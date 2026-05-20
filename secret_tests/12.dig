@@ -1,0 +1,296 @@
+<?xml version="1.0" encoding="utf-8"?>
+<circuit>
+  <version>2</version>
+  <attributes/>
+  <visualElements>
+    <visualElement>
+      <elementName>Testcase</elementName>
+      <elementAttributes>
+        <entry>
+          <string>Label</string>
+          <string>COMP #001 (S3=0,S2=0,S1=0,S0=0)</string>
+        </entry>
+        <entry>
+          <string>Testdata</string>
+          <testData>
+            <dataString>S3 S2 S1 S0 R2 R1 R0
+0 0 0 0 1 1 1
+</dataString>
+          </testData>
+        </entry>
+      </elementAttributes>
+      <pos x="100" y="100"/>
+    </visualElement>
+    <visualElement>
+      <elementName>Testcase</elementName>
+      <elementAttributes>
+        <entry>
+          <string>Label</string>
+          <string>COMP #002 (S3=0,S2=0,S1=0,S0=1)</string>
+        </entry>
+        <entry>
+          <string>Testdata</string>
+          <testData>
+            <dataString>S3 S2 S1 S0 R2 R1 R0
+0 0 0 1 1 1 0
+</dataString>
+          </testData>
+        </entry>
+      </elementAttributes>
+      <pos x="100" y="160"/>
+    </visualElement>
+    <visualElement>
+      <elementName>Testcase</elementName>
+      <elementAttributes>
+        <entry>
+          <string>Label</string>
+          <string>COMP #003 (S3=0,S2=0,S1=1,S0=0)</string>
+        </entry>
+        <entry>
+          <string>Testdata</string>
+          <testData>
+            <dataString>S3 S2 S1 S0 R2 R1 R0
+0 0 1 0 1 0 1
+</dataString>
+          </testData>
+        </entry>
+      </elementAttributes>
+      <pos x="100" y="220"/>
+    </visualElement>
+    <visualElement>
+      <elementName>Testcase</elementName>
+      <elementAttributes>
+        <entry>
+          <string>Label</string>
+          <string>COMP #004 (S3=0,S2=0,S1=1,S0=1)</string>
+        </entry>
+        <entry>
+          <string>Testdata</string>
+          <testData>
+            <dataString>S3 S2 S1 S0 R2 R1 R0
+0 0 1 1 1 0 0
+</dataString>
+          </testData>
+        </entry>
+      </elementAttributes>
+      <pos x="100" y="280"/>
+    </visualElement>
+    <visualElement>
+      <elementName>Testcase</elementName>
+      <elementAttributes>
+        <entry>
+          <string>Label</string>
+          <string>COMP #005 (S3=0,S2=1,S1=0,S0=0)</string>
+        </entry>
+        <entry>
+          <string>Testdata</string>
+          <testData>
+            <dataString>S3 S2 S1 S0 R2 R1 R0
+0 1 0 0 0 1 1
+</dataString>
+          </testData>
+        </entry>
+      </elementAttributes>
+      <pos x="100" y="340"/>
+    </visualElement>
+    <visualElement>
+      <elementName>Testcase</elementName>
+      <elementAttributes>
+        <entry>
+          <string>Label</string>
+          <string>COMP #006 (S3=0,S2=1,S1=0,S0=1)</string>
+        </entry>
+        <entry>
+          <string>Testdata</string>
+          <testData>
+            <dataString>S3 S2 S1 S0 R2 R1 R0
+0 1 0 1 0 1 0
+</dataString>
+          </testData>
+        </entry>
+      </elementAttributes>
+      <pos x="100" y="400"/>
+    </visualElement>
+    <visualElement>
+      <elementName>Testcase</elementName>
+      <elementAttributes>
+        <entry>
+          <string>Label</string>
+          <string>COMP #007 (S3=0,S2=1,S1=1,S0=0)</string>
+        </entry>
+        <entry>
+          <string>Testdata</string>
+          <testData>
+            <dataString>S3 S2 S1 S0 R2 R1 R0
+0 1 1 0 0 0 1
+</dataString>
+          </testData>
+        </entry>
+      </elementAttributes>
+      <pos x="100" y="460"/>
+    </visualElement>
+    <visualElement>
+      <elementName>Testcase</elementName>
+      <elementAttributes>
+        <entry>
+          <string>Label</string>
+          <string>COMP #008 (S3=0,S2=1,S1=1,S0=1)</string>
+        </entry>
+        <entry>
+          <string>Testdata</string>
+          <testData>
+            <dataString>S3 S2 S1 S0 R2 R1 R0
+0 1 1 1 0 0 0
+</dataString>
+          </testData>
+        </entry>
+      </elementAttributes>
+      <pos x="100" y="520"/>
+    </visualElement>
+    <visualElement>
+      <elementName>Testcase</elementName>
+      <elementAttributes>
+        <entry>
+          <string>Label</string>
+          <string>COMP #009 (S3=1,S2=0,S1=0,S0=0)</string>
+        </entry>
+        <entry>
+          <string>Testdata</string>
+          <testData>
+            <dataString>S3 S2 S1 S0 R2 R1 R0
+1 0 0 0 0 0 0
+</dataString>
+          </testData>
+        </entry>
+      </elementAttributes>
+      <pos x="100" y="580"/>
+    </visualElement>
+    <visualElement>
+      <elementName>Testcase</elementName>
+      <elementAttributes>
+        <entry>
+          <string>Label</string>
+          <string>COMP #010 (S3=1,S2=0,S1=0,S0=1)</string>
+        </entry>
+        <entry>
+          <string>Testdata</string>
+          <testData>
+            <dataString>S3 S2 S1 S0 R2 R1 R0
+1 0 0 1 0 0 0
+</dataString>
+          </testData>
+        </entry>
+      </elementAttributes>
+      <pos x="100" y="640"/>
+    </visualElement>
+    <visualElement>
+      <elementName>Testcase</elementName>
+      <elementAttributes>
+        <entry>
+          <string>Label</string>
+          <string>COMP #011 (S3=1,S2=0,S1=1,S0=0)</string>
+        </entry>
+        <entry>
+          <string>Testdata</string>
+          <testData>
+            <dataString>S3 S2 S1 S0 R2 R1 R0
+1 0 1 0 0 0 0
+</dataString>
+          </testData>
+        </entry>
+      </elementAttributes>
+      <pos x="100" y="700"/>
+    </visualElement>
+    <visualElement>
+      <elementName>Testcase</elementName>
+      <elementAttributes>
+        <entry>
+          <string>Label</string>
+          <string>COMP #012 (S3=1,S2=0,S1=1,S0=1)</string>
+        </entry>
+        <entry>
+          <string>Testdata</string>
+          <testData>
+            <dataString>S3 S2 S1 S0 R2 R1 R0
+1 0 1 1 0 0 0
+</dataString>
+          </testData>
+        </entry>
+      </elementAttributes>
+      <pos x="100" y="760"/>
+    </visualElement>
+    <visualElement>
+      <elementName>Testcase</elementName>
+      <elementAttributes>
+        <entry>
+          <string>Label</string>
+          <string>COMP #013 (S3=1,S2=1,S1=0,S0=0)</string>
+        </entry>
+        <entry>
+          <string>Testdata</string>
+          <testData>
+            <dataString>S3 S2 S1 S0 R2 R1 R0
+1 1 0 0 0 0 0
+</dataString>
+          </testData>
+        </entry>
+      </elementAttributes>
+      <pos x="100" y="820"/>
+    </visualElement>
+    <visualElement>
+      <elementName>Testcase</elementName>
+      <elementAttributes>
+        <entry>
+          <string>Label</string>
+          <string>COMP #014 (S3=1,S2=1,S1=0,S0=1)</string>
+        </entry>
+        <entry>
+          <string>Testdata</string>
+          <testData>
+            <dataString>S3 S2 S1 S0 R2 R1 R0
+1 1 0 1 0 0 0
+</dataString>
+          </testData>
+        </entry>
+      </elementAttributes>
+      <pos x="100" y="880"/>
+    </visualElement>
+    <visualElement>
+      <elementName>Testcase</elementName>
+      <elementAttributes>
+        <entry>
+          <string>Label</string>
+          <string>COMP #015 (S3=1,S2=1,S1=1,S0=0)</string>
+        </entry>
+        <entry>
+          <string>Testdata</string>
+          <testData>
+            <dataString>S3 S2 S1 S0 R2 R1 R0
+1 1 1 0 0 0 0
+</dataString>
+          </testData>
+        </entry>
+      </elementAttributes>
+      <pos x="100" y="940"/>
+    </visualElement>
+    <visualElement>
+      <elementName>Testcase</elementName>
+      <elementAttributes>
+        <entry>
+          <string>Label</string>
+          <string>COMP #016 (S3=1,S2=1,S1=1,S0=1)</string>
+        </entry>
+        <entry>
+          <string>Testdata</string>
+          <testData>
+            <dataString>S3 S2 S1 S0 R2 R1 R0
+1 1 1 1 0 0 0
+</dataString>
+          </testData>
+        </entry>
+      </elementAttributes>
+      <pos x="100" y="1000"/>
+    </visualElement>
+  </visualElements>
+  <wires/>
+</circuit>

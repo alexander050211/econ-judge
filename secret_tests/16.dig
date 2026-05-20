@@ -1,0 +1,1160 @@
+<?xml version="1.0" encoding="utf-8"?>
+<circuit>
+  <version>2</version>
+  <attributes/>
+  <visualElements>
+    <visualElement>
+      <elementName>Testcase</elementName>
+      <elementAttributes>
+        <entry>
+          <string>Label</string>
+          <string>WIRE1 #001 (X2=0,X1=0,X0=0,Y2=0,Y1=0,Y0=0)</string>
+        </entry>
+        <entry>
+          <string>Testdata</string>
+          <testData>
+            <dataString>X2 X1 X0 Y2 Y1 Y0 T1 T0
+0 0 0 0 0 0 1 1
+</dataString>
+          </testData>
+        </entry>
+      </elementAttributes>
+      <pos x="100" y="100"/>
+    </visualElement>
+    <visualElement>
+      <elementName>Testcase</elementName>
+      <elementAttributes>
+        <entry>
+          <string>Label</string>
+          <string>WIRE1 #002 (X2=0,X1=0,X0=0,Y2=0,Y1=0,Y0=1)</string>
+        </entry>
+        <entry>
+          <string>Testdata</string>
+          <testData>
+            <dataString>X2 X1 X0 Y2 Y1 Y0 T1 T0
+0 0 0 0 0 1 1 0
+</dataString>
+          </testData>
+        </entry>
+      </elementAttributes>
+      <pos x="100" y="160"/>
+    </visualElement>
+    <visualElement>
+      <elementName>Testcase</elementName>
+      <elementAttributes>
+        <entry>
+          <string>Label</string>
+          <string>WIRE1 #003 (X2=0,X1=0,X0=0,Y2=0,Y1=1,Y0=0)</string>
+        </entry>
+        <entry>
+          <string>Testdata</string>
+          <testData>
+            <dataString>X2 X1 X0 Y2 Y1 Y0 T1 T0
+0 0 0 0 1 0 1 0
+</dataString>
+          </testData>
+        </entry>
+      </elementAttributes>
+      <pos x="100" y="220"/>
+    </visualElement>
+    <visualElement>
+      <elementName>Testcase</elementName>
+      <elementAttributes>
+        <entry>
+          <string>Label</string>
+          <string>WIRE1 #004 (X2=0,X1=0,X0=0,Y2=0,Y1=1,Y0=1)</string>
+        </entry>
+        <entry>
+          <string>Testdata</string>
+          <testData>
+            <dataString>X2 X1 X0 Y2 Y1 Y0 T1 T0
+0 0 0 0 1 1 1 0
+</dataString>
+          </testData>
+        </entry>
+      </elementAttributes>
+      <pos x="100" y="280"/>
+    </visualElement>
+    <visualElement>
+      <elementName>Testcase</elementName>
+      <elementAttributes>
+        <entry>
+          <string>Label</string>
+          <string>WIRE1 #005 (X2=0,X1=0,X0=0,Y2=1,Y1=0,Y0=0)</string>
+        </entry>
+        <entry>
+          <string>Testdata</string>
+          <testData>
+            <dataString>X2 X1 X0 Y2 Y1 Y0 T1 T0
+0 0 0 1 0 0 0 1
+</dataString>
+          </testData>
+        </entry>
+      </elementAttributes>
+      <pos x="100" y="340"/>
+    </visualElement>
+    <visualElement>
+      <elementName>Testcase</elementName>
+      <elementAttributes>
+        <entry>
+          <string>Label</string>
+          <string>WIRE1 #006 (X2=0,X1=0,X0=0,Y2=1,Y1=0,Y0=1)</string>
+        </entry>
+        <entry>
+          <string>Testdata</string>
+          <testData>
+            <dataString>X2 X1 X0 Y2 Y1 Y0 T1 T0
+0 0 0 1 0 1 0 1
+</dataString>
+          </testData>
+        </entry>
+      </elementAttributes>
+      <pos x="100" y="400"/>
+    </visualElement>
+    <visualElement>
+      <elementName>Testcase</elementName>
+      <elementAttributes>
+        <entry>
+          <string>Label</string>
+          <string>WIRE1 #007 (X2=0,X1=0,X0=0,Y2=1,Y1=1,Y0=0)</string>
+        </entry>
+        <entry>
+          <string>Testdata</string>
+          <testData>
+            <dataString>X2 X1 X0 Y2 Y1 Y0 T1 T0
+0 0 0 1 1 0 0 1
+</dataString>
+          </testData>
+        </entry>
+      </elementAttributes>
+      <pos x="100" y="460"/>
+    </visualElement>
+    <visualElement>
+      <elementName>Testcase</elementName>
+      <elementAttributes>
+        <entry>
+          <string>Label</string>
+          <string>WIRE1 #008 (X2=0,X1=0,X0=0,Y2=1,Y1=1,Y0=1)</string>
+        </entry>
+        <entry>
+          <string>Testdata</string>
+          <testData>
+            <dataString>X2 X1 X0 Y2 Y1 Y0 T1 T0
+0 0 0 1 1 1 0 0
+</dataString>
+          </testData>
+        </entry>
+      </elementAttributes>
+      <pos x="100" y="520"/>
+    </visualElement>
+    <visualElement>
+      <elementName>Testcase</elementName>
+      <elementAttributes>
+        <entry>
+          <string>Label</string>
+          <string>WIRE1 #009 (X2=0,X1=0,X0=1,Y2=0,Y1=0,Y0=0)</string>
+        </entry>
+        <entry>
+          <string>Testdata</string>
+          <testData>
+            <dataString>X2 X1 X0 Y2 Y1 Y0 T1 T0
+0 0 1 0 0 0 1 0
+</dataString>
+          </testData>
+        </entry>
+      </elementAttributes>
+      <pos x="100" y="580"/>
+    </visualElement>
+    <visualElement>
+      <elementName>Testcase</elementName>
+      <elementAttributes>
+        <entry>
+          <string>Label</string>
+          <string>WIRE1 #010 (X2=0,X1=0,X0=1,Y2=0,Y1=0,Y0=1)</string>
+        </entry>
+        <entry>
+          <string>Testdata</string>
+          <testData>
+            <dataString>X2 X1 X0 Y2 Y1 Y0 T1 T0
+0 0 1 0 0 1 1 0
+</dataString>
+          </testData>
+        </entry>
+      </elementAttributes>
+      <pos x="100" y="640"/>
+    </visualElement>
+    <visualElement>
+      <elementName>Testcase</elementName>
+      <elementAttributes>
+        <entry>
+          <string>Label</string>
+          <string>WIRE1 #011 (X2=0,X1=0,X0=1,Y2=0,Y1=1,Y0=0)</string>
+        </entry>
+        <entry>
+          <string>Testdata</string>
+          <testData>
+            <dataString>X2 X1 X0 Y2 Y1 Y0 T1 T0
+0 0 1 0 1 0 1 0
+</dataString>
+          </testData>
+        </entry>
+      </elementAttributes>
+      <pos x="100" y="700"/>
+    </visualElement>
+    <visualElement>
+      <elementName>Testcase</elementName>
+      <elementAttributes>
+        <entry>
+          <string>Label</string>
+          <string>WIRE1 #012 (X2=0,X1=0,X0=1,Y2=0,Y1=1,Y0=1)</string>
+        </entry>
+        <entry>
+          <string>Testdata</string>
+          <testData>
+            <dataString>X2 X1 X0 Y2 Y1 Y0 T1 T0
+0 0 1 0 1 1 0 1
+</dataString>
+          </testData>
+        </entry>
+      </elementAttributes>
+      <pos x="100" y="760"/>
+    </visualElement>
+    <visualElement>
+      <elementName>Testcase</elementName>
+      <elementAttributes>
+        <entry>
+          <string>Label</string>
+          <string>WIRE1 #013 (X2=0,X1=0,X0=1,Y2=1,Y1=0,Y0=0)</string>
+        </entry>
+        <entry>
+          <string>Testdata</string>
+          <testData>
+            <dataString>X2 X1 X0 Y2 Y1 Y0 T1 T0
+0 0 1 1 0 0 0 1
+</dataString>
+          </testData>
+        </entry>
+      </elementAttributes>
+      <pos x="100" y="820"/>
+    </visualElement>
+    <visualElement>
+      <elementName>Testcase</elementName>
+      <elementAttributes>
+        <entry>
+          <string>Label</string>
+          <string>WIRE1 #014 (X2=0,X1=0,X0=1,Y2=1,Y1=0,Y0=1)</string>
+        </entry>
+        <entry>
+          <string>Testdata</string>
+          <testData>
+            <dataString>X2 X1 X0 Y2 Y1 Y0 T1 T0
+0 0 1 1 0 1 0 1
+</dataString>
+          </testData>
+        </entry>
+      </elementAttributes>
+      <pos x="100" y="880"/>
+    </visualElement>
+    <visualElement>
+      <elementName>Testcase</elementName>
+      <elementAttributes>
+        <entry>
+          <string>Label</string>
+          <string>WIRE1 #015 (X2=0,X1=0,X0=1,Y2=1,Y1=1,Y0=0)</string>
+        </entry>
+        <entry>
+          <string>Testdata</string>
+          <testData>
+            <dataString>X2 X1 X0 Y2 Y1 Y0 T1 T0
+0 0 1 1 1 0 0 0
+</dataString>
+          </testData>
+        </entry>
+      </elementAttributes>
+      <pos x="100" y="940"/>
+    </visualElement>
+    <visualElement>
+      <elementName>Testcase</elementName>
+      <elementAttributes>
+        <entry>
+          <string>Label</string>
+          <string>WIRE1 #016 (X2=0,X1=0,X0=1,Y2=1,Y1=1,Y0=1)</string>
+        </entry>
+        <entry>
+          <string>Testdata</string>
+          <testData>
+            <dataString>X2 X1 X0 Y2 Y1 Y0 T1 T0
+0 0 1 1 1 1 0 0
+</dataString>
+          </testData>
+        </entry>
+      </elementAttributes>
+      <pos x="100" y="1000"/>
+    </visualElement>
+    <visualElement>
+      <elementName>Testcase</elementName>
+      <elementAttributes>
+        <entry>
+          <string>Label</string>
+          <string>WIRE1 #017 (X2=0,X1=1,X0=0,Y2=0,Y1=0,Y0=0)</string>
+        </entry>
+        <entry>
+          <string>Testdata</string>
+          <testData>
+            <dataString>X2 X1 X0 Y2 Y1 Y0 T1 T0
+0 1 0 0 0 0 1 0
+</dataString>
+          </testData>
+        </entry>
+      </elementAttributes>
+      <pos x="100" y="1060"/>
+    </visualElement>
+    <visualElement>
+      <elementName>Testcase</elementName>
+      <elementAttributes>
+        <entry>
+          <string>Label</string>
+          <string>WIRE1 #018 (X2=0,X1=1,X0=0,Y2=0,Y1=0,Y0=1)</string>
+        </entry>
+        <entry>
+          <string>Testdata</string>
+          <testData>
+            <dataString>X2 X1 X0 Y2 Y1 Y0 T1 T0
+0 1 0 0 0 1 1 0
+</dataString>
+          </testData>
+        </entry>
+      </elementAttributes>
+      <pos x="100" y="1120"/>
+    </visualElement>
+    <visualElement>
+      <elementName>Testcase</elementName>
+      <elementAttributes>
+        <entry>
+          <string>Label</string>
+          <string>WIRE1 #019 (X2=0,X1=1,X0=0,Y2=0,Y1=1,Y0=0)</string>
+        </entry>
+        <entry>
+          <string>Testdata</string>
+          <testData>
+            <dataString>X2 X1 X0 Y2 Y1 Y0 T1 T0
+0 1 0 0 1 0 0 1
+</dataString>
+          </testData>
+        </entry>
+      </elementAttributes>
+      <pos x="100" y="1180"/>
+    </visualElement>
+    <visualElement>
+      <elementName>Testcase</elementName>
+      <elementAttributes>
+        <entry>
+          <string>Label</string>
+          <string>WIRE1 #020 (X2=0,X1=1,X0=0,Y2=0,Y1=1,Y0=1)</string>
+        </entry>
+        <entry>
+          <string>Testdata</string>
+          <testData>
+            <dataString>X2 X1 X0 Y2 Y1 Y0 T1 T0
+0 1 0 0 1 1 0 1
+</dataString>
+          </testData>
+        </entry>
+      </elementAttributes>
+      <pos x="100" y="1240"/>
+    </visualElement>
+    <visualElement>
+      <elementName>Testcase</elementName>
+      <elementAttributes>
+        <entry>
+          <string>Label</string>
+          <string>WIRE1 #021 (X2=0,X1=1,X0=0,Y2=1,Y1=0,Y0=0)</string>
+        </entry>
+        <entry>
+          <string>Testdata</string>
+          <testData>
+            <dataString>X2 X1 X0 Y2 Y1 Y0 T1 T0
+0 1 0 1 0 0 0 1
+</dataString>
+          </testData>
+        </entry>
+      </elementAttributes>
+      <pos x="100" y="1300"/>
+    </visualElement>
+    <visualElement>
+      <elementName>Testcase</elementName>
+      <elementAttributes>
+        <entry>
+          <string>Label</string>
+          <string>WIRE1 #022 (X2=0,X1=1,X0=0,Y2=1,Y1=0,Y0=1)</string>
+        </entry>
+        <entry>
+          <string>Testdata</string>
+          <testData>
+            <dataString>X2 X1 X0 Y2 Y1 Y0 T1 T0
+0 1 0 1 0 1 0 0
+</dataString>
+          </testData>
+        </entry>
+      </elementAttributes>
+      <pos x="100" y="1360"/>
+    </visualElement>
+    <visualElement>
+      <elementName>Testcase</elementName>
+      <elementAttributes>
+        <entry>
+          <string>Label</string>
+          <string>WIRE1 #023 (X2=0,X1=1,X0=0,Y2=1,Y1=1,Y0=0)</string>
+        </entry>
+        <entry>
+          <string>Testdata</string>
+          <testData>
+            <dataString>X2 X1 X0 Y2 Y1 Y0 T1 T0
+0 1 0 1 1 0 0 0
+</dataString>
+          </testData>
+        </entry>
+      </elementAttributes>
+      <pos x="100" y="1420"/>
+    </visualElement>
+    <visualElement>
+      <elementName>Testcase</elementName>
+      <elementAttributes>
+        <entry>
+          <string>Label</string>
+          <string>WIRE1 #024 (X2=0,X1=1,X0=0,Y2=1,Y1=1,Y0=1)</string>
+        </entry>
+        <entry>
+          <string>Testdata</string>
+          <testData>
+            <dataString>X2 X1 X0 Y2 Y1 Y0 T1 T0
+0 1 0 1 1 1 0 0
+</dataString>
+          </testData>
+        </entry>
+      </elementAttributes>
+      <pos x="100" y="1480"/>
+    </visualElement>
+    <visualElement>
+      <elementName>Testcase</elementName>
+      <elementAttributes>
+        <entry>
+          <string>Label</string>
+          <string>WIRE1 #025 (X2=0,X1=1,X0=1,Y2=0,Y1=0,Y0=0)</string>
+        </entry>
+        <entry>
+          <string>Testdata</string>
+          <testData>
+            <dataString>X2 X1 X0 Y2 Y1 Y0 T1 T0
+0 1 1 0 0 0 1 0
+</dataString>
+          </testData>
+        </entry>
+      </elementAttributes>
+      <pos x="100" y="1540"/>
+    </visualElement>
+    <visualElement>
+      <elementName>Testcase</elementName>
+      <elementAttributes>
+        <entry>
+          <string>Label</string>
+          <string>WIRE1 #026 (X2=0,X1=1,X0=1,Y2=0,Y1=0,Y0=1)</string>
+        </entry>
+        <entry>
+          <string>Testdata</string>
+          <testData>
+            <dataString>X2 X1 X0 Y2 Y1 Y0 T1 T0
+0 1 1 0 0 1 0 1
+</dataString>
+          </testData>
+        </entry>
+      </elementAttributes>
+      <pos x="100" y="1600"/>
+    </visualElement>
+    <visualElement>
+      <elementName>Testcase</elementName>
+      <elementAttributes>
+        <entry>
+          <string>Label</string>
+          <string>WIRE1 #027 (X2=0,X1=1,X0=1,Y2=0,Y1=1,Y0=0)</string>
+        </entry>
+        <entry>
+          <string>Testdata</string>
+          <testData>
+            <dataString>X2 X1 X0 Y2 Y1 Y0 T1 T0
+0 1 1 0 1 0 0 1
+</dataString>
+          </testData>
+        </entry>
+      </elementAttributes>
+      <pos x="100" y="1660"/>
+    </visualElement>
+    <visualElement>
+      <elementName>Testcase</elementName>
+      <elementAttributes>
+        <entry>
+          <string>Label</string>
+          <string>WIRE1 #028 (X2=0,X1=1,X0=1,Y2=0,Y1=1,Y0=1)</string>
+        </entry>
+        <entry>
+          <string>Testdata</string>
+          <testData>
+            <dataString>X2 X1 X0 Y2 Y1 Y0 T1 T0
+0 1 1 0 1 1 0 1
+</dataString>
+          </testData>
+        </entry>
+      </elementAttributes>
+      <pos x="100" y="1720"/>
+    </visualElement>
+    <visualElement>
+      <elementName>Testcase</elementName>
+      <elementAttributes>
+        <entry>
+          <string>Label</string>
+          <string>WIRE1 #029 (X2=0,X1=1,X0=1,Y2=1,Y1=0,Y0=0)</string>
+        </entry>
+        <entry>
+          <string>Testdata</string>
+          <testData>
+            <dataString>X2 X1 X0 Y2 Y1 Y0 T1 T0
+0 1 1 1 0 0 0 0
+</dataString>
+          </testData>
+        </entry>
+      </elementAttributes>
+      <pos x="100" y="1780"/>
+    </visualElement>
+    <visualElement>
+      <elementName>Testcase</elementName>
+      <elementAttributes>
+        <entry>
+          <string>Label</string>
+          <string>WIRE1 #030 (X2=0,X1=1,X0=1,Y2=1,Y1=0,Y0=1)</string>
+        </entry>
+        <entry>
+          <string>Testdata</string>
+          <testData>
+            <dataString>X2 X1 X0 Y2 Y1 Y0 T1 T0
+0 1 1 1 0 1 0 0
+</dataString>
+          </testData>
+        </entry>
+      </elementAttributes>
+      <pos x="100" y="1840"/>
+    </visualElement>
+    <visualElement>
+      <elementName>Testcase</elementName>
+      <elementAttributes>
+        <entry>
+          <string>Label</string>
+          <string>WIRE1 #031 (X2=0,X1=1,X0=1,Y2=1,Y1=1,Y0=0)</string>
+        </entry>
+        <entry>
+          <string>Testdata</string>
+          <testData>
+            <dataString>X2 X1 X0 Y2 Y1 Y0 T1 T0
+0 1 1 1 1 0 0 0
+</dataString>
+          </testData>
+        </entry>
+      </elementAttributes>
+      <pos x="100" y="1900"/>
+    </visualElement>
+    <visualElement>
+      <elementName>Testcase</elementName>
+      <elementAttributes>
+        <entry>
+          <string>Label</string>
+          <string>WIRE1 #032 (X2=0,X1=1,X0=1,Y2=1,Y1=1,Y0=1)</string>
+        </entry>
+        <entry>
+          <string>Testdata</string>
+          <testData>
+            <dataString>X2 X1 X0 Y2 Y1 Y0 T1 T0
+0 1 1 1 1 1 0 0
+</dataString>
+          </testData>
+        </entry>
+      </elementAttributes>
+      <pos x="100" y="1960"/>
+    </visualElement>
+    <visualElement>
+      <elementName>Testcase</elementName>
+      <elementAttributes>
+        <entry>
+          <string>Label</string>
+          <string>WIRE1 #033 (X2=1,X1=0,X0=0,Y2=0,Y1=0,Y0=0)</string>
+        </entry>
+        <entry>
+          <string>Testdata</string>
+          <testData>
+            <dataString>X2 X1 X0 Y2 Y1 Y0 T1 T0
+1 0 0 0 0 0 0 1
+</dataString>
+          </testData>
+        </entry>
+      </elementAttributes>
+      <pos x="100" y="2020"/>
+    </visualElement>
+    <visualElement>
+      <elementName>Testcase</elementName>
+      <elementAttributes>
+        <entry>
+          <string>Label</string>
+          <string>WIRE1 #034 (X2=1,X1=0,X0=0,Y2=0,Y1=0,Y0=1)</string>
+        </entry>
+        <entry>
+          <string>Testdata</string>
+          <testData>
+            <dataString>X2 X1 X0 Y2 Y1 Y0 T1 T0
+1 0 0 0 0 1 0 1
+</dataString>
+          </testData>
+        </entry>
+      </elementAttributes>
+      <pos x="100" y="2080"/>
+    </visualElement>
+    <visualElement>
+      <elementName>Testcase</elementName>
+      <elementAttributes>
+        <entry>
+          <string>Label</string>
+          <string>WIRE1 #035 (X2=1,X1=0,X0=0,Y2=0,Y1=1,Y0=0)</string>
+        </entry>
+        <entry>
+          <string>Testdata</string>
+          <testData>
+            <dataString>X2 X1 X0 Y2 Y1 Y0 T1 T0
+1 0 0 0 1 0 0 1
+</dataString>
+          </testData>
+        </entry>
+      </elementAttributes>
+      <pos x="100" y="2140"/>
+    </visualElement>
+    <visualElement>
+      <elementName>Testcase</elementName>
+      <elementAttributes>
+        <entry>
+          <string>Label</string>
+          <string>WIRE1 #036 (X2=1,X1=0,X0=0,Y2=0,Y1=1,Y0=1)</string>
+        </entry>
+        <entry>
+          <string>Testdata</string>
+          <testData>
+            <dataString>X2 X1 X0 Y2 Y1 Y0 T1 T0
+1 0 0 0 1 1 0 0
+</dataString>
+          </testData>
+        </entry>
+      </elementAttributes>
+      <pos x="100" y="2200"/>
+    </visualElement>
+    <visualElement>
+      <elementName>Testcase</elementName>
+      <elementAttributes>
+        <entry>
+          <string>Label</string>
+          <string>WIRE1 #037 (X2=1,X1=0,X0=0,Y2=1,Y1=0,Y0=0)</string>
+        </entry>
+        <entry>
+          <string>Testdata</string>
+          <testData>
+            <dataString>X2 X1 X0 Y2 Y1 Y0 T1 T0
+1 0 0 1 0 0 0 0
+</dataString>
+          </testData>
+        </entry>
+      </elementAttributes>
+      <pos x="100" y="2260"/>
+    </visualElement>
+    <visualElement>
+      <elementName>Testcase</elementName>
+      <elementAttributes>
+        <entry>
+          <string>Label</string>
+          <string>WIRE1 #038 (X2=1,X1=0,X0=0,Y2=1,Y1=0,Y0=1)</string>
+        </entry>
+        <entry>
+          <string>Testdata</string>
+          <testData>
+            <dataString>X2 X1 X0 Y2 Y1 Y0 T1 T0
+1 0 0 1 0 1 0 0
+</dataString>
+          </testData>
+        </entry>
+      </elementAttributes>
+      <pos x="100" y="2320"/>
+    </visualElement>
+    <visualElement>
+      <elementName>Testcase</elementName>
+      <elementAttributes>
+        <entry>
+          <string>Label</string>
+          <string>WIRE1 #039 (X2=1,X1=0,X0=0,Y2=1,Y1=1,Y0=0)</string>
+        </entry>
+        <entry>
+          <string>Testdata</string>
+          <testData>
+            <dataString>X2 X1 X0 Y2 Y1 Y0 T1 T0
+1 0 0 1 1 0 0 0
+</dataString>
+          </testData>
+        </entry>
+      </elementAttributes>
+      <pos x="100" y="2380"/>
+    </visualElement>
+    <visualElement>
+      <elementName>Testcase</elementName>
+      <elementAttributes>
+        <entry>
+          <string>Label</string>
+          <string>WIRE1 #040 (X2=1,X1=0,X0=0,Y2=1,Y1=1,Y0=1)</string>
+        </entry>
+        <entry>
+          <string>Testdata</string>
+          <testData>
+            <dataString>X2 X1 X0 Y2 Y1 Y0 T1 T0
+1 0 0 1 1 1 0 0
+</dataString>
+          </testData>
+        </entry>
+      </elementAttributes>
+      <pos x="100" y="2440"/>
+    </visualElement>
+    <visualElement>
+      <elementName>Testcase</elementName>
+      <elementAttributes>
+        <entry>
+          <string>Label</string>
+          <string>WIRE1 #041 (X2=1,X1=0,X0=1,Y2=0,Y1=0,Y0=0)</string>
+        </entry>
+        <entry>
+          <string>Testdata</string>
+          <testData>
+            <dataString>X2 X1 X0 Y2 Y1 Y0 T1 T0
+1 0 1 0 0 0 0 1
+</dataString>
+          </testData>
+        </entry>
+      </elementAttributes>
+      <pos x="100" y="2500"/>
+    </visualElement>
+    <visualElement>
+      <elementName>Testcase</elementName>
+      <elementAttributes>
+        <entry>
+          <string>Label</string>
+          <string>WIRE1 #042 (X2=1,X1=0,X0=1,Y2=0,Y1=0,Y0=1)</string>
+        </entry>
+        <entry>
+          <string>Testdata</string>
+          <testData>
+            <dataString>X2 X1 X0 Y2 Y1 Y0 T1 T0
+1 0 1 0 0 1 0 1
+</dataString>
+          </testData>
+        </entry>
+      </elementAttributes>
+      <pos x="100" y="2560"/>
+    </visualElement>
+    <visualElement>
+      <elementName>Testcase</elementName>
+      <elementAttributes>
+        <entry>
+          <string>Label</string>
+          <string>WIRE1 #043 (X2=1,X1=0,X0=1,Y2=0,Y1=1,Y0=0)</string>
+        </entry>
+        <entry>
+          <string>Testdata</string>
+          <testData>
+            <dataString>X2 X1 X0 Y2 Y1 Y0 T1 T0
+1 0 1 0 1 0 0 0
+</dataString>
+          </testData>
+        </entry>
+      </elementAttributes>
+      <pos x="100" y="2620"/>
+    </visualElement>
+    <visualElement>
+      <elementName>Testcase</elementName>
+      <elementAttributes>
+        <entry>
+          <string>Label</string>
+          <string>WIRE1 #044 (X2=1,X1=0,X0=1,Y2=0,Y1=1,Y0=1)</string>
+        </entry>
+        <entry>
+          <string>Testdata</string>
+          <testData>
+            <dataString>X2 X1 X0 Y2 Y1 Y0 T1 T0
+1 0 1 0 1 1 0 0
+</dataString>
+          </testData>
+        </entry>
+      </elementAttributes>
+      <pos x="100" y="2680"/>
+    </visualElement>
+    <visualElement>
+      <elementName>Testcase</elementName>
+      <elementAttributes>
+        <entry>
+          <string>Label</string>
+          <string>WIRE1 #045 (X2=1,X1=0,X0=1,Y2=1,Y1=0,Y0=0)</string>
+        </entry>
+        <entry>
+          <string>Testdata</string>
+          <testData>
+            <dataString>X2 X1 X0 Y2 Y1 Y0 T1 T0
+1 0 1 1 0 0 0 0
+</dataString>
+          </testData>
+        </entry>
+      </elementAttributes>
+      <pos x="100" y="2740"/>
+    </visualElement>
+    <visualElement>
+      <elementName>Testcase</elementName>
+      <elementAttributes>
+        <entry>
+          <string>Label</string>
+          <string>WIRE1 #046 (X2=1,X1=0,X0=1,Y2=1,Y1=0,Y0=1)</string>
+        </entry>
+        <entry>
+          <string>Testdata</string>
+          <testData>
+            <dataString>X2 X1 X0 Y2 Y1 Y0 T1 T0
+1 0 1 1 0 1 0 0
+</dataString>
+          </testData>
+        </entry>
+      </elementAttributes>
+      <pos x="100" y="2800"/>
+    </visualElement>
+    <visualElement>
+      <elementName>Testcase</elementName>
+      <elementAttributes>
+        <entry>
+          <string>Label</string>
+          <string>WIRE1 #047 (X2=1,X1=0,X0=1,Y2=1,Y1=1,Y0=0)</string>
+        </entry>
+        <entry>
+          <string>Testdata</string>
+          <testData>
+            <dataString>X2 X1 X0 Y2 Y1 Y0 T1 T0
+1 0 1 1 1 0 0 0
+</dataString>
+          </testData>
+        </entry>
+      </elementAttributes>
+      <pos x="100" y="2860"/>
+    </visualElement>
+    <visualElement>
+      <elementName>Testcase</elementName>
+      <elementAttributes>
+        <entry>
+          <string>Label</string>
+          <string>WIRE1 #048 (X2=1,X1=0,X0=1,Y2=1,Y1=1,Y0=1)</string>
+        </entry>
+        <entry>
+          <string>Testdata</string>
+          <testData>
+            <dataString>X2 X1 X0 Y2 Y1 Y0 T1 T0
+1 0 1 1 1 1 0 0
+</dataString>
+          </testData>
+        </entry>
+      </elementAttributes>
+      <pos x="100" y="2920"/>
+    </visualElement>
+    <visualElement>
+      <elementName>Testcase</elementName>
+      <elementAttributes>
+        <entry>
+          <string>Label</string>
+          <string>WIRE1 #049 (X2=1,X1=1,X0=0,Y2=0,Y1=0,Y0=0)</string>
+        </entry>
+        <entry>
+          <string>Testdata</string>
+          <testData>
+            <dataString>X2 X1 X0 Y2 Y1 Y0 T1 T0
+1 1 0 0 0 0 0 1
+</dataString>
+          </testData>
+        </entry>
+      </elementAttributes>
+      <pos x="100" y="2980"/>
+    </visualElement>
+    <visualElement>
+      <elementName>Testcase</elementName>
+      <elementAttributes>
+        <entry>
+          <string>Label</string>
+          <string>WIRE1 #050 (X2=1,X1=1,X0=0,Y2=0,Y1=0,Y0=1)</string>
+        </entry>
+        <entry>
+          <string>Testdata</string>
+          <testData>
+            <dataString>X2 X1 X0 Y2 Y1 Y0 T1 T0
+1 1 0 0 0 1 0 0
+</dataString>
+          </testData>
+        </entry>
+      </elementAttributes>
+      <pos x="100" y="3040"/>
+    </visualElement>
+    <visualElement>
+      <elementName>Testcase</elementName>
+      <elementAttributes>
+        <entry>
+          <string>Label</string>
+          <string>WIRE1 #051 (X2=1,X1=1,X0=0,Y2=0,Y1=1,Y0=0)</string>
+        </entry>
+        <entry>
+          <string>Testdata</string>
+          <testData>
+            <dataString>X2 X1 X0 Y2 Y1 Y0 T1 T0
+1 1 0 0 1 0 0 0
+</dataString>
+          </testData>
+        </entry>
+      </elementAttributes>
+      <pos x="100" y="3100"/>
+    </visualElement>
+    <visualElement>
+      <elementName>Testcase</elementName>
+      <elementAttributes>
+        <entry>
+          <string>Label</string>
+          <string>WIRE1 #052 (X2=1,X1=1,X0=0,Y2=0,Y1=1,Y0=1)</string>
+        </entry>
+        <entry>
+          <string>Testdata</string>
+          <testData>
+            <dataString>X2 X1 X0 Y2 Y1 Y0 T1 T0
+1 1 0 0 1 1 0 0
+</dataString>
+          </testData>
+        </entry>
+      </elementAttributes>
+      <pos x="100" y="3160"/>
+    </visualElement>
+    <visualElement>
+      <elementName>Testcase</elementName>
+      <elementAttributes>
+        <entry>
+          <string>Label</string>
+          <string>WIRE1 #053 (X2=1,X1=1,X0=0,Y2=1,Y1=0,Y0=0)</string>
+        </entry>
+        <entry>
+          <string>Testdata</string>
+          <testData>
+            <dataString>X2 X1 X0 Y2 Y1 Y0 T1 T0
+1 1 0 1 0 0 0 0
+</dataString>
+          </testData>
+        </entry>
+      </elementAttributes>
+      <pos x="100" y="3220"/>
+    </visualElement>
+    <visualElement>
+      <elementName>Testcase</elementName>
+      <elementAttributes>
+        <entry>
+          <string>Label</string>
+          <string>WIRE1 #054 (X2=1,X1=1,X0=0,Y2=1,Y1=0,Y0=1)</string>
+        </entry>
+        <entry>
+          <string>Testdata</string>
+          <testData>
+            <dataString>X2 X1 X0 Y2 Y1 Y0 T1 T0
+1 1 0 1 0 1 0 0
+</dataString>
+          </testData>
+        </entry>
+      </elementAttributes>
+      <pos x="100" y="3280"/>
+    </visualElement>
+    <visualElement>
+      <elementName>Testcase</elementName>
+      <elementAttributes>
+        <entry>
+          <string>Label</string>
+          <string>WIRE1 #055 (X2=1,X1=1,X0=0,Y2=1,Y1=1,Y0=0)</string>
+        </entry>
+        <entry>
+          <string>Testdata</string>
+          <testData>
+            <dataString>X2 X1 X0 Y2 Y1 Y0 T1 T0
+1 1 0 1 1 0 0 0
+</dataString>
+          </testData>
+        </entry>
+      </elementAttributes>
+      <pos x="100" y="3340"/>
+    </visualElement>
+    <visualElement>
+      <elementName>Testcase</elementName>
+      <elementAttributes>
+        <entry>
+          <string>Label</string>
+          <string>WIRE1 #056 (X2=1,X1=1,X0=0,Y2=1,Y1=1,Y0=1)</string>
+        </entry>
+        <entry>
+          <string>Testdata</string>
+          <testData>
+            <dataString>X2 X1 X0 Y2 Y1 Y0 T1 T0
+1 1 0 1 1 1 0 0
+</dataString>
+          </testData>
+        </entry>
+      </elementAttributes>
+      <pos x="100" y="3400"/>
+    </visualElement>
+    <visualElement>
+      <elementName>Testcase</elementName>
+      <elementAttributes>
+        <entry>
+          <string>Label</string>
+          <string>WIRE1 #057 (X2=1,X1=1,X0=1,Y2=0,Y1=0,Y0=0)</string>
+        </entry>
+        <entry>
+          <string>Testdata</string>
+          <testData>
+            <dataString>X2 X1 X0 Y2 Y1 Y0 T1 T0
+1 1 1 0 0 0 0 0
+</dataString>
+          </testData>
+        </entry>
+      </elementAttributes>
+      <pos x="100" y="3460"/>
+    </visualElement>
+    <visualElement>
+      <elementName>Testcase</elementName>
+      <elementAttributes>
+        <entry>
+          <string>Label</string>
+          <string>WIRE1 #058 (X2=1,X1=1,X0=1,Y2=0,Y1=0,Y0=1)</string>
+        </entry>
+        <entry>
+          <string>Testdata</string>
+          <testData>
+            <dataString>X2 X1 X0 Y2 Y1 Y0 T1 T0
+1 1 1 0 0 1 0 0
+</dataString>
+          </testData>
+        </entry>
+      </elementAttributes>
+      <pos x="100" y="3520"/>
+    </visualElement>
+    <visualElement>
+      <elementName>Testcase</elementName>
+      <elementAttributes>
+        <entry>
+          <string>Label</string>
+          <string>WIRE1 #059 (X2=1,X1=1,X0=1,Y2=0,Y1=1,Y0=0)</string>
+        </entry>
+        <entry>
+          <string>Testdata</string>
+          <testData>
+            <dataString>X2 X1 X0 Y2 Y1 Y0 T1 T0
+1 1 1 0 1 0 0 0
+</dataString>
+          </testData>
+        </entry>
+      </elementAttributes>
+      <pos x="100" y="3580"/>
+    </visualElement>
+    <visualElement>
+      <elementName>Testcase</elementName>
+      <elementAttributes>
+        <entry>
+          <string>Label</string>
+          <string>WIRE1 #060 (X2=1,X1=1,X0=1,Y2=0,Y1=1,Y0=1)</string>
+        </entry>
+        <entry>
+          <string>Testdata</string>
+          <testData>
+            <dataString>X2 X1 X0 Y2 Y1 Y0 T1 T0
+1 1 1 0 1 1 0 0
+</dataString>
+          </testData>
+        </entry>
+      </elementAttributes>
+      <pos x="100" y="3640"/>
+    </visualElement>
+    <visualElement>
+      <elementName>Testcase</elementName>
+      <elementAttributes>
+        <entry>
+          <string>Label</string>
+          <string>WIRE1 #061 (X2=1,X1=1,X0=1,Y2=1,Y1=0,Y0=0)</string>
+        </entry>
+        <entry>
+          <string>Testdata</string>
+          <testData>
+            <dataString>X2 X1 X0 Y2 Y1 Y0 T1 T0
+1 1 1 1 0 0 0 0
+</dataString>
+          </testData>
+        </entry>
+      </elementAttributes>
+      <pos x="100" y="3700"/>
+    </visualElement>
+    <visualElement>
+      <elementName>Testcase</elementName>
+      <elementAttributes>
+        <entry>
+          <string>Label</string>
+          <string>WIRE1 #062 (X2=1,X1=1,X0=1,Y2=1,Y1=0,Y0=1)</string>
+        </entry>
+        <entry>
+          <string>Testdata</string>
+          <testData>
+            <dataString>X2 X1 X0 Y2 Y1 Y0 T1 T0
+1 1 1 1 0 1 0 0
+</dataString>
+          </testData>
+        </entry>
+      </elementAttributes>
+      <pos x="100" y="3760"/>
+    </visualElement>
+    <visualElement>
+      <elementName>Testcase</elementName>
+      <elementAttributes>
+        <entry>
+          <string>Label</string>
+          <string>WIRE1 #063 (X2=1,X1=1,X0=1,Y2=1,Y1=1,Y0=0)</string>
+        </entry>
+        <entry>
+          <string>Testdata</string>
+          <testData>
+            <dataString>X2 X1 X0 Y2 Y1 Y0 T1 T0
+1 1 1 1 1 0 0 0
+</dataString>
+          </testData>
+        </entry>
+      </elementAttributes>
+      <pos x="100" y="3820"/>
+    </visualElement>
+    <visualElement>
+      <elementName>Testcase</elementName>
+      <elementAttributes>
+        <entry>
+          <string>Label</string>
+          <string>WIRE1 #064 (X2=1,X1=1,X0=1,Y2=1,Y1=1,Y0=1)</string>
+        </entry>
+        <entry>
+          <string>Testdata</string>
+          <testData>
+            <dataString>X2 X1 X0 Y2 Y1 Y0 T1 T0
+1 1 1 1 1 1 0 0
+</dataString>
+          </testData>
+        </entry>
+      </elementAttributes>
+      <pos x="100" y="3880"/>
+    </visualElement>
+  </visualElements>
+  <wires/>
+</circuit>

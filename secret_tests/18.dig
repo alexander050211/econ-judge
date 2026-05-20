@@ -1,0 +1,4616 @@
+<?xml version="1.0" encoding="utf-8"?>
+<circuit>
+  <version>2</version>
+  <attributes/>
+  <visualElements>
+    <visualElement>
+      <elementName>Testcase</elementName>
+      <elementAttributes>
+        <entry>
+          <string>Label</string>
+          <string>WIRE2 #001 (A1=0,A0=0,B2=0,B1=0,B0=0,C2=0,C1=0,C0=0)</string>
+        </entry>
+        <entry>
+          <string>Testdata</string>
+          <testData>
+            <dataString>A1 A0 B2 B1 B0 C2 C1 C0 a b c d e f g
+0 0 0 0 0 0 0 0 1 1 1 1 1 0 1
+</dataString>
+          </testData>
+        </entry>
+      </elementAttributes>
+      <pos x="100" y="100"/>
+    </visualElement>
+    <visualElement>
+      <elementName>Testcase</elementName>
+      <elementAttributes>
+        <entry>
+          <string>Label</string>
+          <string>WIRE2 #002 (A1=0,A0=0,B2=0,B1=0,B0=0,C2=0,C1=0,C0=1)</string>
+        </entry>
+        <entry>
+          <string>Testdata</string>
+          <testData>
+            <dataString>A1 A0 B2 B1 B0 C2 C1 C0 a b c d e f g
+0 0 0 0 0 0 0 1 1 1 1 1 1 0 1
+</dataString>
+          </testData>
+        </entry>
+      </elementAttributes>
+      <pos x="100" y="160"/>
+    </visualElement>
+    <visualElement>
+      <elementName>Testcase</elementName>
+      <elementAttributes>
+        <entry>
+          <string>Label</string>
+          <string>WIRE2 #003 (A1=0,A0=0,B2=0,B1=0,B0=0,C2=0,C1=1,C0=0)</string>
+        </entry>
+        <entry>
+          <string>Testdata</string>
+          <testData>
+            <dataString>A1 A0 B2 B1 B0 C2 C1 C0 a b c d e f g
+0 0 0 0 0 0 1 0 1 1 1 1 1 0 1
+</dataString>
+          </testData>
+        </entry>
+      </elementAttributes>
+      <pos x="100" y="220"/>
+    </visualElement>
+    <visualElement>
+      <elementName>Testcase</elementName>
+      <elementAttributes>
+        <entry>
+          <string>Label</string>
+          <string>WIRE2 #004 (A1=0,A0=0,B2=0,B1=0,B0=0,C2=0,C1=1,C0=1)</string>
+        </entry>
+        <entry>
+          <string>Testdata</string>
+          <testData>
+            <dataString>A1 A0 B2 B1 B0 C2 C1 C0 a b c d e f g
+0 0 0 0 0 0 1 1 1 1 1 1 1 0 1
+</dataString>
+          </testData>
+        </entry>
+      </elementAttributes>
+      <pos x="100" y="280"/>
+    </visualElement>
+    <visualElement>
+      <elementName>Testcase</elementName>
+      <elementAttributes>
+        <entry>
+          <string>Label</string>
+          <string>WIRE2 #005 (A1=0,A0=0,B2=0,B1=0,B0=0,C2=1,C1=0,C0=0)</string>
+        </entry>
+        <entry>
+          <string>Testdata</string>
+          <testData>
+            <dataString>A1 A0 B2 B1 B0 C2 C1 C0 a b c d e f g
+0 0 0 0 0 1 0 0 0 0 1 1 1 1 1
+</dataString>
+          </testData>
+        </entry>
+      </elementAttributes>
+      <pos x="100" y="340"/>
+    </visualElement>
+    <visualElement>
+      <elementName>Testcase</elementName>
+      <elementAttributes>
+        <entry>
+          <string>Label</string>
+          <string>WIRE2 #006 (A1=0,A0=0,B2=0,B1=0,B0=0,C2=1,C1=0,C0=1)</string>
+        </entry>
+        <entry>
+          <string>Testdata</string>
+          <testData>
+            <dataString>A1 A0 B2 B1 B0 C2 C1 C0 a b c d e f g
+0 0 0 0 0 1 0 1 0 0 1 1 1 1 1
+</dataString>
+          </testData>
+        </entry>
+      </elementAttributes>
+      <pos x="100" y="400"/>
+    </visualElement>
+    <visualElement>
+      <elementName>Testcase</elementName>
+      <elementAttributes>
+        <entry>
+          <string>Label</string>
+          <string>WIRE2 #007 (A1=0,A0=0,B2=0,B1=0,B0=0,C2=1,C1=1,C0=0)</string>
+        </entry>
+        <entry>
+          <string>Testdata</string>
+          <testData>
+            <dataString>A1 A0 B2 B1 B0 C2 C1 C0 a b c d e f g
+0 0 0 0 0 1 1 0 0 0 1 1 1 1 1
+</dataString>
+          </testData>
+        </entry>
+      </elementAttributes>
+      <pos x="100" y="460"/>
+    </visualElement>
+    <visualElement>
+      <elementName>Testcase</elementName>
+      <elementAttributes>
+        <entry>
+          <string>Label</string>
+          <string>WIRE2 #008 (A1=0,A0=0,B2=0,B1=0,B0=0,C2=1,C1=1,C0=1)</string>
+        </entry>
+        <entry>
+          <string>Testdata</string>
+          <testData>
+            <dataString>A1 A0 B2 B1 B0 C2 C1 C0 a b c d e f g
+0 0 0 0 0 1 1 1 0 0 1 1 1 1 1
+</dataString>
+          </testData>
+        </entry>
+      </elementAttributes>
+      <pos x="100" y="520"/>
+    </visualElement>
+    <visualElement>
+      <elementName>Testcase</elementName>
+      <elementAttributes>
+        <entry>
+          <string>Label</string>
+          <string>WIRE2 #009 (A1=0,A0=0,B2=0,B1=0,B0=1,C2=0,C1=0,C0=0)</string>
+        </entry>
+        <entry>
+          <string>Testdata</string>
+          <testData>
+            <dataString>A1 A0 B2 B1 B0 C2 C1 C0 a b c d e f g
+0 0 0 0 1 0 0 0 0 0 1 1 1 1 1
+</dataString>
+          </testData>
+        </entry>
+      </elementAttributes>
+      <pos x="100" y="580"/>
+    </visualElement>
+    <visualElement>
+      <elementName>Testcase</elementName>
+      <elementAttributes>
+        <entry>
+          <string>Label</string>
+          <string>WIRE2 #010 (A1=0,A0=0,B2=0,B1=0,B0=1,C2=0,C1=0,C0=1)</string>
+        </entry>
+        <entry>
+          <string>Testdata</string>
+          <testData>
+            <dataString>A1 A0 B2 B1 B0 C2 C1 C0 a b c d e f g
+0 0 0 0 1 0 0 1 0 0 1 1 1 1 1
+</dataString>
+          </testData>
+        </entry>
+      </elementAttributes>
+      <pos x="100" y="640"/>
+    </visualElement>
+    <visualElement>
+      <elementName>Testcase</elementName>
+      <elementAttributes>
+        <entry>
+          <string>Label</string>
+          <string>WIRE2 #011 (A1=0,A0=0,B2=0,B1=0,B0=1,C2=0,C1=1,C0=0)</string>
+        </entry>
+        <entry>
+          <string>Testdata</string>
+          <testData>
+            <dataString>A1 A0 B2 B1 B0 C2 C1 C0 a b c d e f g
+0 0 0 0 1 0 1 0 0 0 1 1 1 1 1
+</dataString>
+          </testData>
+        </entry>
+      </elementAttributes>
+      <pos x="100" y="700"/>
+    </visualElement>
+    <visualElement>
+      <elementName>Testcase</elementName>
+      <elementAttributes>
+        <entry>
+          <string>Label</string>
+          <string>WIRE2 #012 (A1=0,A0=0,B2=0,B1=0,B0=1,C2=0,C1=1,C0=1)</string>
+        </entry>
+        <entry>
+          <string>Testdata</string>
+          <testData>
+            <dataString>A1 A0 B2 B1 B0 C2 C1 C0 a b c d e f g
+0 0 0 0 1 0 1 1 0 0 1 1 1 1 1
+</dataString>
+          </testData>
+        </entry>
+      </elementAttributes>
+      <pos x="100" y="760"/>
+    </visualElement>
+    <visualElement>
+      <elementName>Testcase</elementName>
+      <elementAttributes>
+        <entry>
+          <string>Label</string>
+          <string>WIRE2 #013 (A1=0,A0=0,B2=0,B1=0,B0=1,C2=1,C1=0,C0=0)</string>
+        </entry>
+        <entry>
+          <string>Testdata</string>
+          <testData>
+            <dataString>A1 A0 B2 B1 B0 C2 C1 C0 a b c d e f g
+0 0 0 0 1 1 0 0 0 0 1 1 1 1 1
+</dataString>
+          </testData>
+        </entry>
+      </elementAttributes>
+      <pos x="100" y="820"/>
+    </visualElement>
+    <visualElement>
+      <elementName>Testcase</elementName>
+      <elementAttributes>
+        <entry>
+          <string>Label</string>
+          <string>WIRE2 #014 (A1=0,A0=0,B2=0,B1=0,B0=1,C2=1,C1=0,C0=1)</string>
+        </entry>
+        <entry>
+          <string>Testdata</string>
+          <testData>
+            <dataString>A1 A0 B2 B1 B0 C2 C1 C0 a b c d e f g
+0 0 0 0 1 1 0 1 0 0 1 1 1 1 1
+</dataString>
+          </testData>
+        </entry>
+      </elementAttributes>
+      <pos x="100" y="880"/>
+    </visualElement>
+    <visualElement>
+      <elementName>Testcase</elementName>
+      <elementAttributes>
+        <entry>
+          <string>Label</string>
+          <string>WIRE2 #015 (A1=0,A0=0,B2=0,B1=0,B0=1,C2=1,C1=1,C0=0)</string>
+        </entry>
+        <entry>
+          <string>Testdata</string>
+          <testData>
+            <dataString>A1 A0 B2 B1 B0 C2 C1 C0 a b c d e f g
+0 0 0 0 1 1 1 0 0 0 1 1 1 1 1
+</dataString>
+          </testData>
+        </entry>
+      </elementAttributes>
+      <pos x="100" y="940"/>
+    </visualElement>
+    <visualElement>
+      <elementName>Testcase</elementName>
+      <elementAttributes>
+        <entry>
+          <string>Label</string>
+          <string>WIRE2 #016 (A1=0,A0=0,B2=0,B1=0,B0=1,C2=1,C1=1,C0=1)</string>
+        </entry>
+        <entry>
+          <string>Testdata</string>
+          <testData>
+            <dataString>A1 A0 B2 B1 B0 C2 C1 C0 a b c d e f g
+0 0 0 0 1 1 1 1 0 0 1 1 1 1 1
+</dataString>
+          </testData>
+        </entry>
+      </elementAttributes>
+      <pos x="100" y="1000"/>
+    </visualElement>
+    <visualElement>
+      <elementName>Testcase</elementName>
+      <elementAttributes>
+        <entry>
+          <string>Label</string>
+          <string>WIRE2 #017 (A1=0,A0=0,B2=0,B1=1,B0=0,C2=0,C1=0,C0=0)</string>
+        </entry>
+        <entry>
+          <string>Testdata</string>
+          <testData>
+            <dataString>A1 A0 B2 B1 B0 C2 C1 C0 a b c d e f g
+0 0 0 1 0 0 0 0 0 0 1 1 1 1 1
+</dataString>
+          </testData>
+        </entry>
+      </elementAttributes>
+      <pos x="100" y="1060"/>
+    </visualElement>
+    <visualElement>
+      <elementName>Testcase</elementName>
+      <elementAttributes>
+        <entry>
+          <string>Label</string>
+          <string>WIRE2 #018 (A1=0,A0=0,B2=0,B1=1,B0=0,C2=0,C1=0,C0=1)</string>
+        </entry>
+        <entry>
+          <string>Testdata</string>
+          <testData>
+            <dataString>A1 A0 B2 B1 B0 C2 C1 C0 a b c d e f g
+0 0 0 1 0 0 0 1 0 0 1 1 1 1 1
+</dataString>
+          </testData>
+        </entry>
+      </elementAttributes>
+      <pos x="100" y="1120"/>
+    </visualElement>
+    <visualElement>
+      <elementName>Testcase</elementName>
+      <elementAttributes>
+        <entry>
+          <string>Label</string>
+          <string>WIRE2 #019 (A1=0,A0=0,B2=0,B1=1,B0=0,C2=0,C1=1,C0=0)</string>
+        </entry>
+        <entry>
+          <string>Testdata</string>
+          <testData>
+            <dataString>A1 A0 B2 B1 B0 C2 C1 C0 a b c d e f g
+0 0 0 1 0 0 1 0 0 0 1 1 1 1 1
+</dataString>
+          </testData>
+        </entry>
+      </elementAttributes>
+      <pos x="100" y="1180"/>
+    </visualElement>
+    <visualElement>
+      <elementName>Testcase</elementName>
+      <elementAttributes>
+        <entry>
+          <string>Label</string>
+          <string>WIRE2 #020 (A1=0,A0=0,B2=0,B1=1,B0=0,C2=0,C1=1,C0=1)</string>
+        </entry>
+        <entry>
+          <string>Testdata</string>
+          <testData>
+            <dataString>A1 A0 B2 B1 B0 C2 C1 C0 a b c d e f g
+0 0 0 1 0 0 1 1 0 0 1 1 1 1 1
+</dataString>
+          </testData>
+        </entry>
+      </elementAttributes>
+      <pos x="100" y="1240"/>
+    </visualElement>
+    <visualElement>
+      <elementName>Testcase</elementName>
+      <elementAttributes>
+        <entry>
+          <string>Label</string>
+          <string>WIRE2 #021 (A1=0,A0=0,B2=0,B1=1,B0=0,C2=1,C1=0,C0=0)</string>
+        </entry>
+        <entry>
+          <string>Testdata</string>
+          <testData>
+            <dataString>A1 A0 B2 B1 B0 C2 C1 C0 a b c d e f g
+0 0 0 1 0 1 0 0 0 0 1 1 1 1 1
+</dataString>
+          </testData>
+        </entry>
+      </elementAttributes>
+      <pos x="100" y="1300"/>
+    </visualElement>
+    <visualElement>
+      <elementName>Testcase</elementName>
+      <elementAttributes>
+        <entry>
+          <string>Label</string>
+          <string>WIRE2 #022 (A1=0,A0=0,B2=0,B1=1,B0=0,C2=1,C1=0,C0=1)</string>
+        </entry>
+        <entry>
+          <string>Testdata</string>
+          <testData>
+            <dataString>A1 A0 B2 B1 B0 C2 C1 C0 a b c d e f g
+0 0 0 1 0 1 0 1 0 0 1 1 1 1 1
+</dataString>
+          </testData>
+        </entry>
+      </elementAttributes>
+      <pos x="100" y="1360"/>
+    </visualElement>
+    <visualElement>
+      <elementName>Testcase</elementName>
+      <elementAttributes>
+        <entry>
+          <string>Label</string>
+          <string>WIRE2 #023 (A1=0,A0=0,B2=0,B1=1,B0=0,C2=1,C1=1,C0=0)</string>
+        </entry>
+        <entry>
+          <string>Testdata</string>
+          <testData>
+            <dataString>A1 A0 B2 B1 B0 C2 C1 C0 a b c d e f g
+0 0 0 1 0 1 1 0 0 0 1 1 1 1 1
+</dataString>
+          </testData>
+        </entry>
+      </elementAttributes>
+      <pos x="100" y="1420"/>
+    </visualElement>
+    <visualElement>
+      <elementName>Testcase</elementName>
+      <elementAttributes>
+        <entry>
+          <string>Label</string>
+          <string>WIRE2 #024 (A1=0,A0=0,B2=0,B1=1,B0=0,C2=1,C1=1,C0=1)</string>
+        </entry>
+        <entry>
+          <string>Testdata</string>
+          <testData>
+            <dataString>A1 A0 B2 B1 B0 C2 C1 C0 a b c d e f g
+0 0 0 1 0 1 1 1 0 0 1 1 1 1 1
+</dataString>
+          </testData>
+        </entry>
+      </elementAttributes>
+      <pos x="100" y="1480"/>
+    </visualElement>
+    <visualElement>
+      <elementName>Testcase</elementName>
+      <elementAttributes>
+        <entry>
+          <string>Label</string>
+          <string>WIRE2 #025 (A1=0,A0=0,B2=0,B1=1,B0=1,C2=0,C1=0,C0=0)</string>
+        </entry>
+        <entry>
+          <string>Testdata</string>
+          <testData>
+            <dataString>A1 A0 B2 B1 B0 C2 C1 C0 a b c d e f g
+0 0 0 1 1 0 0 0 0 0 1 1 1 1 1
+</dataString>
+          </testData>
+        </entry>
+      </elementAttributes>
+      <pos x="100" y="1540"/>
+    </visualElement>
+    <visualElement>
+      <elementName>Testcase</elementName>
+      <elementAttributes>
+        <entry>
+          <string>Label</string>
+          <string>WIRE2 #026 (A1=0,A0=0,B2=0,B1=1,B0=1,C2=0,C1=0,C0=1)</string>
+        </entry>
+        <entry>
+          <string>Testdata</string>
+          <testData>
+            <dataString>A1 A0 B2 B1 B0 C2 C1 C0 a b c d e f g
+0 0 0 1 1 0 0 1 0 0 1 1 1 1 1
+</dataString>
+          </testData>
+        </entry>
+      </elementAttributes>
+      <pos x="100" y="1600"/>
+    </visualElement>
+    <visualElement>
+      <elementName>Testcase</elementName>
+      <elementAttributes>
+        <entry>
+          <string>Label</string>
+          <string>WIRE2 #027 (A1=0,A0=0,B2=0,B1=1,B0=1,C2=0,C1=1,C0=0)</string>
+        </entry>
+        <entry>
+          <string>Testdata</string>
+          <testData>
+            <dataString>A1 A0 B2 B1 B0 C2 C1 C0 a b c d e f g
+0 0 0 1 1 0 1 0 0 0 1 1 1 1 1
+</dataString>
+          </testData>
+        </entry>
+      </elementAttributes>
+      <pos x="100" y="1660"/>
+    </visualElement>
+    <visualElement>
+      <elementName>Testcase</elementName>
+      <elementAttributes>
+        <entry>
+          <string>Label</string>
+          <string>WIRE2 #028 (A1=0,A0=0,B2=0,B1=1,B0=1,C2=0,C1=1,C0=1)</string>
+        </entry>
+        <entry>
+          <string>Testdata</string>
+          <testData>
+            <dataString>A1 A0 B2 B1 B0 C2 C1 C0 a b c d e f g
+0 0 0 1 1 0 1 1 0 0 1 1 1 1 1
+</dataString>
+          </testData>
+        </entry>
+      </elementAttributes>
+      <pos x="100" y="1720"/>
+    </visualElement>
+    <visualElement>
+      <elementName>Testcase</elementName>
+      <elementAttributes>
+        <entry>
+          <string>Label</string>
+          <string>WIRE2 #029 (A1=0,A0=0,B2=0,B1=1,B0=1,C2=1,C1=0,C0=0)</string>
+        </entry>
+        <entry>
+          <string>Testdata</string>
+          <testData>
+            <dataString>A1 A0 B2 B1 B0 C2 C1 C0 a b c d e f g
+0 0 0 1 1 1 0 0 0 0 1 1 1 1 1
+</dataString>
+          </testData>
+        </entry>
+      </elementAttributes>
+      <pos x="100" y="1780"/>
+    </visualElement>
+    <visualElement>
+      <elementName>Testcase</elementName>
+      <elementAttributes>
+        <entry>
+          <string>Label</string>
+          <string>WIRE2 #030 (A1=0,A0=0,B2=0,B1=1,B0=1,C2=1,C1=0,C0=1)</string>
+        </entry>
+        <entry>
+          <string>Testdata</string>
+          <testData>
+            <dataString>A1 A0 B2 B1 B0 C2 C1 C0 a b c d e f g
+0 0 0 1 1 1 0 1 0 0 1 1 1 1 1
+</dataString>
+          </testData>
+        </entry>
+      </elementAttributes>
+      <pos x="100" y="1840"/>
+    </visualElement>
+    <visualElement>
+      <elementName>Testcase</elementName>
+      <elementAttributes>
+        <entry>
+          <string>Label</string>
+          <string>WIRE2 #031 (A1=0,A0=0,B2=0,B1=1,B0=1,C2=1,C1=1,C0=0)</string>
+        </entry>
+        <entry>
+          <string>Testdata</string>
+          <testData>
+            <dataString>A1 A0 B2 B1 B0 C2 C1 C0 a b c d e f g
+0 0 0 1 1 1 1 0 0 0 1 1 1 1 1
+</dataString>
+          </testData>
+        </entry>
+      </elementAttributes>
+      <pos x="100" y="1900"/>
+    </visualElement>
+    <visualElement>
+      <elementName>Testcase</elementName>
+      <elementAttributes>
+        <entry>
+          <string>Label</string>
+          <string>WIRE2 #032 (A1=0,A0=0,B2=0,B1=1,B0=1,C2=1,C1=1,C0=1)</string>
+        </entry>
+        <entry>
+          <string>Testdata</string>
+          <testData>
+            <dataString>A1 A0 B2 B1 B0 C2 C1 C0 a b c d e f g
+0 0 0 1 1 1 1 1 0 0 1 1 1 1 1
+</dataString>
+          </testData>
+        </entry>
+      </elementAttributes>
+      <pos x="100" y="1960"/>
+    </visualElement>
+    <visualElement>
+      <elementName>Testcase</elementName>
+      <elementAttributes>
+        <entry>
+          <string>Label</string>
+          <string>WIRE2 #033 (A1=0,A0=0,B2=1,B1=0,B0=0,C2=0,C1=0,C0=0)</string>
+        </entry>
+        <entry>
+          <string>Testdata</string>
+          <testData>
+            <dataString>A1 A0 B2 B1 B0 C2 C1 C0 a b c d e f g
+0 0 1 0 0 0 0 0 0 0 1 1 1 1 1
+</dataString>
+          </testData>
+        </entry>
+      </elementAttributes>
+      <pos x="100" y="2020"/>
+    </visualElement>
+    <visualElement>
+      <elementName>Testcase</elementName>
+      <elementAttributes>
+        <entry>
+          <string>Label</string>
+          <string>WIRE2 #034 (A1=0,A0=0,B2=1,B1=0,B0=0,C2=0,C1=0,C0=1)</string>
+        </entry>
+        <entry>
+          <string>Testdata</string>
+          <testData>
+            <dataString>A1 A0 B2 B1 B0 C2 C1 C0 a b c d e f g
+0 0 1 0 0 0 0 1 0 0 1 1 1 1 1
+</dataString>
+          </testData>
+        </entry>
+      </elementAttributes>
+      <pos x="100" y="2080"/>
+    </visualElement>
+    <visualElement>
+      <elementName>Testcase</elementName>
+      <elementAttributes>
+        <entry>
+          <string>Label</string>
+          <string>WIRE2 #035 (A1=0,A0=0,B2=1,B1=0,B0=0,C2=0,C1=1,C0=0)</string>
+        </entry>
+        <entry>
+          <string>Testdata</string>
+          <testData>
+            <dataString>A1 A0 B2 B1 B0 C2 C1 C0 a b c d e f g
+0 0 1 0 0 0 1 0 0 0 1 1 1 1 1
+</dataString>
+          </testData>
+        </entry>
+      </elementAttributes>
+      <pos x="100" y="2140"/>
+    </visualElement>
+    <visualElement>
+      <elementName>Testcase</elementName>
+      <elementAttributes>
+        <entry>
+          <string>Label</string>
+          <string>WIRE2 #036 (A1=0,A0=0,B2=1,B1=0,B0=0,C2=0,C1=1,C0=1)</string>
+        </entry>
+        <entry>
+          <string>Testdata</string>
+          <testData>
+            <dataString>A1 A0 B2 B1 B0 C2 C1 C0 a b c d e f g
+0 0 1 0 0 0 1 1 0 0 1 1 1 1 1
+</dataString>
+          </testData>
+        </entry>
+      </elementAttributes>
+      <pos x="100" y="2200"/>
+    </visualElement>
+    <visualElement>
+      <elementName>Testcase</elementName>
+      <elementAttributes>
+        <entry>
+          <string>Label</string>
+          <string>WIRE2 #037 (A1=0,A0=0,B2=1,B1=0,B0=0,C2=1,C1=0,C0=0)</string>
+        </entry>
+        <entry>
+          <string>Testdata</string>
+          <testData>
+            <dataString>A1 A0 B2 B1 B0 C2 C1 C0 a b c d e f g
+0 0 1 0 0 1 0 0 0 0 1 1 1 1 1
+</dataString>
+          </testData>
+        </entry>
+      </elementAttributes>
+      <pos x="100" y="2260"/>
+    </visualElement>
+    <visualElement>
+      <elementName>Testcase</elementName>
+      <elementAttributes>
+        <entry>
+          <string>Label</string>
+          <string>WIRE2 #038 (A1=0,A0=0,B2=1,B1=0,B0=0,C2=1,C1=0,C0=1)</string>
+        </entry>
+        <entry>
+          <string>Testdata</string>
+          <testData>
+            <dataString>A1 A0 B2 B1 B0 C2 C1 C0 a b c d e f g
+0 0 1 0 0 1 0 1 0 0 1 1 1 1 1
+</dataString>
+          </testData>
+        </entry>
+      </elementAttributes>
+      <pos x="100" y="2320"/>
+    </visualElement>
+    <visualElement>
+      <elementName>Testcase</elementName>
+      <elementAttributes>
+        <entry>
+          <string>Label</string>
+          <string>WIRE2 #039 (A1=0,A0=0,B2=1,B1=0,B0=0,C2=1,C1=1,C0=0)</string>
+        </entry>
+        <entry>
+          <string>Testdata</string>
+          <testData>
+            <dataString>A1 A0 B2 B1 B0 C2 C1 C0 a b c d e f g
+0 0 1 0 0 1 1 0 0 0 1 1 1 1 1
+</dataString>
+          </testData>
+        </entry>
+      </elementAttributes>
+      <pos x="100" y="2380"/>
+    </visualElement>
+    <visualElement>
+      <elementName>Testcase</elementName>
+      <elementAttributes>
+        <entry>
+          <string>Label</string>
+          <string>WIRE2 #040 (A1=0,A0=0,B2=1,B1=0,B0=0,C2=1,C1=1,C0=1)</string>
+        </entry>
+        <entry>
+          <string>Testdata</string>
+          <testData>
+            <dataString>A1 A0 B2 B1 B0 C2 C1 C0 a b c d e f g
+0 0 1 0 0 1 1 1 0 0 1 1 1 1 1
+</dataString>
+          </testData>
+        </entry>
+      </elementAttributes>
+      <pos x="100" y="2440"/>
+    </visualElement>
+    <visualElement>
+      <elementName>Testcase</elementName>
+      <elementAttributes>
+        <entry>
+          <string>Label</string>
+          <string>WIRE2 #041 (A1=0,A0=0,B2=1,B1=0,B0=1,C2=0,C1=0,C0=0)</string>
+        </entry>
+        <entry>
+          <string>Testdata</string>
+          <testData>
+            <dataString>A1 A0 B2 B1 B0 C2 C1 C0 a b c d e f g
+0 0 1 0 1 0 0 0 0 0 1 1 1 1 1
+</dataString>
+          </testData>
+        </entry>
+      </elementAttributes>
+      <pos x="100" y="2500"/>
+    </visualElement>
+    <visualElement>
+      <elementName>Testcase</elementName>
+      <elementAttributes>
+        <entry>
+          <string>Label</string>
+          <string>WIRE2 #042 (A1=0,A0=0,B2=1,B1=0,B0=1,C2=0,C1=0,C0=1)</string>
+        </entry>
+        <entry>
+          <string>Testdata</string>
+          <testData>
+            <dataString>A1 A0 B2 B1 B0 C2 C1 C0 a b c d e f g
+0 0 1 0 1 0 0 1 0 0 1 1 1 1 1
+</dataString>
+          </testData>
+        </entry>
+      </elementAttributes>
+      <pos x="100" y="2560"/>
+    </visualElement>
+    <visualElement>
+      <elementName>Testcase</elementName>
+      <elementAttributes>
+        <entry>
+          <string>Label</string>
+          <string>WIRE2 #043 (A1=0,A0=0,B2=1,B1=0,B0=1,C2=0,C1=1,C0=0)</string>
+        </entry>
+        <entry>
+          <string>Testdata</string>
+          <testData>
+            <dataString>A1 A0 B2 B1 B0 C2 C1 C0 a b c d e f g
+0 0 1 0 1 0 1 0 0 0 1 1 1 1 1
+</dataString>
+          </testData>
+        </entry>
+      </elementAttributes>
+      <pos x="100" y="2620"/>
+    </visualElement>
+    <visualElement>
+      <elementName>Testcase</elementName>
+      <elementAttributes>
+        <entry>
+          <string>Label</string>
+          <string>WIRE2 #044 (A1=0,A0=0,B2=1,B1=0,B0=1,C2=0,C1=1,C0=1)</string>
+        </entry>
+        <entry>
+          <string>Testdata</string>
+          <testData>
+            <dataString>A1 A0 B2 B1 B0 C2 C1 C0 a b c d e f g
+0 0 1 0 1 0 1 1 0 0 1 1 1 1 1
+</dataString>
+          </testData>
+        </entry>
+      </elementAttributes>
+      <pos x="100" y="2680"/>
+    </visualElement>
+    <visualElement>
+      <elementName>Testcase</elementName>
+      <elementAttributes>
+        <entry>
+          <string>Label</string>
+          <string>WIRE2 #045 (A1=0,A0=0,B2=1,B1=0,B0=1,C2=1,C1=0,C0=0)</string>
+        </entry>
+        <entry>
+          <string>Testdata</string>
+          <testData>
+            <dataString>A1 A0 B2 B1 B0 C2 C1 C0 a b c d e f g
+0 0 1 0 1 1 0 0 0 0 1 1 1 1 1
+</dataString>
+          </testData>
+        </entry>
+      </elementAttributes>
+      <pos x="100" y="2740"/>
+    </visualElement>
+    <visualElement>
+      <elementName>Testcase</elementName>
+      <elementAttributes>
+        <entry>
+          <string>Label</string>
+          <string>WIRE2 #046 (A1=0,A0=0,B2=1,B1=0,B0=1,C2=1,C1=0,C0=1)</string>
+        </entry>
+        <entry>
+          <string>Testdata</string>
+          <testData>
+            <dataString>A1 A0 B2 B1 B0 C2 C1 C0 a b c d e f g
+0 0 1 0 1 1 0 1 0 0 1 1 1 1 1
+</dataString>
+          </testData>
+        </entry>
+      </elementAttributes>
+      <pos x="100" y="2800"/>
+    </visualElement>
+    <visualElement>
+      <elementName>Testcase</elementName>
+      <elementAttributes>
+        <entry>
+          <string>Label</string>
+          <string>WIRE2 #047 (A1=0,A0=0,B2=1,B1=0,B0=1,C2=1,C1=1,C0=0)</string>
+        </entry>
+        <entry>
+          <string>Testdata</string>
+          <testData>
+            <dataString>A1 A0 B2 B1 B0 C2 C1 C0 a b c d e f g
+0 0 1 0 1 1 1 0 0 0 1 1 1 1 1
+</dataString>
+          </testData>
+        </entry>
+      </elementAttributes>
+      <pos x="100" y="2860"/>
+    </visualElement>
+    <visualElement>
+      <elementName>Testcase</elementName>
+      <elementAttributes>
+        <entry>
+          <string>Label</string>
+          <string>WIRE2 #048 (A1=0,A0=0,B2=1,B1=0,B0=1,C2=1,C1=1,C0=1)</string>
+        </entry>
+        <entry>
+          <string>Testdata</string>
+          <testData>
+            <dataString>A1 A0 B2 B1 B0 C2 C1 C0 a b c d e f g
+0 0 1 0 1 1 1 1 0 0 1 1 1 1 1
+</dataString>
+          </testData>
+        </entry>
+      </elementAttributes>
+      <pos x="100" y="2920"/>
+    </visualElement>
+    <visualElement>
+      <elementName>Testcase</elementName>
+      <elementAttributes>
+        <entry>
+          <string>Label</string>
+          <string>WIRE2 #049 (A1=0,A0=0,B2=1,B1=1,B0=0,C2=0,C1=0,C0=0)</string>
+        </entry>
+        <entry>
+          <string>Testdata</string>
+          <testData>
+            <dataString>A1 A0 B2 B1 B0 C2 C1 C0 a b c d e f g
+0 0 1 1 0 0 0 0 0 0 1 1 1 1 1
+</dataString>
+          </testData>
+        </entry>
+      </elementAttributes>
+      <pos x="100" y="2980"/>
+    </visualElement>
+    <visualElement>
+      <elementName>Testcase</elementName>
+      <elementAttributes>
+        <entry>
+          <string>Label</string>
+          <string>WIRE2 #050 (A1=0,A0=0,B2=1,B1=1,B0=0,C2=0,C1=0,C0=1)</string>
+        </entry>
+        <entry>
+          <string>Testdata</string>
+          <testData>
+            <dataString>A1 A0 B2 B1 B0 C2 C1 C0 a b c d e f g
+0 0 1 1 0 0 0 1 0 0 1 1 1 1 1
+</dataString>
+          </testData>
+        </entry>
+      </elementAttributes>
+      <pos x="100" y="3040"/>
+    </visualElement>
+    <visualElement>
+      <elementName>Testcase</elementName>
+      <elementAttributes>
+        <entry>
+          <string>Label</string>
+          <string>WIRE2 #051 (A1=0,A0=0,B2=1,B1=1,B0=0,C2=0,C1=1,C0=0)</string>
+        </entry>
+        <entry>
+          <string>Testdata</string>
+          <testData>
+            <dataString>A1 A0 B2 B1 B0 C2 C1 C0 a b c d e f g
+0 0 1 1 0 0 1 0 0 0 1 1 1 1 1
+</dataString>
+          </testData>
+        </entry>
+      </elementAttributes>
+      <pos x="100" y="3100"/>
+    </visualElement>
+    <visualElement>
+      <elementName>Testcase</elementName>
+      <elementAttributes>
+        <entry>
+          <string>Label</string>
+          <string>WIRE2 #052 (A1=0,A0=0,B2=1,B1=1,B0=0,C2=0,C1=1,C0=1)</string>
+        </entry>
+        <entry>
+          <string>Testdata</string>
+          <testData>
+            <dataString>A1 A0 B2 B1 B0 C2 C1 C0 a b c d e f g
+0 0 1 1 0 0 1 1 0 0 1 1 1 1 1
+</dataString>
+          </testData>
+        </entry>
+      </elementAttributes>
+      <pos x="100" y="3160"/>
+    </visualElement>
+    <visualElement>
+      <elementName>Testcase</elementName>
+      <elementAttributes>
+        <entry>
+          <string>Label</string>
+          <string>WIRE2 #053 (A1=0,A0=0,B2=1,B1=1,B0=0,C2=1,C1=0,C0=0)</string>
+        </entry>
+        <entry>
+          <string>Testdata</string>
+          <testData>
+            <dataString>A1 A0 B2 B1 B0 C2 C1 C0 a b c d e f g
+0 0 1 1 0 1 0 0 0 0 1 1 1 1 1
+</dataString>
+          </testData>
+        </entry>
+      </elementAttributes>
+      <pos x="100" y="3220"/>
+    </visualElement>
+    <visualElement>
+      <elementName>Testcase</elementName>
+      <elementAttributes>
+        <entry>
+          <string>Label</string>
+          <string>WIRE2 #054 (A1=0,A0=0,B2=1,B1=1,B0=0,C2=1,C1=0,C0=1)</string>
+        </entry>
+        <entry>
+          <string>Testdata</string>
+          <testData>
+            <dataString>A1 A0 B2 B1 B0 C2 C1 C0 a b c d e f g
+0 0 1 1 0 1 0 1 0 0 1 1 1 1 1
+</dataString>
+          </testData>
+        </entry>
+      </elementAttributes>
+      <pos x="100" y="3280"/>
+    </visualElement>
+    <visualElement>
+      <elementName>Testcase</elementName>
+      <elementAttributes>
+        <entry>
+          <string>Label</string>
+          <string>WIRE2 #055 (A1=0,A0=0,B2=1,B1=1,B0=0,C2=1,C1=1,C0=0)</string>
+        </entry>
+        <entry>
+          <string>Testdata</string>
+          <testData>
+            <dataString>A1 A0 B2 B1 B0 C2 C1 C0 a b c d e f g
+0 0 1 1 0 1 1 0 0 0 1 1 1 1 1
+</dataString>
+          </testData>
+        </entry>
+      </elementAttributes>
+      <pos x="100" y="3340"/>
+    </visualElement>
+    <visualElement>
+      <elementName>Testcase</elementName>
+      <elementAttributes>
+        <entry>
+          <string>Label</string>
+          <string>WIRE2 #056 (A1=0,A0=0,B2=1,B1=1,B0=0,C2=1,C1=1,C0=1)</string>
+        </entry>
+        <entry>
+          <string>Testdata</string>
+          <testData>
+            <dataString>A1 A0 B2 B1 B0 C2 C1 C0 a b c d e f g
+0 0 1 1 0 1 1 1 0 0 1 1 1 1 1
+</dataString>
+          </testData>
+        </entry>
+      </elementAttributes>
+      <pos x="100" y="3400"/>
+    </visualElement>
+    <visualElement>
+      <elementName>Testcase</elementName>
+      <elementAttributes>
+        <entry>
+          <string>Label</string>
+          <string>WIRE2 #057 (A1=0,A0=0,B2=1,B1=1,B0=1,C2=0,C1=0,C0=0)</string>
+        </entry>
+        <entry>
+          <string>Testdata</string>
+          <testData>
+            <dataString>A1 A0 B2 B1 B0 C2 C1 C0 a b c d e f g
+0 0 1 1 1 0 0 0 0 0 1 1 1 1 1
+</dataString>
+          </testData>
+        </entry>
+      </elementAttributes>
+      <pos x="100" y="3460"/>
+    </visualElement>
+    <visualElement>
+      <elementName>Testcase</elementName>
+      <elementAttributes>
+        <entry>
+          <string>Label</string>
+          <string>WIRE2 #058 (A1=0,A0=0,B2=1,B1=1,B0=1,C2=0,C1=0,C0=1)</string>
+        </entry>
+        <entry>
+          <string>Testdata</string>
+          <testData>
+            <dataString>A1 A0 B2 B1 B0 C2 C1 C0 a b c d e f g
+0 0 1 1 1 0 0 1 0 0 1 1 1 1 1
+</dataString>
+          </testData>
+        </entry>
+      </elementAttributes>
+      <pos x="100" y="3520"/>
+    </visualElement>
+    <visualElement>
+      <elementName>Testcase</elementName>
+      <elementAttributes>
+        <entry>
+          <string>Label</string>
+          <string>WIRE2 #059 (A1=0,A0=0,B2=1,B1=1,B0=1,C2=0,C1=1,C0=0)</string>
+        </entry>
+        <entry>
+          <string>Testdata</string>
+          <testData>
+            <dataString>A1 A0 B2 B1 B0 C2 C1 C0 a b c d e f g
+0 0 1 1 1 0 1 0 0 0 1 1 1 1 1
+</dataString>
+          </testData>
+        </entry>
+      </elementAttributes>
+      <pos x="100" y="3580"/>
+    </visualElement>
+    <visualElement>
+      <elementName>Testcase</elementName>
+      <elementAttributes>
+        <entry>
+          <string>Label</string>
+          <string>WIRE2 #060 (A1=0,A0=0,B2=1,B1=1,B0=1,C2=0,C1=1,C0=1)</string>
+        </entry>
+        <entry>
+          <string>Testdata</string>
+          <testData>
+            <dataString>A1 A0 B2 B1 B0 C2 C1 C0 a b c d e f g
+0 0 1 1 1 0 1 1 0 0 1 1 1 1 1
+</dataString>
+          </testData>
+        </entry>
+      </elementAttributes>
+      <pos x="100" y="3640"/>
+    </visualElement>
+    <visualElement>
+      <elementName>Testcase</elementName>
+      <elementAttributes>
+        <entry>
+          <string>Label</string>
+          <string>WIRE2 #061 (A1=0,A0=0,B2=1,B1=1,B0=1,C2=1,C1=0,C0=0)</string>
+        </entry>
+        <entry>
+          <string>Testdata</string>
+          <testData>
+            <dataString>A1 A0 B2 B1 B0 C2 C1 C0 a b c d e f g
+0 0 1 1 1 1 0 0 0 0 1 1 1 1 1
+</dataString>
+          </testData>
+        </entry>
+      </elementAttributes>
+      <pos x="100" y="3700"/>
+    </visualElement>
+    <visualElement>
+      <elementName>Testcase</elementName>
+      <elementAttributes>
+        <entry>
+          <string>Label</string>
+          <string>WIRE2 #062 (A1=0,A0=0,B2=1,B1=1,B0=1,C2=1,C1=0,C0=1)</string>
+        </entry>
+        <entry>
+          <string>Testdata</string>
+          <testData>
+            <dataString>A1 A0 B2 B1 B0 C2 C1 C0 a b c d e f g
+0 0 1 1 1 1 0 1 0 0 1 1 1 1 1
+</dataString>
+          </testData>
+        </entry>
+      </elementAttributes>
+      <pos x="100" y="3760"/>
+    </visualElement>
+    <visualElement>
+      <elementName>Testcase</elementName>
+      <elementAttributes>
+        <entry>
+          <string>Label</string>
+          <string>WIRE2 #063 (A1=0,A0=0,B2=1,B1=1,B0=1,C2=1,C1=1,C0=0)</string>
+        </entry>
+        <entry>
+          <string>Testdata</string>
+          <testData>
+            <dataString>A1 A0 B2 B1 B0 C2 C1 C0 a b c d e f g
+0 0 1 1 1 1 1 0 0 0 1 1 1 1 1
+</dataString>
+          </testData>
+        </entry>
+      </elementAttributes>
+      <pos x="100" y="3820"/>
+    </visualElement>
+    <visualElement>
+      <elementName>Testcase</elementName>
+      <elementAttributes>
+        <entry>
+          <string>Label</string>
+          <string>WIRE2 #064 (A1=0,A0=0,B2=1,B1=1,B0=1,C2=1,C1=1,C0=1)</string>
+        </entry>
+        <entry>
+          <string>Testdata</string>
+          <testData>
+            <dataString>A1 A0 B2 B1 B0 C2 C1 C0 a b c d e f g
+0 0 1 1 1 1 1 1 0 0 1 1 1 1 1
+</dataString>
+          </testData>
+        </entry>
+      </elementAttributes>
+      <pos x="100" y="3880"/>
+    </visualElement>
+    <visualElement>
+      <elementName>Testcase</elementName>
+      <elementAttributes>
+        <entry>
+          <string>Label</string>
+          <string>WIRE2 #065 (A1=0,A0=1,B2=0,B1=0,B0=0,C2=0,C1=0,C0=0)</string>
+        </entry>
+        <entry>
+          <string>Testdata</string>
+          <testData>
+            <dataString>A1 A0 B2 B1 B0 C2 C1 C0 a b c d e f g
+0 1 0 0 0 0 0 0 1 1 1 1 1 0 1
+</dataString>
+          </testData>
+        </entry>
+      </elementAttributes>
+      <pos x="100" y="3940"/>
+    </visualElement>
+    <visualElement>
+      <elementName>Testcase</elementName>
+      <elementAttributes>
+        <entry>
+          <string>Label</string>
+          <string>WIRE2 #066 (A1=0,A0=1,B2=0,B1=0,B0=0,C2=0,C1=0,C0=1)</string>
+        </entry>
+        <entry>
+          <string>Testdata</string>
+          <testData>
+            <dataString>A1 A0 B2 B1 B0 C2 C1 C0 a b c d e f g
+0 1 0 0 0 0 0 1 1 1 1 1 1 0 1
+</dataString>
+          </testData>
+        </entry>
+      </elementAttributes>
+      <pos x="100" y="4000"/>
+    </visualElement>
+    <visualElement>
+      <elementName>Testcase</elementName>
+      <elementAttributes>
+        <entry>
+          <string>Label</string>
+          <string>WIRE2 #067 (A1=0,A0=1,B2=0,B1=0,B0=0,C2=0,C1=1,C0=0)</string>
+        </entry>
+        <entry>
+          <string>Testdata</string>
+          <testData>
+            <dataString>A1 A0 B2 B1 B0 C2 C1 C0 a b c d e f g
+0 1 0 0 0 0 1 0 1 1 1 1 1 0 1
+</dataString>
+          </testData>
+        </entry>
+      </elementAttributes>
+      <pos x="100" y="4060"/>
+    </visualElement>
+    <visualElement>
+      <elementName>Testcase</elementName>
+      <elementAttributes>
+        <entry>
+          <string>Label</string>
+          <string>WIRE2 #068 (A1=0,A0=1,B2=0,B1=0,B0=0,C2=0,C1=1,C0=1)</string>
+        </entry>
+        <entry>
+          <string>Testdata</string>
+          <testData>
+            <dataString>A1 A0 B2 B1 B0 C2 C1 C0 a b c d e f g
+0 1 0 0 0 0 1 1 1 1 1 1 1 0 1
+</dataString>
+          </testData>
+        </entry>
+      </elementAttributes>
+      <pos x="100" y="4120"/>
+    </visualElement>
+    <visualElement>
+      <elementName>Testcase</elementName>
+      <elementAttributes>
+        <entry>
+          <string>Label</string>
+          <string>WIRE2 #069 (A1=0,A0=1,B2=0,B1=0,B0=0,C2=1,C1=0,C0=0)</string>
+        </entry>
+        <entry>
+          <string>Testdata</string>
+          <testData>
+            <dataString>A1 A0 B2 B1 B0 C2 C1 C0 a b c d e f g
+0 1 0 0 0 1 0 0 1 1 1 1 1 0 1
+</dataString>
+          </testData>
+        </entry>
+      </elementAttributes>
+      <pos x="100" y="4180"/>
+    </visualElement>
+    <visualElement>
+      <elementName>Testcase</elementName>
+      <elementAttributes>
+        <entry>
+          <string>Label</string>
+          <string>WIRE2 #070 (A1=0,A0=1,B2=0,B1=0,B0=0,C2=1,C1=0,C0=1)</string>
+        </entry>
+        <entry>
+          <string>Testdata</string>
+          <testData>
+            <dataString>A1 A0 B2 B1 B0 C2 C1 C0 a b c d e f g
+0 1 0 0 0 1 0 1 1 1 1 1 1 0 1
+</dataString>
+          </testData>
+        </entry>
+      </elementAttributes>
+      <pos x="100" y="4240"/>
+    </visualElement>
+    <visualElement>
+      <elementName>Testcase</elementName>
+      <elementAttributes>
+        <entry>
+          <string>Label</string>
+          <string>WIRE2 #071 (A1=0,A0=1,B2=0,B1=0,B0=0,C2=1,C1=1,C0=0)</string>
+        </entry>
+        <entry>
+          <string>Testdata</string>
+          <testData>
+            <dataString>A1 A0 B2 B1 B0 C2 C1 C0 a b c d e f g
+0 1 0 0 0 1 1 0 1 1 1 1 1 0 1
+</dataString>
+          </testData>
+        </entry>
+      </elementAttributes>
+      <pos x="100" y="4300"/>
+    </visualElement>
+    <visualElement>
+      <elementName>Testcase</elementName>
+      <elementAttributes>
+        <entry>
+          <string>Label</string>
+          <string>WIRE2 #072 (A1=0,A0=1,B2=0,B1=0,B0=0,C2=1,C1=1,C0=1)</string>
+        </entry>
+        <entry>
+          <string>Testdata</string>
+          <testData>
+            <dataString>A1 A0 B2 B1 B0 C2 C1 C0 a b c d e f g
+0 1 0 0 0 1 1 1 1 1 1 1 1 0 1
+</dataString>
+          </testData>
+        </entry>
+      </elementAttributes>
+      <pos x="100" y="4360"/>
+    </visualElement>
+    <visualElement>
+      <elementName>Testcase</elementName>
+      <elementAttributes>
+        <entry>
+          <string>Label</string>
+          <string>WIRE2 #073 (A1=0,A0=1,B2=0,B1=0,B0=1,C2=0,C1=0,C0=0)</string>
+        </entry>
+        <entry>
+          <string>Testdata</string>
+          <testData>
+            <dataString>A1 A0 B2 B1 B0 C2 C1 C0 a b c d e f g
+0 1 0 0 1 0 0 0 1 1 1 1 1 0 1
+</dataString>
+          </testData>
+        </entry>
+      </elementAttributes>
+      <pos x="100" y="4420"/>
+    </visualElement>
+    <visualElement>
+      <elementName>Testcase</elementName>
+      <elementAttributes>
+        <entry>
+          <string>Label</string>
+          <string>WIRE2 #074 (A1=0,A0=1,B2=0,B1=0,B0=1,C2=0,C1=0,C0=1)</string>
+        </entry>
+        <entry>
+          <string>Testdata</string>
+          <testData>
+            <dataString>A1 A0 B2 B1 B0 C2 C1 C0 a b c d e f g
+0 1 0 0 1 0 0 1 1 1 1 1 1 0 1
+</dataString>
+          </testData>
+        </entry>
+      </elementAttributes>
+      <pos x="100" y="4480"/>
+    </visualElement>
+    <visualElement>
+      <elementName>Testcase</elementName>
+      <elementAttributes>
+        <entry>
+          <string>Label</string>
+          <string>WIRE2 #075 (A1=0,A0=1,B2=0,B1=0,B0=1,C2=0,C1=1,C0=0)</string>
+        </entry>
+        <entry>
+          <string>Testdata</string>
+          <testData>
+            <dataString>A1 A0 B2 B1 B0 C2 C1 C0 a b c d e f g
+0 1 0 0 1 0 1 0 1 1 1 1 1 0 1
+</dataString>
+          </testData>
+        </entry>
+      </elementAttributes>
+      <pos x="100" y="4540"/>
+    </visualElement>
+    <visualElement>
+      <elementName>Testcase</elementName>
+      <elementAttributes>
+        <entry>
+          <string>Label</string>
+          <string>WIRE2 #076 (A1=0,A0=1,B2=0,B1=0,B0=1,C2=0,C1=1,C0=1)</string>
+        </entry>
+        <entry>
+          <string>Testdata</string>
+          <testData>
+            <dataString>A1 A0 B2 B1 B0 C2 C1 C0 a b c d e f g
+0 1 0 0 1 0 1 1 1 1 1 1 1 0 1
+</dataString>
+          </testData>
+        </entry>
+      </elementAttributes>
+      <pos x="100" y="4600"/>
+    </visualElement>
+    <visualElement>
+      <elementName>Testcase</elementName>
+      <elementAttributes>
+        <entry>
+          <string>Label</string>
+          <string>WIRE2 #077 (A1=0,A0=1,B2=0,B1=0,B0=1,C2=1,C1=0,C0=0)</string>
+        </entry>
+        <entry>
+          <string>Testdata</string>
+          <testData>
+            <dataString>A1 A0 B2 B1 B0 C2 C1 C0 a b c d e f g
+0 1 0 0 1 1 0 0 0 0 1 1 1 1 1
+</dataString>
+          </testData>
+        </entry>
+      </elementAttributes>
+      <pos x="100" y="4660"/>
+    </visualElement>
+    <visualElement>
+      <elementName>Testcase</elementName>
+      <elementAttributes>
+        <entry>
+          <string>Label</string>
+          <string>WIRE2 #078 (A1=0,A0=1,B2=0,B1=0,B0=1,C2=1,C1=0,C0=1)</string>
+        </entry>
+        <entry>
+          <string>Testdata</string>
+          <testData>
+            <dataString>A1 A0 B2 B1 B0 C2 C1 C0 a b c d e f g
+0 1 0 0 1 1 0 1 0 0 1 1 1 1 1
+</dataString>
+          </testData>
+        </entry>
+      </elementAttributes>
+      <pos x="100" y="4720"/>
+    </visualElement>
+    <visualElement>
+      <elementName>Testcase</elementName>
+      <elementAttributes>
+        <entry>
+          <string>Label</string>
+          <string>WIRE2 #079 (A1=0,A0=1,B2=0,B1=0,B0=1,C2=1,C1=1,C0=0)</string>
+        </entry>
+        <entry>
+          <string>Testdata</string>
+          <testData>
+            <dataString>A1 A0 B2 B1 B0 C2 C1 C0 a b c d e f g
+0 1 0 0 1 1 1 0 0 0 1 1 1 1 1
+</dataString>
+          </testData>
+        </entry>
+      </elementAttributes>
+      <pos x="100" y="4780"/>
+    </visualElement>
+    <visualElement>
+      <elementName>Testcase</elementName>
+      <elementAttributes>
+        <entry>
+          <string>Label</string>
+          <string>WIRE2 #080 (A1=0,A0=1,B2=0,B1=0,B0=1,C2=1,C1=1,C0=1)</string>
+        </entry>
+        <entry>
+          <string>Testdata</string>
+          <testData>
+            <dataString>A1 A0 B2 B1 B0 C2 C1 C0 a b c d e f g
+0 1 0 0 1 1 1 1 0 0 1 1 1 1 1
+</dataString>
+          </testData>
+        </entry>
+      </elementAttributes>
+      <pos x="100" y="4840"/>
+    </visualElement>
+    <visualElement>
+      <elementName>Testcase</elementName>
+      <elementAttributes>
+        <entry>
+          <string>Label</string>
+          <string>WIRE2 #081 (A1=0,A0=1,B2=0,B1=1,B0=0,C2=0,C1=0,C0=0)</string>
+        </entry>
+        <entry>
+          <string>Testdata</string>
+          <testData>
+            <dataString>A1 A0 B2 B1 B0 C2 C1 C0 a b c d e f g
+0 1 0 1 0 0 0 0 0 0 1 1 1 1 1
+</dataString>
+          </testData>
+        </entry>
+      </elementAttributes>
+      <pos x="100" y="4900"/>
+    </visualElement>
+    <visualElement>
+      <elementName>Testcase</elementName>
+      <elementAttributes>
+        <entry>
+          <string>Label</string>
+          <string>WIRE2 #082 (A1=0,A0=1,B2=0,B1=1,B0=0,C2=0,C1=0,C0=1)</string>
+        </entry>
+        <entry>
+          <string>Testdata</string>
+          <testData>
+            <dataString>A1 A0 B2 B1 B0 C2 C1 C0 a b c d e f g
+0 1 0 1 0 0 0 1 0 0 1 1 1 1 1
+</dataString>
+          </testData>
+        </entry>
+      </elementAttributes>
+      <pos x="100" y="4960"/>
+    </visualElement>
+    <visualElement>
+      <elementName>Testcase</elementName>
+      <elementAttributes>
+        <entry>
+          <string>Label</string>
+          <string>WIRE2 #083 (A1=0,A0=1,B2=0,B1=1,B0=0,C2=0,C1=1,C0=0)</string>
+        </entry>
+        <entry>
+          <string>Testdata</string>
+          <testData>
+            <dataString>A1 A0 B2 B1 B0 C2 C1 C0 a b c d e f g
+0 1 0 1 0 0 1 0 0 0 1 1 1 1 1
+</dataString>
+          </testData>
+        </entry>
+      </elementAttributes>
+      <pos x="100" y="5020"/>
+    </visualElement>
+    <visualElement>
+      <elementName>Testcase</elementName>
+      <elementAttributes>
+        <entry>
+          <string>Label</string>
+          <string>WIRE2 #084 (A1=0,A0=1,B2=0,B1=1,B0=0,C2=0,C1=1,C0=1)</string>
+        </entry>
+        <entry>
+          <string>Testdata</string>
+          <testData>
+            <dataString>A1 A0 B2 B1 B0 C2 C1 C0 a b c d e f g
+0 1 0 1 0 0 1 1 0 0 1 1 1 1 1
+</dataString>
+          </testData>
+        </entry>
+      </elementAttributes>
+      <pos x="100" y="5080"/>
+    </visualElement>
+    <visualElement>
+      <elementName>Testcase</elementName>
+      <elementAttributes>
+        <entry>
+          <string>Label</string>
+          <string>WIRE2 #085 (A1=0,A0=1,B2=0,B1=1,B0=0,C2=1,C1=0,C0=0)</string>
+        </entry>
+        <entry>
+          <string>Testdata</string>
+          <testData>
+            <dataString>A1 A0 B2 B1 B0 C2 C1 C0 a b c d e f g
+0 1 0 1 0 1 0 0 0 0 1 1 1 1 1
+</dataString>
+          </testData>
+        </entry>
+      </elementAttributes>
+      <pos x="100" y="5140"/>
+    </visualElement>
+    <visualElement>
+      <elementName>Testcase</elementName>
+      <elementAttributes>
+        <entry>
+          <string>Label</string>
+          <string>WIRE2 #086 (A1=0,A0=1,B2=0,B1=1,B0=0,C2=1,C1=0,C0=1)</string>
+        </entry>
+        <entry>
+          <string>Testdata</string>
+          <testData>
+            <dataString>A1 A0 B2 B1 B0 C2 C1 C0 a b c d e f g
+0 1 0 1 0 1 0 1 0 0 1 1 1 1 1
+</dataString>
+          </testData>
+        </entry>
+      </elementAttributes>
+      <pos x="100" y="5200"/>
+    </visualElement>
+    <visualElement>
+      <elementName>Testcase</elementName>
+      <elementAttributes>
+        <entry>
+          <string>Label</string>
+          <string>WIRE2 #087 (A1=0,A0=1,B2=0,B1=1,B0=0,C2=1,C1=1,C0=0)</string>
+        </entry>
+        <entry>
+          <string>Testdata</string>
+          <testData>
+            <dataString>A1 A0 B2 B1 B0 C2 C1 C0 a b c d e f g
+0 1 0 1 0 1 1 0 0 0 1 1 1 1 1
+</dataString>
+          </testData>
+        </entry>
+      </elementAttributes>
+      <pos x="100" y="5260"/>
+    </visualElement>
+    <visualElement>
+      <elementName>Testcase</elementName>
+      <elementAttributes>
+        <entry>
+          <string>Label</string>
+          <string>WIRE2 #088 (A1=0,A0=1,B2=0,B1=1,B0=0,C2=1,C1=1,C0=1)</string>
+        </entry>
+        <entry>
+          <string>Testdata</string>
+          <testData>
+            <dataString>A1 A0 B2 B1 B0 C2 C1 C0 a b c d e f g
+0 1 0 1 0 1 1 1 0 0 1 1 1 1 1
+</dataString>
+          </testData>
+        </entry>
+      </elementAttributes>
+      <pos x="100" y="5320"/>
+    </visualElement>
+    <visualElement>
+      <elementName>Testcase</elementName>
+      <elementAttributes>
+        <entry>
+          <string>Label</string>
+          <string>WIRE2 #089 (A1=0,A0=1,B2=0,B1=1,B0=1,C2=0,C1=0,C0=0)</string>
+        </entry>
+        <entry>
+          <string>Testdata</string>
+          <testData>
+            <dataString>A1 A0 B2 B1 B0 C2 C1 C0 a b c d e f g
+0 1 0 1 1 0 0 0 0 0 1 1 1 1 1
+</dataString>
+          </testData>
+        </entry>
+      </elementAttributes>
+      <pos x="100" y="5380"/>
+    </visualElement>
+    <visualElement>
+      <elementName>Testcase</elementName>
+      <elementAttributes>
+        <entry>
+          <string>Label</string>
+          <string>WIRE2 #090 (A1=0,A0=1,B2=0,B1=1,B0=1,C2=0,C1=0,C0=1)</string>
+        </entry>
+        <entry>
+          <string>Testdata</string>
+          <testData>
+            <dataString>A1 A0 B2 B1 B0 C2 C1 C0 a b c d e f g
+0 1 0 1 1 0 0 1 0 0 1 1 1 1 1
+</dataString>
+          </testData>
+        </entry>
+      </elementAttributes>
+      <pos x="100" y="5440"/>
+    </visualElement>
+    <visualElement>
+      <elementName>Testcase</elementName>
+      <elementAttributes>
+        <entry>
+          <string>Label</string>
+          <string>WIRE2 #091 (A1=0,A0=1,B2=0,B1=1,B0=1,C2=0,C1=1,C0=0)</string>
+        </entry>
+        <entry>
+          <string>Testdata</string>
+          <testData>
+            <dataString>A1 A0 B2 B1 B0 C2 C1 C0 a b c d e f g
+0 1 0 1 1 0 1 0 0 0 1 1 1 1 1
+</dataString>
+          </testData>
+        </entry>
+      </elementAttributes>
+      <pos x="100" y="5500"/>
+    </visualElement>
+    <visualElement>
+      <elementName>Testcase</elementName>
+      <elementAttributes>
+        <entry>
+          <string>Label</string>
+          <string>WIRE2 #092 (A1=0,A0=1,B2=0,B1=1,B0=1,C2=0,C1=1,C0=1)</string>
+        </entry>
+        <entry>
+          <string>Testdata</string>
+          <testData>
+            <dataString>A1 A0 B2 B1 B0 C2 C1 C0 a b c d e f g
+0 1 0 1 1 0 1 1 0 0 1 1 1 1 1
+</dataString>
+          </testData>
+        </entry>
+      </elementAttributes>
+      <pos x="100" y="5560"/>
+    </visualElement>
+    <visualElement>
+      <elementName>Testcase</elementName>
+      <elementAttributes>
+        <entry>
+          <string>Label</string>
+          <string>WIRE2 #093 (A1=0,A0=1,B2=0,B1=1,B0=1,C2=1,C1=0,C0=0)</string>
+        </entry>
+        <entry>
+          <string>Testdata</string>
+          <testData>
+            <dataString>A1 A0 B2 B1 B0 C2 C1 C0 a b c d e f g
+0 1 0 1 1 1 0 0 0 0 1 1 1 1 1
+</dataString>
+          </testData>
+        </entry>
+      </elementAttributes>
+      <pos x="100" y="5620"/>
+    </visualElement>
+    <visualElement>
+      <elementName>Testcase</elementName>
+      <elementAttributes>
+        <entry>
+          <string>Label</string>
+          <string>WIRE2 #094 (A1=0,A0=1,B2=0,B1=1,B0=1,C2=1,C1=0,C0=1)</string>
+        </entry>
+        <entry>
+          <string>Testdata</string>
+          <testData>
+            <dataString>A1 A0 B2 B1 B0 C2 C1 C0 a b c d e f g
+0 1 0 1 1 1 0 1 0 0 1 1 1 1 1
+</dataString>
+          </testData>
+        </entry>
+      </elementAttributes>
+      <pos x="100" y="5680"/>
+    </visualElement>
+    <visualElement>
+      <elementName>Testcase</elementName>
+      <elementAttributes>
+        <entry>
+          <string>Label</string>
+          <string>WIRE2 #095 (A1=0,A0=1,B2=0,B1=1,B0=1,C2=1,C1=1,C0=0)</string>
+        </entry>
+        <entry>
+          <string>Testdata</string>
+          <testData>
+            <dataString>A1 A0 B2 B1 B0 C2 C1 C0 a b c d e f g
+0 1 0 1 1 1 1 0 0 0 1 1 1 1 1
+</dataString>
+          </testData>
+        </entry>
+      </elementAttributes>
+      <pos x="100" y="5740"/>
+    </visualElement>
+    <visualElement>
+      <elementName>Testcase</elementName>
+      <elementAttributes>
+        <entry>
+          <string>Label</string>
+          <string>WIRE2 #096 (A1=0,A0=1,B2=0,B1=1,B0=1,C2=1,C1=1,C0=1)</string>
+        </entry>
+        <entry>
+          <string>Testdata</string>
+          <testData>
+            <dataString>A1 A0 B2 B1 B0 C2 C1 C0 a b c d e f g
+0 1 0 1 1 1 1 1 0 0 1 1 1 1 1
+</dataString>
+          </testData>
+        </entry>
+      </elementAttributes>
+      <pos x="100" y="5800"/>
+    </visualElement>
+    <visualElement>
+      <elementName>Testcase</elementName>
+      <elementAttributes>
+        <entry>
+          <string>Label</string>
+          <string>WIRE2 #097 (A1=0,A0=1,B2=1,B1=0,B0=0,C2=0,C1=0,C0=0)</string>
+        </entry>
+        <entry>
+          <string>Testdata</string>
+          <testData>
+            <dataString>A1 A0 B2 B1 B0 C2 C1 C0 a b c d e f g
+0 1 1 0 0 0 0 0 0 0 1 1 1 1 1
+</dataString>
+          </testData>
+        </entry>
+      </elementAttributes>
+      <pos x="100" y="5860"/>
+    </visualElement>
+    <visualElement>
+      <elementName>Testcase</elementName>
+      <elementAttributes>
+        <entry>
+          <string>Label</string>
+          <string>WIRE2 #098 (A1=0,A0=1,B2=1,B1=0,B0=0,C2=0,C1=0,C0=1)</string>
+        </entry>
+        <entry>
+          <string>Testdata</string>
+          <testData>
+            <dataString>A1 A0 B2 B1 B0 C2 C1 C0 a b c d e f g
+0 1 1 0 0 0 0 1 0 0 1 1 1 1 1
+</dataString>
+          </testData>
+        </entry>
+      </elementAttributes>
+      <pos x="100" y="5920"/>
+    </visualElement>
+    <visualElement>
+      <elementName>Testcase</elementName>
+      <elementAttributes>
+        <entry>
+          <string>Label</string>
+          <string>WIRE2 #099 (A1=0,A0=1,B2=1,B1=0,B0=0,C2=0,C1=1,C0=0)</string>
+        </entry>
+        <entry>
+          <string>Testdata</string>
+          <testData>
+            <dataString>A1 A0 B2 B1 B0 C2 C1 C0 a b c d e f g
+0 1 1 0 0 0 1 0 0 0 1 1 1 1 1
+</dataString>
+          </testData>
+        </entry>
+      </elementAttributes>
+      <pos x="100" y="5980"/>
+    </visualElement>
+    <visualElement>
+      <elementName>Testcase</elementName>
+      <elementAttributes>
+        <entry>
+          <string>Label</string>
+          <string>WIRE2 #100 (A1=0,A0=1,B2=1,B1=0,B0=0,C2=0,C1=1,C0=1)</string>
+        </entry>
+        <entry>
+          <string>Testdata</string>
+          <testData>
+            <dataString>A1 A0 B2 B1 B0 C2 C1 C0 a b c d e f g
+0 1 1 0 0 0 1 1 0 0 1 1 1 1 1
+</dataString>
+          </testData>
+        </entry>
+      </elementAttributes>
+      <pos x="100" y="6040"/>
+    </visualElement>
+    <visualElement>
+      <elementName>Testcase</elementName>
+      <elementAttributes>
+        <entry>
+          <string>Label</string>
+          <string>WIRE2 #101 (A1=0,A0=1,B2=1,B1=0,B0=0,C2=1,C1=0,C0=0)</string>
+        </entry>
+        <entry>
+          <string>Testdata</string>
+          <testData>
+            <dataString>A1 A0 B2 B1 B0 C2 C1 C0 a b c d e f g
+0 1 1 0 0 1 0 0 0 0 1 1 1 1 1
+</dataString>
+          </testData>
+        </entry>
+      </elementAttributes>
+      <pos x="100" y="6100"/>
+    </visualElement>
+    <visualElement>
+      <elementName>Testcase</elementName>
+      <elementAttributes>
+        <entry>
+          <string>Label</string>
+          <string>WIRE2 #102 (A1=0,A0=1,B2=1,B1=0,B0=0,C2=1,C1=0,C0=1)</string>
+        </entry>
+        <entry>
+          <string>Testdata</string>
+          <testData>
+            <dataString>A1 A0 B2 B1 B0 C2 C1 C0 a b c d e f g
+0 1 1 0 0 1 0 1 0 0 1 1 1 1 1
+</dataString>
+          </testData>
+        </entry>
+      </elementAttributes>
+      <pos x="100" y="6160"/>
+    </visualElement>
+    <visualElement>
+      <elementName>Testcase</elementName>
+      <elementAttributes>
+        <entry>
+          <string>Label</string>
+          <string>WIRE2 #103 (A1=0,A0=1,B2=1,B1=0,B0=0,C2=1,C1=1,C0=0)</string>
+        </entry>
+        <entry>
+          <string>Testdata</string>
+          <testData>
+            <dataString>A1 A0 B2 B1 B0 C2 C1 C0 a b c d e f g
+0 1 1 0 0 1 1 0 0 0 1 1 1 1 1
+</dataString>
+          </testData>
+        </entry>
+      </elementAttributes>
+      <pos x="100" y="6220"/>
+    </visualElement>
+    <visualElement>
+      <elementName>Testcase</elementName>
+      <elementAttributes>
+        <entry>
+          <string>Label</string>
+          <string>WIRE2 #104 (A1=0,A0=1,B2=1,B1=0,B0=0,C2=1,C1=1,C0=1)</string>
+        </entry>
+        <entry>
+          <string>Testdata</string>
+          <testData>
+            <dataString>A1 A0 B2 B1 B0 C2 C1 C0 a b c d e f g
+0 1 1 0 0 1 1 1 0 0 1 1 1 1 1
+</dataString>
+          </testData>
+        </entry>
+      </elementAttributes>
+      <pos x="100" y="6280"/>
+    </visualElement>
+    <visualElement>
+      <elementName>Testcase</elementName>
+      <elementAttributes>
+        <entry>
+          <string>Label</string>
+          <string>WIRE2 #105 (A1=0,A0=1,B2=1,B1=0,B0=1,C2=0,C1=0,C0=0)</string>
+        </entry>
+        <entry>
+          <string>Testdata</string>
+          <testData>
+            <dataString>A1 A0 B2 B1 B0 C2 C1 C0 a b c d e f g
+0 1 1 0 1 0 0 0 0 0 1 1 1 1 1
+</dataString>
+          </testData>
+        </entry>
+      </elementAttributes>
+      <pos x="100" y="6340"/>
+    </visualElement>
+    <visualElement>
+      <elementName>Testcase</elementName>
+      <elementAttributes>
+        <entry>
+          <string>Label</string>
+          <string>WIRE2 #106 (A1=0,A0=1,B2=1,B1=0,B0=1,C2=0,C1=0,C0=1)</string>
+        </entry>
+        <entry>
+          <string>Testdata</string>
+          <testData>
+            <dataString>A1 A0 B2 B1 B0 C2 C1 C0 a b c d e f g
+0 1 1 0 1 0 0 1 0 0 1 1 1 1 1
+</dataString>
+          </testData>
+        </entry>
+      </elementAttributes>
+      <pos x="100" y="6400"/>
+    </visualElement>
+    <visualElement>
+      <elementName>Testcase</elementName>
+      <elementAttributes>
+        <entry>
+          <string>Label</string>
+          <string>WIRE2 #107 (A1=0,A0=1,B2=1,B1=0,B0=1,C2=0,C1=1,C0=0)</string>
+        </entry>
+        <entry>
+          <string>Testdata</string>
+          <testData>
+            <dataString>A1 A0 B2 B1 B0 C2 C1 C0 a b c d e f g
+0 1 1 0 1 0 1 0 0 0 1 1 1 1 1
+</dataString>
+          </testData>
+        </entry>
+      </elementAttributes>
+      <pos x="100" y="6460"/>
+    </visualElement>
+    <visualElement>
+      <elementName>Testcase</elementName>
+      <elementAttributes>
+        <entry>
+          <string>Label</string>
+          <string>WIRE2 #108 (A1=0,A0=1,B2=1,B1=0,B0=1,C2=0,C1=1,C0=1)</string>
+        </entry>
+        <entry>
+          <string>Testdata</string>
+          <testData>
+            <dataString>A1 A0 B2 B1 B0 C2 C1 C0 a b c d e f g
+0 1 1 0 1 0 1 1 0 0 1 1 1 1 1
+</dataString>
+          </testData>
+        </entry>
+      </elementAttributes>
+      <pos x="100" y="6520"/>
+    </visualElement>
+    <visualElement>
+      <elementName>Testcase</elementName>
+      <elementAttributes>
+        <entry>
+          <string>Label</string>
+          <string>WIRE2 #109 (A1=0,A0=1,B2=1,B1=0,B0=1,C2=1,C1=0,C0=0)</string>
+        </entry>
+        <entry>
+          <string>Testdata</string>
+          <testData>
+            <dataString>A1 A0 B2 B1 B0 C2 C1 C0 a b c d e f g
+0 1 1 0 1 1 0 0 0 0 1 1 1 1 1
+</dataString>
+          </testData>
+        </entry>
+      </elementAttributes>
+      <pos x="100" y="6580"/>
+    </visualElement>
+    <visualElement>
+      <elementName>Testcase</elementName>
+      <elementAttributes>
+        <entry>
+          <string>Label</string>
+          <string>WIRE2 #110 (A1=0,A0=1,B2=1,B1=0,B0=1,C2=1,C1=0,C0=1)</string>
+        </entry>
+        <entry>
+          <string>Testdata</string>
+          <testData>
+            <dataString>A1 A0 B2 B1 B0 C2 C1 C0 a b c d e f g
+0 1 1 0 1 1 0 1 0 0 1 1 1 1 1
+</dataString>
+          </testData>
+        </entry>
+      </elementAttributes>
+      <pos x="100" y="6640"/>
+    </visualElement>
+    <visualElement>
+      <elementName>Testcase</elementName>
+      <elementAttributes>
+        <entry>
+          <string>Label</string>
+          <string>WIRE2 #111 (A1=0,A0=1,B2=1,B1=0,B0=1,C2=1,C1=1,C0=0)</string>
+        </entry>
+        <entry>
+          <string>Testdata</string>
+          <testData>
+            <dataString>A1 A0 B2 B1 B0 C2 C1 C0 a b c d e f g
+0 1 1 0 1 1 1 0 0 0 1 1 1 1 1
+</dataString>
+          </testData>
+        </entry>
+      </elementAttributes>
+      <pos x="100" y="6700"/>
+    </visualElement>
+    <visualElement>
+      <elementName>Testcase</elementName>
+      <elementAttributes>
+        <entry>
+          <string>Label</string>
+          <string>WIRE2 #112 (A1=0,A0=1,B2=1,B1=0,B0=1,C2=1,C1=1,C0=1)</string>
+        </entry>
+        <entry>
+          <string>Testdata</string>
+          <testData>
+            <dataString>A1 A0 B2 B1 B0 C2 C1 C0 a b c d e f g
+0 1 1 0 1 1 1 1 0 0 1 1 1 1 1
+</dataString>
+          </testData>
+        </entry>
+      </elementAttributes>
+      <pos x="100" y="6760"/>
+    </visualElement>
+    <visualElement>
+      <elementName>Testcase</elementName>
+      <elementAttributes>
+        <entry>
+          <string>Label</string>
+          <string>WIRE2 #113 (A1=0,A0=1,B2=1,B1=1,B0=0,C2=0,C1=0,C0=0)</string>
+        </entry>
+        <entry>
+          <string>Testdata</string>
+          <testData>
+            <dataString>A1 A0 B2 B1 B0 C2 C1 C0 a b c d e f g
+0 1 1 1 0 0 0 0 0 0 1 1 1 1 1
+</dataString>
+          </testData>
+        </entry>
+      </elementAttributes>
+      <pos x="100" y="6820"/>
+    </visualElement>
+    <visualElement>
+      <elementName>Testcase</elementName>
+      <elementAttributes>
+        <entry>
+          <string>Label</string>
+          <string>WIRE2 #114 (A1=0,A0=1,B2=1,B1=1,B0=0,C2=0,C1=0,C0=1)</string>
+        </entry>
+        <entry>
+          <string>Testdata</string>
+          <testData>
+            <dataString>A1 A0 B2 B1 B0 C2 C1 C0 a b c d e f g
+0 1 1 1 0 0 0 1 0 0 1 1 1 1 1
+</dataString>
+          </testData>
+        </entry>
+      </elementAttributes>
+      <pos x="100" y="6880"/>
+    </visualElement>
+    <visualElement>
+      <elementName>Testcase</elementName>
+      <elementAttributes>
+        <entry>
+          <string>Label</string>
+          <string>WIRE2 #115 (A1=0,A0=1,B2=1,B1=1,B0=0,C2=0,C1=1,C0=0)</string>
+        </entry>
+        <entry>
+          <string>Testdata</string>
+          <testData>
+            <dataString>A1 A0 B2 B1 B0 C2 C1 C0 a b c d e f g
+0 1 1 1 0 0 1 0 0 0 1 1 1 1 1
+</dataString>
+          </testData>
+        </entry>
+      </elementAttributes>
+      <pos x="100" y="6940"/>
+    </visualElement>
+    <visualElement>
+      <elementName>Testcase</elementName>
+      <elementAttributes>
+        <entry>
+          <string>Label</string>
+          <string>WIRE2 #116 (A1=0,A0=1,B2=1,B1=1,B0=0,C2=0,C1=1,C0=1)</string>
+        </entry>
+        <entry>
+          <string>Testdata</string>
+          <testData>
+            <dataString>A1 A0 B2 B1 B0 C2 C1 C0 a b c d e f g
+0 1 1 1 0 0 1 1 0 0 1 1 1 1 1
+</dataString>
+          </testData>
+        </entry>
+      </elementAttributes>
+      <pos x="100" y="7000"/>
+    </visualElement>
+    <visualElement>
+      <elementName>Testcase</elementName>
+      <elementAttributes>
+        <entry>
+          <string>Label</string>
+          <string>WIRE2 #117 (A1=0,A0=1,B2=1,B1=1,B0=0,C2=1,C1=0,C0=0)</string>
+        </entry>
+        <entry>
+          <string>Testdata</string>
+          <testData>
+            <dataString>A1 A0 B2 B1 B0 C2 C1 C0 a b c d e f g
+0 1 1 1 0 1 0 0 0 0 1 1 1 1 1
+</dataString>
+          </testData>
+        </entry>
+      </elementAttributes>
+      <pos x="100" y="7060"/>
+    </visualElement>
+    <visualElement>
+      <elementName>Testcase</elementName>
+      <elementAttributes>
+        <entry>
+          <string>Label</string>
+          <string>WIRE2 #118 (A1=0,A0=1,B2=1,B1=1,B0=0,C2=1,C1=0,C0=1)</string>
+        </entry>
+        <entry>
+          <string>Testdata</string>
+          <testData>
+            <dataString>A1 A0 B2 B1 B0 C2 C1 C0 a b c d e f g
+0 1 1 1 0 1 0 1 0 0 1 1 1 1 1
+</dataString>
+          </testData>
+        </entry>
+      </elementAttributes>
+      <pos x="100" y="7120"/>
+    </visualElement>
+    <visualElement>
+      <elementName>Testcase</elementName>
+      <elementAttributes>
+        <entry>
+          <string>Label</string>
+          <string>WIRE2 #119 (A1=0,A0=1,B2=1,B1=1,B0=0,C2=1,C1=1,C0=0)</string>
+        </entry>
+        <entry>
+          <string>Testdata</string>
+          <testData>
+            <dataString>A1 A0 B2 B1 B0 C2 C1 C0 a b c d e f g
+0 1 1 1 0 1 1 0 0 0 1 1 1 1 1
+</dataString>
+          </testData>
+        </entry>
+      </elementAttributes>
+      <pos x="100" y="7180"/>
+    </visualElement>
+    <visualElement>
+      <elementName>Testcase</elementName>
+      <elementAttributes>
+        <entry>
+          <string>Label</string>
+          <string>WIRE2 #120 (A1=0,A0=1,B2=1,B1=1,B0=0,C2=1,C1=1,C0=1)</string>
+        </entry>
+        <entry>
+          <string>Testdata</string>
+          <testData>
+            <dataString>A1 A0 B2 B1 B0 C2 C1 C0 a b c d e f g
+0 1 1 1 0 1 1 1 0 0 1 1 1 1 1
+</dataString>
+          </testData>
+        </entry>
+      </elementAttributes>
+      <pos x="100" y="7240"/>
+    </visualElement>
+    <visualElement>
+      <elementName>Testcase</elementName>
+      <elementAttributes>
+        <entry>
+          <string>Label</string>
+          <string>WIRE2 #121 (A1=0,A0=1,B2=1,B1=1,B0=1,C2=0,C1=0,C0=0)</string>
+        </entry>
+        <entry>
+          <string>Testdata</string>
+          <testData>
+            <dataString>A1 A0 B2 B1 B0 C2 C1 C0 a b c d e f g
+0 1 1 1 1 0 0 0 0 0 1 1 1 1 1
+</dataString>
+          </testData>
+        </entry>
+      </elementAttributes>
+      <pos x="100" y="7300"/>
+    </visualElement>
+    <visualElement>
+      <elementName>Testcase</elementName>
+      <elementAttributes>
+        <entry>
+          <string>Label</string>
+          <string>WIRE2 #122 (A1=0,A0=1,B2=1,B1=1,B0=1,C2=0,C1=0,C0=1)</string>
+        </entry>
+        <entry>
+          <string>Testdata</string>
+          <testData>
+            <dataString>A1 A0 B2 B1 B0 C2 C1 C0 a b c d e f g
+0 1 1 1 1 0 0 1 0 0 1 1 1 1 1
+</dataString>
+          </testData>
+        </entry>
+      </elementAttributes>
+      <pos x="100" y="7360"/>
+    </visualElement>
+    <visualElement>
+      <elementName>Testcase</elementName>
+      <elementAttributes>
+        <entry>
+          <string>Label</string>
+          <string>WIRE2 #123 (A1=0,A0=1,B2=1,B1=1,B0=1,C2=0,C1=1,C0=0)</string>
+        </entry>
+        <entry>
+          <string>Testdata</string>
+          <testData>
+            <dataString>A1 A0 B2 B1 B0 C2 C1 C0 a b c d e f g
+0 1 1 1 1 0 1 0 0 0 1 1 1 1 1
+</dataString>
+          </testData>
+        </entry>
+      </elementAttributes>
+      <pos x="100" y="7420"/>
+    </visualElement>
+    <visualElement>
+      <elementName>Testcase</elementName>
+      <elementAttributes>
+        <entry>
+          <string>Label</string>
+          <string>WIRE2 #124 (A1=0,A0=1,B2=1,B1=1,B0=1,C2=0,C1=1,C0=1)</string>
+        </entry>
+        <entry>
+          <string>Testdata</string>
+          <testData>
+            <dataString>A1 A0 B2 B1 B0 C2 C1 C0 a b c d e f g
+0 1 1 1 1 0 1 1 0 0 1 1 1 1 1
+</dataString>
+          </testData>
+        </entry>
+      </elementAttributes>
+      <pos x="100" y="7480"/>
+    </visualElement>
+    <visualElement>
+      <elementName>Testcase</elementName>
+      <elementAttributes>
+        <entry>
+          <string>Label</string>
+          <string>WIRE2 #125 (A1=0,A0=1,B2=1,B1=1,B0=1,C2=1,C1=0,C0=0)</string>
+        </entry>
+        <entry>
+          <string>Testdata</string>
+          <testData>
+            <dataString>A1 A0 B2 B1 B0 C2 C1 C0 a b c d e f g
+0 1 1 1 1 1 0 0 0 0 1 1 1 1 1
+</dataString>
+          </testData>
+        </entry>
+      </elementAttributes>
+      <pos x="100" y="7540"/>
+    </visualElement>
+    <visualElement>
+      <elementName>Testcase</elementName>
+      <elementAttributes>
+        <entry>
+          <string>Label</string>
+          <string>WIRE2 #126 (A1=0,A0=1,B2=1,B1=1,B0=1,C2=1,C1=0,C0=1)</string>
+        </entry>
+        <entry>
+          <string>Testdata</string>
+          <testData>
+            <dataString>A1 A0 B2 B1 B0 C2 C1 C0 a b c d e f g
+0 1 1 1 1 1 0 1 0 0 1 1 1 1 1
+</dataString>
+          </testData>
+        </entry>
+      </elementAttributes>
+      <pos x="100" y="7600"/>
+    </visualElement>
+    <visualElement>
+      <elementName>Testcase</elementName>
+      <elementAttributes>
+        <entry>
+          <string>Label</string>
+          <string>WIRE2 #127 (A1=0,A0=1,B2=1,B1=1,B0=1,C2=1,C1=1,C0=0)</string>
+        </entry>
+        <entry>
+          <string>Testdata</string>
+          <testData>
+            <dataString>A1 A0 B2 B1 B0 C2 C1 C0 a b c d e f g
+0 1 1 1 1 1 1 0 0 0 1 1 1 1 1
+</dataString>
+          </testData>
+        </entry>
+      </elementAttributes>
+      <pos x="100" y="7660"/>
+    </visualElement>
+    <visualElement>
+      <elementName>Testcase</elementName>
+      <elementAttributes>
+        <entry>
+          <string>Label</string>
+          <string>WIRE2 #128 (A1=0,A0=1,B2=1,B1=1,B0=1,C2=1,C1=1,C0=1)</string>
+        </entry>
+        <entry>
+          <string>Testdata</string>
+          <testData>
+            <dataString>A1 A0 B2 B1 B0 C2 C1 C0 a b c d e f g
+0 1 1 1 1 1 1 1 0 0 1 1 1 1 1
+</dataString>
+          </testData>
+        </entry>
+      </elementAttributes>
+      <pos x="100" y="7720"/>
+    </visualElement>
+    <visualElement>
+      <elementName>Testcase</elementName>
+      <elementAttributes>
+        <entry>
+          <string>Label</string>
+          <string>WIRE2 #129 (A1=1,A0=0,B2=0,B1=0,B0=0,C2=0,C1=0,C0=0)</string>
+        </entry>
+        <entry>
+          <string>Testdata</string>
+          <testData>
+            <dataString>A1 A0 B2 B1 B0 C2 C1 C0 a b c d e f g
+1 0 0 0 0 0 0 0 1 1 1 1 1 0 1
+</dataString>
+          </testData>
+        </entry>
+      </elementAttributes>
+      <pos x="100" y="7780"/>
+    </visualElement>
+    <visualElement>
+      <elementName>Testcase</elementName>
+      <elementAttributes>
+        <entry>
+          <string>Label</string>
+          <string>WIRE2 #130 (A1=1,A0=0,B2=0,B1=0,B0=0,C2=0,C1=0,C0=1)</string>
+        </entry>
+        <entry>
+          <string>Testdata</string>
+          <testData>
+            <dataString>A1 A0 B2 B1 B0 C2 C1 C0 a b c d e f g
+1 0 0 0 0 0 0 1 1 1 1 1 1 0 1
+</dataString>
+          </testData>
+        </entry>
+      </elementAttributes>
+      <pos x="100" y="7840"/>
+    </visualElement>
+    <visualElement>
+      <elementName>Testcase</elementName>
+      <elementAttributes>
+        <entry>
+          <string>Label</string>
+          <string>WIRE2 #131 (A1=1,A0=0,B2=0,B1=0,B0=0,C2=0,C1=1,C0=0)</string>
+        </entry>
+        <entry>
+          <string>Testdata</string>
+          <testData>
+            <dataString>A1 A0 B2 B1 B0 C2 C1 C0 a b c d e f g
+1 0 0 0 0 0 1 0 1 1 1 1 1 0 1
+</dataString>
+          </testData>
+        </entry>
+      </elementAttributes>
+      <pos x="100" y="7900"/>
+    </visualElement>
+    <visualElement>
+      <elementName>Testcase</elementName>
+      <elementAttributes>
+        <entry>
+          <string>Label</string>
+          <string>WIRE2 #132 (A1=1,A0=0,B2=0,B1=0,B0=0,C2=0,C1=1,C0=1)</string>
+        </entry>
+        <entry>
+          <string>Testdata</string>
+          <testData>
+            <dataString>A1 A0 B2 B1 B0 C2 C1 C0 a b c d e f g
+1 0 0 0 0 0 1 1 1 1 1 1 1 0 1
+</dataString>
+          </testData>
+        </entry>
+      </elementAttributes>
+      <pos x="100" y="7960"/>
+    </visualElement>
+    <visualElement>
+      <elementName>Testcase</elementName>
+      <elementAttributes>
+        <entry>
+          <string>Label</string>
+          <string>WIRE2 #133 (A1=1,A0=0,B2=0,B1=0,B0=0,C2=1,C1=0,C0=0)</string>
+        </entry>
+        <entry>
+          <string>Testdata</string>
+          <testData>
+            <dataString>A1 A0 B2 B1 B0 C2 C1 C0 a b c d e f g
+1 0 0 0 0 1 0 0 1 1 1 1 1 0 1
+</dataString>
+          </testData>
+        </entry>
+      </elementAttributes>
+      <pos x="100" y="8020"/>
+    </visualElement>
+    <visualElement>
+      <elementName>Testcase</elementName>
+      <elementAttributes>
+        <entry>
+          <string>Label</string>
+          <string>WIRE2 #134 (A1=1,A0=0,B2=0,B1=0,B0=0,C2=1,C1=0,C0=1)</string>
+        </entry>
+        <entry>
+          <string>Testdata</string>
+          <testData>
+            <dataString>A1 A0 B2 B1 B0 C2 C1 C0 a b c d e f g
+1 0 0 0 0 1 0 1 1 1 1 1 1 0 1
+</dataString>
+          </testData>
+        </entry>
+      </elementAttributes>
+      <pos x="100" y="8080"/>
+    </visualElement>
+    <visualElement>
+      <elementName>Testcase</elementName>
+      <elementAttributes>
+        <entry>
+          <string>Label</string>
+          <string>WIRE2 #135 (A1=1,A0=0,B2=0,B1=0,B0=0,C2=1,C1=1,C0=0)</string>
+        </entry>
+        <entry>
+          <string>Testdata</string>
+          <testData>
+            <dataString>A1 A0 B2 B1 B0 C2 C1 C0 a b c d e f g
+1 0 0 0 0 1 1 0 1 1 1 1 1 0 1
+</dataString>
+          </testData>
+        </entry>
+      </elementAttributes>
+      <pos x="100" y="8140"/>
+    </visualElement>
+    <visualElement>
+      <elementName>Testcase</elementName>
+      <elementAttributes>
+        <entry>
+          <string>Label</string>
+          <string>WIRE2 #136 (A1=1,A0=0,B2=0,B1=0,B0=0,C2=1,C1=1,C0=1)</string>
+        </entry>
+        <entry>
+          <string>Testdata</string>
+          <testData>
+            <dataString>A1 A0 B2 B1 B0 C2 C1 C0 a b c d e f g
+1 0 0 0 0 1 1 1 1 1 1 1 1 0 1
+</dataString>
+          </testData>
+        </entry>
+      </elementAttributes>
+      <pos x="100" y="8200"/>
+    </visualElement>
+    <visualElement>
+      <elementName>Testcase</elementName>
+      <elementAttributes>
+        <entry>
+          <string>Label</string>
+          <string>WIRE2 #137 (A1=1,A0=0,B2=0,B1=0,B0=1,C2=0,C1=0,C0=0)</string>
+        </entry>
+        <entry>
+          <string>Testdata</string>
+          <testData>
+            <dataString>A1 A0 B2 B1 B0 C2 C1 C0 a b c d e f g
+1 0 0 0 1 0 0 0 1 1 1 1 1 0 1
+</dataString>
+          </testData>
+        </entry>
+      </elementAttributes>
+      <pos x="100" y="8260"/>
+    </visualElement>
+    <visualElement>
+      <elementName>Testcase</elementName>
+      <elementAttributes>
+        <entry>
+          <string>Label</string>
+          <string>WIRE2 #138 (A1=1,A0=0,B2=0,B1=0,B0=1,C2=0,C1=0,C0=1)</string>
+        </entry>
+        <entry>
+          <string>Testdata</string>
+          <testData>
+            <dataString>A1 A0 B2 B1 B0 C2 C1 C0 a b c d e f g
+1 0 0 0 1 0 0 1 1 1 1 1 1 0 1
+</dataString>
+          </testData>
+        </entry>
+      </elementAttributes>
+      <pos x="100" y="8320"/>
+    </visualElement>
+    <visualElement>
+      <elementName>Testcase</elementName>
+      <elementAttributes>
+        <entry>
+          <string>Label</string>
+          <string>WIRE2 #139 (A1=1,A0=0,B2=0,B1=0,B0=1,C2=0,C1=1,C0=0)</string>
+        </entry>
+        <entry>
+          <string>Testdata</string>
+          <testData>
+            <dataString>A1 A0 B2 B1 B0 C2 C1 C0 a b c d e f g
+1 0 0 0 1 0 1 0 1 1 1 1 1 0 1
+</dataString>
+          </testData>
+        </entry>
+      </elementAttributes>
+      <pos x="100" y="8380"/>
+    </visualElement>
+    <visualElement>
+      <elementName>Testcase</elementName>
+      <elementAttributes>
+        <entry>
+          <string>Label</string>
+          <string>WIRE2 #140 (A1=1,A0=0,B2=0,B1=0,B0=1,C2=0,C1=1,C0=1)</string>
+        </entry>
+        <entry>
+          <string>Testdata</string>
+          <testData>
+            <dataString>A1 A0 B2 B1 B0 C2 C1 C0 a b c d e f g
+1 0 0 0 1 0 1 1 1 1 1 1 1 0 1
+</dataString>
+          </testData>
+        </entry>
+      </elementAttributes>
+      <pos x="100" y="8440"/>
+    </visualElement>
+    <visualElement>
+      <elementName>Testcase</elementName>
+      <elementAttributes>
+        <entry>
+          <string>Label</string>
+          <string>WIRE2 #141 (A1=1,A0=0,B2=0,B1=0,B0=1,C2=1,C1=0,C0=0)</string>
+        </entry>
+        <entry>
+          <string>Testdata</string>
+          <testData>
+            <dataString>A1 A0 B2 B1 B0 C2 C1 C0 a b c d e f g
+1 0 0 0 1 1 0 0 1 1 1 1 1 0 1
+</dataString>
+          </testData>
+        </entry>
+      </elementAttributes>
+      <pos x="100" y="8500"/>
+    </visualElement>
+    <visualElement>
+      <elementName>Testcase</elementName>
+      <elementAttributes>
+        <entry>
+          <string>Label</string>
+          <string>WIRE2 #142 (A1=1,A0=0,B2=0,B1=0,B0=1,C2=1,C1=0,C0=1)</string>
+        </entry>
+        <entry>
+          <string>Testdata</string>
+          <testData>
+            <dataString>A1 A0 B2 B1 B0 C2 C1 C0 a b c d e f g
+1 0 0 0 1 1 0 1 1 1 1 1 1 0 1
+</dataString>
+          </testData>
+        </entry>
+      </elementAttributes>
+      <pos x="100" y="8560"/>
+    </visualElement>
+    <visualElement>
+      <elementName>Testcase</elementName>
+      <elementAttributes>
+        <entry>
+          <string>Label</string>
+          <string>WIRE2 #143 (A1=1,A0=0,B2=0,B1=0,B0=1,C2=1,C1=1,C0=0)</string>
+        </entry>
+        <entry>
+          <string>Testdata</string>
+          <testData>
+            <dataString>A1 A0 B2 B1 B0 C2 C1 C0 a b c d e f g
+1 0 0 0 1 1 1 0 1 1 1 1 1 0 1
+</dataString>
+          </testData>
+        </entry>
+      </elementAttributes>
+      <pos x="100" y="8620"/>
+    </visualElement>
+    <visualElement>
+      <elementName>Testcase</elementName>
+      <elementAttributes>
+        <entry>
+          <string>Label</string>
+          <string>WIRE2 #144 (A1=1,A0=0,B2=0,B1=0,B0=1,C2=1,C1=1,C0=1)</string>
+        </entry>
+        <entry>
+          <string>Testdata</string>
+          <testData>
+            <dataString>A1 A0 B2 B1 B0 C2 C1 C0 a b c d e f g
+1 0 0 0 1 1 1 1 1 1 1 1 1 0 1
+</dataString>
+          </testData>
+        </entry>
+      </elementAttributes>
+      <pos x="100" y="8680"/>
+    </visualElement>
+    <visualElement>
+      <elementName>Testcase</elementName>
+      <elementAttributes>
+        <entry>
+          <string>Label</string>
+          <string>WIRE2 #145 (A1=1,A0=0,B2=0,B1=1,B0=0,C2=0,C1=0,C0=0)</string>
+        </entry>
+        <entry>
+          <string>Testdata</string>
+          <testData>
+            <dataString>A1 A0 B2 B1 B0 C2 C1 C0 a b c d e f g
+1 0 0 1 0 0 0 0 1 1 1 1 1 0 1
+</dataString>
+          </testData>
+        </entry>
+      </elementAttributes>
+      <pos x="100" y="8740"/>
+    </visualElement>
+    <visualElement>
+      <elementName>Testcase</elementName>
+      <elementAttributes>
+        <entry>
+          <string>Label</string>
+          <string>WIRE2 #146 (A1=1,A0=0,B2=0,B1=1,B0=0,C2=0,C1=0,C0=1)</string>
+        </entry>
+        <entry>
+          <string>Testdata</string>
+          <testData>
+            <dataString>A1 A0 B2 B1 B0 C2 C1 C0 a b c d e f g
+1 0 0 1 0 0 0 1 1 1 1 1 1 0 1
+</dataString>
+          </testData>
+        </entry>
+      </elementAttributes>
+      <pos x="100" y="8800"/>
+    </visualElement>
+    <visualElement>
+      <elementName>Testcase</elementName>
+      <elementAttributes>
+        <entry>
+          <string>Label</string>
+          <string>WIRE2 #147 (A1=1,A0=0,B2=0,B1=1,B0=0,C2=0,C1=1,C0=0)</string>
+        </entry>
+        <entry>
+          <string>Testdata</string>
+          <testData>
+            <dataString>A1 A0 B2 B1 B0 C2 C1 C0 a b c d e f g
+1 0 0 1 0 0 1 0 1 1 1 1 1 0 1
+</dataString>
+          </testData>
+        </entry>
+      </elementAttributes>
+      <pos x="100" y="8860"/>
+    </visualElement>
+    <visualElement>
+      <elementName>Testcase</elementName>
+      <elementAttributes>
+        <entry>
+          <string>Label</string>
+          <string>WIRE2 #148 (A1=1,A0=0,B2=0,B1=1,B0=0,C2=0,C1=1,C0=1)</string>
+        </entry>
+        <entry>
+          <string>Testdata</string>
+          <testData>
+            <dataString>A1 A0 B2 B1 B0 C2 C1 C0 a b c d e f g
+1 0 0 1 0 0 1 1 1 1 1 1 1 0 1
+</dataString>
+          </testData>
+        </entry>
+      </elementAttributes>
+      <pos x="100" y="8920"/>
+    </visualElement>
+    <visualElement>
+      <elementName>Testcase</elementName>
+      <elementAttributes>
+        <entry>
+          <string>Label</string>
+          <string>WIRE2 #149 (A1=1,A0=0,B2=0,B1=1,B0=0,C2=1,C1=0,C0=0)</string>
+        </entry>
+        <entry>
+          <string>Testdata</string>
+          <testData>
+            <dataString>A1 A0 B2 B1 B0 C2 C1 C0 a b c d e f g
+1 0 0 1 0 1 0 0 0 0 1 1 1 1 1
+</dataString>
+          </testData>
+        </entry>
+      </elementAttributes>
+      <pos x="100" y="8980"/>
+    </visualElement>
+    <visualElement>
+      <elementName>Testcase</elementName>
+      <elementAttributes>
+        <entry>
+          <string>Label</string>
+          <string>WIRE2 #150 (A1=1,A0=0,B2=0,B1=1,B0=0,C2=1,C1=0,C0=1)</string>
+        </entry>
+        <entry>
+          <string>Testdata</string>
+          <testData>
+            <dataString>A1 A0 B2 B1 B0 C2 C1 C0 a b c d e f g
+1 0 0 1 0 1 0 1 0 0 1 1 1 1 1
+</dataString>
+          </testData>
+        </entry>
+      </elementAttributes>
+      <pos x="100" y="9040"/>
+    </visualElement>
+    <visualElement>
+      <elementName>Testcase</elementName>
+      <elementAttributes>
+        <entry>
+          <string>Label</string>
+          <string>WIRE2 #151 (A1=1,A0=0,B2=0,B1=1,B0=0,C2=1,C1=1,C0=0)</string>
+        </entry>
+        <entry>
+          <string>Testdata</string>
+          <testData>
+            <dataString>A1 A0 B2 B1 B0 C2 C1 C0 a b c d e f g
+1 0 0 1 0 1 1 0 0 0 1 1 1 1 1
+</dataString>
+          </testData>
+        </entry>
+      </elementAttributes>
+      <pos x="100" y="9100"/>
+    </visualElement>
+    <visualElement>
+      <elementName>Testcase</elementName>
+      <elementAttributes>
+        <entry>
+          <string>Label</string>
+          <string>WIRE2 #152 (A1=1,A0=0,B2=0,B1=1,B0=0,C2=1,C1=1,C0=1)</string>
+        </entry>
+        <entry>
+          <string>Testdata</string>
+          <testData>
+            <dataString>A1 A0 B2 B1 B0 C2 C1 C0 a b c d e f g
+1 0 0 1 0 1 1 1 0 0 1 1 1 1 1
+</dataString>
+          </testData>
+        </entry>
+      </elementAttributes>
+      <pos x="100" y="9160"/>
+    </visualElement>
+    <visualElement>
+      <elementName>Testcase</elementName>
+      <elementAttributes>
+        <entry>
+          <string>Label</string>
+          <string>WIRE2 #153 (A1=1,A0=0,B2=0,B1=1,B0=1,C2=0,C1=0,C0=0)</string>
+        </entry>
+        <entry>
+          <string>Testdata</string>
+          <testData>
+            <dataString>A1 A0 B2 B1 B0 C2 C1 C0 a b c d e f g
+1 0 0 1 1 0 0 0 0 0 1 1 1 1 1
+</dataString>
+          </testData>
+        </entry>
+      </elementAttributes>
+      <pos x="100" y="9220"/>
+    </visualElement>
+    <visualElement>
+      <elementName>Testcase</elementName>
+      <elementAttributes>
+        <entry>
+          <string>Label</string>
+          <string>WIRE2 #154 (A1=1,A0=0,B2=0,B1=1,B0=1,C2=0,C1=0,C0=1)</string>
+        </entry>
+        <entry>
+          <string>Testdata</string>
+          <testData>
+            <dataString>A1 A0 B2 B1 B0 C2 C1 C0 a b c d e f g
+1 0 0 1 1 0 0 1 0 0 1 1 1 1 1
+</dataString>
+          </testData>
+        </entry>
+      </elementAttributes>
+      <pos x="100" y="9280"/>
+    </visualElement>
+    <visualElement>
+      <elementName>Testcase</elementName>
+      <elementAttributes>
+        <entry>
+          <string>Label</string>
+          <string>WIRE2 #155 (A1=1,A0=0,B2=0,B1=1,B0=1,C2=0,C1=1,C0=0)</string>
+        </entry>
+        <entry>
+          <string>Testdata</string>
+          <testData>
+            <dataString>A1 A0 B2 B1 B0 C2 C1 C0 a b c d e f g
+1 0 0 1 1 0 1 0 0 0 1 1 1 1 1
+</dataString>
+          </testData>
+        </entry>
+      </elementAttributes>
+      <pos x="100" y="9340"/>
+    </visualElement>
+    <visualElement>
+      <elementName>Testcase</elementName>
+      <elementAttributes>
+        <entry>
+          <string>Label</string>
+          <string>WIRE2 #156 (A1=1,A0=0,B2=0,B1=1,B0=1,C2=0,C1=1,C0=1)</string>
+        </entry>
+        <entry>
+          <string>Testdata</string>
+          <testData>
+            <dataString>A1 A0 B2 B1 B0 C2 C1 C0 a b c d e f g
+1 0 0 1 1 0 1 1 0 0 1 1 1 1 1
+</dataString>
+          </testData>
+        </entry>
+      </elementAttributes>
+      <pos x="100" y="9400"/>
+    </visualElement>
+    <visualElement>
+      <elementName>Testcase</elementName>
+      <elementAttributes>
+        <entry>
+          <string>Label</string>
+          <string>WIRE2 #157 (A1=1,A0=0,B2=0,B1=1,B0=1,C2=1,C1=0,C0=0)</string>
+        </entry>
+        <entry>
+          <string>Testdata</string>
+          <testData>
+            <dataString>A1 A0 B2 B1 B0 C2 C1 C0 a b c d e f g
+1 0 0 1 1 1 0 0 0 0 1 1 1 1 1
+</dataString>
+          </testData>
+        </entry>
+      </elementAttributes>
+      <pos x="100" y="9460"/>
+    </visualElement>
+    <visualElement>
+      <elementName>Testcase</elementName>
+      <elementAttributes>
+        <entry>
+          <string>Label</string>
+          <string>WIRE2 #158 (A1=1,A0=0,B2=0,B1=1,B0=1,C2=1,C1=0,C0=1)</string>
+        </entry>
+        <entry>
+          <string>Testdata</string>
+          <testData>
+            <dataString>A1 A0 B2 B1 B0 C2 C1 C0 a b c d e f g
+1 0 0 1 1 1 0 1 0 0 1 1 1 1 1
+</dataString>
+          </testData>
+        </entry>
+      </elementAttributes>
+      <pos x="100" y="9520"/>
+    </visualElement>
+    <visualElement>
+      <elementName>Testcase</elementName>
+      <elementAttributes>
+        <entry>
+          <string>Label</string>
+          <string>WIRE2 #159 (A1=1,A0=0,B2=0,B1=1,B0=1,C2=1,C1=1,C0=0)</string>
+        </entry>
+        <entry>
+          <string>Testdata</string>
+          <testData>
+            <dataString>A1 A0 B2 B1 B0 C2 C1 C0 a b c d e f g
+1 0 0 1 1 1 1 0 0 0 1 1 1 1 1
+</dataString>
+          </testData>
+        </entry>
+      </elementAttributes>
+      <pos x="100" y="9580"/>
+    </visualElement>
+    <visualElement>
+      <elementName>Testcase</elementName>
+      <elementAttributes>
+        <entry>
+          <string>Label</string>
+          <string>WIRE2 #160 (A1=1,A0=0,B2=0,B1=1,B0=1,C2=1,C1=1,C0=1)</string>
+        </entry>
+        <entry>
+          <string>Testdata</string>
+          <testData>
+            <dataString>A1 A0 B2 B1 B0 C2 C1 C0 a b c d e f g
+1 0 0 1 1 1 1 1 0 0 1 1 1 1 1
+</dataString>
+          </testData>
+        </entry>
+      </elementAttributes>
+      <pos x="100" y="9640"/>
+    </visualElement>
+    <visualElement>
+      <elementName>Testcase</elementName>
+      <elementAttributes>
+        <entry>
+          <string>Label</string>
+          <string>WIRE2 #161 (A1=1,A0=0,B2=1,B1=0,B0=0,C2=0,C1=0,C0=0)</string>
+        </entry>
+        <entry>
+          <string>Testdata</string>
+          <testData>
+            <dataString>A1 A0 B2 B1 B0 C2 C1 C0 a b c d e f g
+1 0 1 0 0 0 0 0 0 0 1 1 1 1 1
+</dataString>
+          </testData>
+        </entry>
+      </elementAttributes>
+      <pos x="100" y="9700"/>
+    </visualElement>
+    <visualElement>
+      <elementName>Testcase</elementName>
+      <elementAttributes>
+        <entry>
+          <string>Label</string>
+          <string>WIRE2 #162 (A1=1,A0=0,B2=1,B1=0,B0=0,C2=0,C1=0,C0=1)</string>
+        </entry>
+        <entry>
+          <string>Testdata</string>
+          <testData>
+            <dataString>A1 A0 B2 B1 B0 C2 C1 C0 a b c d e f g
+1 0 1 0 0 0 0 1 0 0 1 1 1 1 1
+</dataString>
+          </testData>
+        </entry>
+      </elementAttributes>
+      <pos x="100" y="9760"/>
+    </visualElement>
+    <visualElement>
+      <elementName>Testcase</elementName>
+      <elementAttributes>
+        <entry>
+          <string>Label</string>
+          <string>WIRE2 #163 (A1=1,A0=0,B2=1,B1=0,B0=0,C2=0,C1=1,C0=0)</string>
+        </entry>
+        <entry>
+          <string>Testdata</string>
+          <testData>
+            <dataString>A1 A0 B2 B1 B0 C2 C1 C0 a b c d e f g
+1 0 1 0 0 0 1 0 0 0 1 1 1 1 1
+</dataString>
+          </testData>
+        </entry>
+      </elementAttributes>
+      <pos x="100" y="9820"/>
+    </visualElement>
+    <visualElement>
+      <elementName>Testcase</elementName>
+      <elementAttributes>
+        <entry>
+          <string>Label</string>
+          <string>WIRE2 #164 (A1=1,A0=0,B2=1,B1=0,B0=0,C2=0,C1=1,C0=1)</string>
+        </entry>
+        <entry>
+          <string>Testdata</string>
+          <testData>
+            <dataString>A1 A0 B2 B1 B0 C2 C1 C0 a b c d e f g
+1 0 1 0 0 0 1 1 0 0 1 1 1 1 1
+</dataString>
+          </testData>
+        </entry>
+      </elementAttributes>
+      <pos x="100" y="9880"/>
+    </visualElement>
+    <visualElement>
+      <elementName>Testcase</elementName>
+      <elementAttributes>
+        <entry>
+          <string>Label</string>
+          <string>WIRE2 #165 (A1=1,A0=0,B2=1,B1=0,B0=0,C2=1,C1=0,C0=0)</string>
+        </entry>
+        <entry>
+          <string>Testdata</string>
+          <testData>
+            <dataString>A1 A0 B2 B1 B0 C2 C1 C0 a b c d e f g
+1 0 1 0 0 1 0 0 0 0 1 1 1 1 1
+</dataString>
+          </testData>
+        </entry>
+      </elementAttributes>
+      <pos x="100" y="9940"/>
+    </visualElement>
+    <visualElement>
+      <elementName>Testcase</elementName>
+      <elementAttributes>
+        <entry>
+          <string>Label</string>
+          <string>WIRE2 #166 (A1=1,A0=0,B2=1,B1=0,B0=0,C2=1,C1=0,C0=1)</string>
+        </entry>
+        <entry>
+          <string>Testdata</string>
+          <testData>
+            <dataString>A1 A0 B2 B1 B0 C2 C1 C0 a b c d e f g
+1 0 1 0 0 1 0 1 0 0 1 1 1 1 1
+</dataString>
+          </testData>
+        </entry>
+      </elementAttributes>
+      <pos x="100" y="10000"/>
+    </visualElement>
+    <visualElement>
+      <elementName>Testcase</elementName>
+      <elementAttributes>
+        <entry>
+          <string>Label</string>
+          <string>WIRE2 #167 (A1=1,A0=0,B2=1,B1=0,B0=0,C2=1,C1=1,C0=0)</string>
+        </entry>
+        <entry>
+          <string>Testdata</string>
+          <testData>
+            <dataString>A1 A0 B2 B1 B0 C2 C1 C0 a b c d e f g
+1 0 1 0 0 1 1 0 0 0 1 1 1 1 1
+</dataString>
+          </testData>
+        </entry>
+      </elementAttributes>
+      <pos x="100" y="10060"/>
+    </visualElement>
+    <visualElement>
+      <elementName>Testcase</elementName>
+      <elementAttributes>
+        <entry>
+          <string>Label</string>
+          <string>WIRE2 #168 (A1=1,A0=0,B2=1,B1=0,B0=0,C2=1,C1=1,C0=1)</string>
+        </entry>
+        <entry>
+          <string>Testdata</string>
+          <testData>
+            <dataString>A1 A0 B2 B1 B0 C2 C1 C0 a b c d e f g
+1 0 1 0 0 1 1 1 0 0 1 1 1 1 1
+</dataString>
+          </testData>
+        </entry>
+      </elementAttributes>
+      <pos x="100" y="10120"/>
+    </visualElement>
+    <visualElement>
+      <elementName>Testcase</elementName>
+      <elementAttributes>
+        <entry>
+          <string>Label</string>
+          <string>WIRE2 #169 (A1=1,A0=0,B2=1,B1=0,B0=1,C2=0,C1=0,C0=0)</string>
+        </entry>
+        <entry>
+          <string>Testdata</string>
+          <testData>
+            <dataString>A1 A0 B2 B1 B0 C2 C1 C0 a b c d e f g
+1 0 1 0 1 0 0 0 0 0 1 1 1 1 1
+</dataString>
+          </testData>
+        </entry>
+      </elementAttributes>
+      <pos x="100" y="10180"/>
+    </visualElement>
+    <visualElement>
+      <elementName>Testcase</elementName>
+      <elementAttributes>
+        <entry>
+          <string>Label</string>
+          <string>WIRE2 #170 (A1=1,A0=0,B2=1,B1=0,B0=1,C2=0,C1=0,C0=1)</string>
+        </entry>
+        <entry>
+          <string>Testdata</string>
+          <testData>
+            <dataString>A1 A0 B2 B1 B0 C2 C1 C0 a b c d e f g
+1 0 1 0 1 0 0 1 0 0 1 1 1 1 1
+</dataString>
+          </testData>
+        </entry>
+      </elementAttributes>
+      <pos x="100" y="10240"/>
+    </visualElement>
+    <visualElement>
+      <elementName>Testcase</elementName>
+      <elementAttributes>
+        <entry>
+          <string>Label</string>
+          <string>WIRE2 #171 (A1=1,A0=0,B2=1,B1=0,B0=1,C2=0,C1=1,C0=0)</string>
+        </entry>
+        <entry>
+          <string>Testdata</string>
+          <testData>
+            <dataString>A1 A0 B2 B1 B0 C2 C1 C0 a b c d e f g
+1 0 1 0 1 0 1 0 0 0 1 1 1 1 1
+</dataString>
+          </testData>
+        </entry>
+      </elementAttributes>
+      <pos x="100" y="10300"/>
+    </visualElement>
+    <visualElement>
+      <elementName>Testcase</elementName>
+      <elementAttributes>
+        <entry>
+          <string>Label</string>
+          <string>WIRE2 #172 (A1=1,A0=0,B2=1,B1=0,B0=1,C2=0,C1=1,C0=1)</string>
+        </entry>
+        <entry>
+          <string>Testdata</string>
+          <testData>
+            <dataString>A1 A0 B2 B1 B0 C2 C1 C0 a b c d e f g
+1 0 1 0 1 0 1 1 0 0 1 1 1 1 1
+</dataString>
+          </testData>
+        </entry>
+      </elementAttributes>
+      <pos x="100" y="10360"/>
+    </visualElement>
+    <visualElement>
+      <elementName>Testcase</elementName>
+      <elementAttributes>
+        <entry>
+          <string>Label</string>
+          <string>WIRE2 #173 (A1=1,A0=0,B2=1,B1=0,B0=1,C2=1,C1=0,C0=0)</string>
+        </entry>
+        <entry>
+          <string>Testdata</string>
+          <testData>
+            <dataString>A1 A0 B2 B1 B0 C2 C1 C0 a b c d e f g
+1 0 1 0 1 1 0 0 0 0 1 1 1 1 1
+</dataString>
+          </testData>
+        </entry>
+      </elementAttributes>
+      <pos x="100" y="10420"/>
+    </visualElement>
+    <visualElement>
+      <elementName>Testcase</elementName>
+      <elementAttributes>
+        <entry>
+          <string>Label</string>
+          <string>WIRE2 #174 (A1=1,A0=0,B2=1,B1=0,B0=1,C2=1,C1=0,C0=1)</string>
+        </entry>
+        <entry>
+          <string>Testdata</string>
+          <testData>
+            <dataString>A1 A0 B2 B1 B0 C2 C1 C0 a b c d e f g
+1 0 1 0 1 1 0 1 0 0 1 1 1 1 1
+</dataString>
+          </testData>
+        </entry>
+      </elementAttributes>
+      <pos x="100" y="10480"/>
+    </visualElement>
+    <visualElement>
+      <elementName>Testcase</elementName>
+      <elementAttributes>
+        <entry>
+          <string>Label</string>
+          <string>WIRE2 #175 (A1=1,A0=0,B2=1,B1=0,B0=1,C2=1,C1=1,C0=0)</string>
+        </entry>
+        <entry>
+          <string>Testdata</string>
+          <testData>
+            <dataString>A1 A0 B2 B1 B0 C2 C1 C0 a b c d e f g
+1 0 1 0 1 1 1 0 0 0 1 1 1 1 1
+</dataString>
+          </testData>
+        </entry>
+      </elementAttributes>
+      <pos x="100" y="10540"/>
+    </visualElement>
+    <visualElement>
+      <elementName>Testcase</elementName>
+      <elementAttributes>
+        <entry>
+          <string>Label</string>
+          <string>WIRE2 #176 (A1=1,A0=0,B2=1,B1=0,B0=1,C2=1,C1=1,C0=1)</string>
+        </entry>
+        <entry>
+          <string>Testdata</string>
+          <testData>
+            <dataString>A1 A0 B2 B1 B0 C2 C1 C0 a b c d e f g
+1 0 1 0 1 1 1 1 0 0 1 1 1 1 1
+</dataString>
+          </testData>
+        </entry>
+      </elementAttributes>
+      <pos x="100" y="10600"/>
+    </visualElement>
+    <visualElement>
+      <elementName>Testcase</elementName>
+      <elementAttributes>
+        <entry>
+          <string>Label</string>
+          <string>WIRE2 #177 (A1=1,A0=0,B2=1,B1=1,B0=0,C2=0,C1=0,C0=0)</string>
+        </entry>
+        <entry>
+          <string>Testdata</string>
+          <testData>
+            <dataString>A1 A0 B2 B1 B0 C2 C1 C0 a b c d e f g
+1 0 1 1 0 0 0 0 0 0 1 1 1 1 1
+</dataString>
+          </testData>
+        </entry>
+      </elementAttributes>
+      <pos x="100" y="10660"/>
+    </visualElement>
+    <visualElement>
+      <elementName>Testcase</elementName>
+      <elementAttributes>
+        <entry>
+          <string>Label</string>
+          <string>WIRE2 #178 (A1=1,A0=0,B2=1,B1=1,B0=0,C2=0,C1=0,C0=1)</string>
+        </entry>
+        <entry>
+          <string>Testdata</string>
+          <testData>
+            <dataString>A1 A0 B2 B1 B0 C2 C1 C0 a b c d e f g
+1 0 1 1 0 0 0 1 0 0 1 1 1 1 1
+</dataString>
+          </testData>
+        </entry>
+      </elementAttributes>
+      <pos x="100" y="10720"/>
+    </visualElement>
+    <visualElement>
+      <elementName>Testcase</elementName>
+      <elementAttributes>
+        <entry>
+          <string>Label</string>
+          <string>WIRE2 #179 (A1=1,A0=0,B2=1,B1=1,B0=0,C2=0,C1=1,C0=0)</string>
+        </entry>
+        <entry>
+          <string>Testdata</string>
+          <testData>
+            <dataString>A1 A0 B2 B1 B0 C2 C1 C0 a b c d e f g
+1 0 1 1 0 0 1 0 0 0 1 1 1 1 1
+</dataString>
+          </testData>
+        </entry>
+      </elementAttributes>
+      <pos x="100" y="10780"/>
+    </visualElement>
+    <visualElement>
+      <elementName>Testcase</elementName>
+      <elementAttributes>
+        <entry>
+          <string>Label</string>
+          <string>WIRE2 #180 (A1=1,A0=0,B2=1,B1=1,B0=0,C2=0,C1=1,C0=1)</string>
+        </entry>
+        <entry>
+          <string>Testdata</string>
+          <testData>
+            <dataString>A1 A0 B2 B1 B0 C2 C1 C0 a b c d e f g
+1 0 1 1 0 0 1 1 0 0 1 1 1 1 1
+</dataString>
+          </testData>
+        </entry>
+      </elementAttributes>
+      <pos x="100" y="10840"/>
+    </visualElement>
+    <visualElement>
+      <elementName>Testcase</elementName>
+      <elementAttributes>
+        <entry>
+          <string>Label</string>
+          <string>WIRE2 #181 (A1=1,A0=0,B2=1,B1=1,B0=0,C2=1,C1=0,C0=0)</string>
+        </entry>
+        <entry>
+          <string>Testdata</string>
+          <testData>
+            <dataString>A1 A0 B2 B1 B0 C2 C1 C0 a b c d e f g
+1 0 1 1 0 1 0 0 0 0 1 1 1 1 1
+</dataString>
+          </testData>
+        </entry>
+      </elementAttributes>
+      <pos x="100" y="10900"/>
+    </visualElement>
+    <visualElement>
+      <elementName>Testcase</elementName>
+      <elementAttributes>
+        <entry>
+          <string>Label</string>
+          <string>WIRE2 #182 (A1=1,A0=0,B2=1,B1=1,B0=0,C2=1,C1=0,C0=1)</string>
+        </entry>
+        <entry>
+          <string>Testdata</string>
+          <testData>
+            <dataString>A1 A0 B2 B1 B0 C2 C1 C0 a b c d e f g
+1 0 1 1 0 1 0 1 0 0 1 1 1 1 1
+</dataString>
+          </testData>
+        </entry>
+      </elementAttributes>
+      <pos x="100" y="10960"/>
+    </visualElement>
+    <visualElement>
+      <elementName>Testcase</elementName>
+      <elementAttributes>
+        <entry>
+          <string>Label</string>
+          <string>WIRE2 #183 (A1=1,A0=0,B2=1,B1=1,B0=0,C2=1,C1=1,C0=0)</string>
+        </entry>
+        <entry>
+          <string>Testdata</string>
+          <testData>
+            <dataString>A1 A0 B2 B1 B0 C2 C1 C0 a b c d e f g
+1 0 1 1 0 1 1 0 0 0 1 1 1 1 1
+</dataString>
+          </testData>
+        </entry>
+      </elementAttributes>
+      <pos x="100" y="11020"/>
+    </visualElement>
+    <visualElement>
+      <elementName>Testcase</elementName>
+      <elementAttributes>
+        <entry>
+          <string>Label</string>
+          <string>WIRE2 #184 (A1=1,A0=0,B2=1,B1=1,B0=0,C2=1,C1=1,C0=1)</string>
+        </entry>
+        <entry>
+          <string>Testdata</string>
+          <testData>
+            <dataString>A1 A0 B2 B1 B0 C2 C1 C0 a b c d e f g
+1 0 1 1 0 1 1 1 0 0 1 1 1 1 1
+</dataString>
+          </testData>
+        </entry>
+      </elementAttributes>
+      <pos x="100" y="11080"/>
+    </visualElement>
+    <visualElement>
+      <elementName>Testcase</elementName>
+      <elementAttributes>
+        <entry>
+          <string>Label</string>
+          <string>WIRE2 #185 (A1=1,A0=0,B2=1,B1=1,B0=1,C2=0,C1=0,C0=0)</string>
+        </entry>
+        <entry>
+          <string>Testdata</string>
+          <testData>
+            <dataString>A1 A0 B2 B1 B0 C2 C1 C0 a b c d e f g
+1 0 1 1 1 0 0 0 0 0 1 1 1 1 1
+</dataString>
+          </testData>
+        </entry>
+      </elementAttributes>
+      <pos x="100" y="11140"/>
+    </visualElement>
+    <visualElement>
+      <elementName>Testcase</elementName>
+      <elementAttributes>
+        <entry>
+          <string>Label</string>
+          <string>WIRE2 #186 (A1=1,A0=0,B2=1,B1=1,B0=1,C2=0,C1=0,C0=1)</string>
+        </entry>
+        <entry>
+          <string>Testdata</string>
+          <testData>
+            <dataString>A1 A0 B2 B1 B0 C2 C1 C0 a b c d e f g
+1 0 1 1 1 0 0 1 0 0 1 1 1 1 1
+</dataString>
+          </testData>
+        </entry>
+      </elementAttributes>
+      <pos x="100" y="11200"/>
+    </visualElement>
+    <visualElement>
+      <elementName>Testcase</elementName>
+      <elementAttributes>
+        <entry>
+          <string>Label</string>
+          <string>WIRE2 #187 (A1=1,A0=0,B2=1,B1=1,B0=1,C2=0,C1=1,C0=0)</string>
+        </entry>
+        <entry>
+          <string>Testdata</string>
+          <testData>
+            <dataString>A1 A0 B2 B1 B0 C2 C1 C0 a b c d e f g
+1 0 1 1 1 0 1 0 0 0 1 1 1 1 1
+</dataString>
+          </testData>
+        </entry>
+      </elementAttributes>
+      <pos x="100" y="11260"/>
+    </visualElement>
+    <visualElement>
+      <elementName>Testcase</elementName>
+      <elementAttributes>
+        <entry>
+          <string>Label</string>
+          <string>WIRE2 #188 (A1=1,A0=0,B2=1,B1=1,B0=1,C2=0,C1=1,C0=1)</string>
+        </entry>
+        <entry>
+          <string>Testdata</string>
+          <testData>
+            <dataString>A1 A0 B2 B1 B0 C2 C1 C0 a b c d e f g
+1 0 1 1 1 0 1 1 0 0 1 1 1 1 1
+</dataString>
+          </testData>
+        </entry>
+      </elementAttributes>
+      <pos x="100" y="11320"/>
+    </visualElement>
+    <visualElement>
+      <elementName>Testcase</elementName>
+      <elementAttributes>
+        <entry>
+          <string>Label</string>
+          <string>WIRE2 #189 (A1=1,A0=0,B2=1,B1=1,B0=1,C2=1,C1=0,C0=0)</string>
+        </entry>
+        <entry>
+          <string>Testdata</string>
+          <testData>
+            <dataString>A1 A0 B2 B1 B0 C2 C1 C0 a b c d e f g
+1 0 1 1 1 1 0 0 0 0 1 1 1 1 1
+</dataString>
+          </testData>
+        </entry>
+      </elementAttributes>
+      <pos x="100" y="11380"/>
+    </visualElement>
+    <visualElement>
+      <elementName>Testcase</elementName>
+      <elementAttributes>
+        <entry>
+          <string>Label</string>
+          <string>WIRE2 #190 (A1=1,A0=0,B2=1,B1=1,B0=1,C2=1,C1=0,C0=1)</string>
+        </entry>
+        <entry>
+          <string>Testdata</string>
+          <testData>
+            <dataString>A1 A0 B2 B1 B0 C2 C1 C0 a b c d e f g
+1 0 1 1 1 1 0 1 0 0 1 1 1 1 1
+</dataString>
+          </testData>
+        </entry>
+      </elementAttributes>
+      <pos x="100" y="11440"/>
+    </visualElement>
+    <visualElement>
+      <elementName>Testcase</elementName>
+      <elementAttributes>
+        <entry>
+          <string>Label</string>
+          <string>WIRE2 #191 (A1=1,A0=0,B2=1,B1=1,B0=1,C2=1,C1=1,C0=0)</string>
+        </entry>
+        <entry>
+          <string>Testdata</string>
+          <testData>
+            <dataString>A1 A0 B2 B1 B0 C2 C1 C0 a b c d e f g
+1 0 1 1 1 1 1 0 0 0 1 1 1 1 1
+</dataString>
+          </testData>
+        </entry>
+      </elementAttributes>
+      <pos x="100" y="11500"/>
+    </visualElement>
+    <visualElement>
+      <elementName>Testcase</elementName>
+      <elementAttributes>
+        <entry>
+          <string>Label</string>
+          <string>WIRE2 #192 (A1=1,A0=0,B2=1,B1=1,B0=1,C2=1,C1=1,C0=1)</string>
+        </entry>
+        <entry>
+          <string>Testdata</string>
+          <testData>
+            <dataString>A1 A0 B2 B1 B0 C2 C1 C0 a b c d e f g
+1 0 1 1 1 1 1 1 0 0 1 1 1 1 1
+</dataString>
+          </testData>
+        </entry>
+      </elementAttributes>
+      <pos x="100" y="11560"/>
+    </visualElement>
+    <visualElement>
+      <elementName>Testcase</elementName>
+      <elementAttributes>
+        <entry>
+          <string>Label</string>
+          <string>WIRE2 #193 (A1=1,A0=1,B2=0,B1=0,B0=0,C2=0,C1=0,C0=0)</string>
+        </entry>
+        <entry>
+          <string>Testdata</string>
+          <testData>
+            <dataString>A1 A0 B2 B1 B0 C2 C1 C0 a b c d e f g
+1 1 0 0 0 0 0 0 1 1 1 1 1 0 1
+</dataString>
+          </testData>
+        </entry>
+      </elementAttributes>
+      <pos x="100" y="11620"/>
+    </visualElement>
+    <visualElement>
+      <elementName>Testcase</elementName>
+      <elementAttributes>
+        <entry>
+          <string>Label</string>
+          <string>WIRE2 #194 (A1=1,A0=1,B2=0,B1=0,B0=0,C2=0,C1=0,C0=1)</string>
+        </entry>
+        <entry>
+          <string>Testdata</string>
+          <testData>
+            <dataString>A1 A0 B2 B1 B0 C2 C1 C0 a b c d e f g
+1 1 0 0 0 0 0 1 1 1 1 1 1 0 1
+</dataString>
+          </testData>
+        </entry>
+      </elementAttributes>
+      <pos x="100" y="11680"/>
+    </visualElement>
+    <visualElement>
+      <elementName>Testcase</elementName>
+      <elementAttributes>
+        <entry>
+          <string>Label</string>
+          <string>WIRE2 #195 (A1=1,A0=1,B2=0,B1=0,B0=0,C2=0,C1=1,C0=0)</string>
+        </entry>
+        <entry>
+          <string>Testdata</string>
+          <testData>
+            <dataString>A1 A0 B2 B1 B0 C2 C1 C0 a b c d e f g
+1 1 0 0 0 0 1 0 1 1 1 1 1 0 1
+</dataString>
+          </testData>
+        </entry>
+      </elementAttributes>
+      <pos x="100" y="11740"/>
+    </visualElement>
+    <visualElement>
+      <elementName>Testcase</elementName>
+      <elementAttributes>
+        <entry>
+          <string>Label</string>
+          <string>WIRE2 #196 (A1=1,A0=1,B2=0,B1=0,B0=0,C2=0,C1=1,C0=1)</string>
+        </entry>
+        <entry>
+          <string>Testdata</string>
+          <testData>
+            <dataString>A1 A0 B2 B1 B0 C2 C1 C0 a b c d e f g
+1 1 0 0 0 0 1 1 1 1 1 1 1 0 1
+</dataString>
+          </testData>
+        </entry>
+      </elementAttributes>
+      <pos x="100" y="11800"/>
+    </visualElement>
+    <visualElement>
+      <elementName>Testcase</elementName>
+      <elementAttributes>
+        <entry>
+          <string>Label</string>
+          <string>WIRE2 #197 (A1=1,A0=1,B2=0,B1=0,B0=0,C2=1,C1=0,C0=0)</string>
+        </entry>
+        <entry>
+          <string>Testdata</string>
+          <testData>
+            <dataString>A1 A0 B2 B1 B0 C2 C1 C0 a b c d e f g
+1 1 0 0 0 1 0 0 1 1 1 1 1 0 1
+</dataString>
+          </testData>
+        </entry>
+      </elementAttributes>
+      <pos x="100" y="11860"/>
+    </visualElement>
+    <visualElement>
+      <elementName>Testcase</elementName>
+      <elementAttributes>
+        <entry>
+          <string>Label</string>
+          <string>WIRE2 #198 (A1=1,A0=1,B2=0,B1=0,B0=0,C2=1,C1=0,C0=1)</string>
+        </entry>
+        <entry>
+          <string>Testdata</string>
+          <testData>
+            <dataString>A1 A0 B2 B1 B0 C2 C1 C0 a b c d e f g
+1 1 0 0 0 1 0 1 1 1 1 1 1 0 1
+</dataString>
+          </testData>
+        </entry>
+      </elementAttributes>
+      <pos x="100" y="11920"/>
+    </visualElement>
+    <visualElement>
+      <elementName>Testcase</elementName>
+      <elementAttributes>
+        <entry>
+          <string>Label</string>
+          <string>WIRE2 #199 (A1=1,A0=1,B2=0,B1=0,B0=0,C2=1,C1=1,C0=0)</string>
+        </entry>
+        <entry>
+          <string>Testdata</string>
+          <testData>
+            <dataString>A1 A0 B2 B1 B0 C2 C1 C0 a b c d e f g
+1 1 0 0 0 1 1 0 1 1 1 1 1 0 1
+</dataString>
+          </testData>
+        </entry>
+      </elementAttributes>
+      <pos x="100" y="11980"/>
+    </visualElement>
+    <visualElement>
+      <elementName>Testcase</elementName>
+      <elementAttributes>
+        <entry>
+          <string>Label</string>
+          <string>WIRE2 #200 (A1=1,A0=1,B2=0,B1=0,B0=0,C2=1,C1=1,C0=1)</string>
+        </entry>
+        <entry>
+          <string>Testdata</string>
+          <testData>
+            <dataString>A1 A0 B2 B1 B0 C2 C1 C0 a b c d e f g
+1 1 0 0 0 1 1 1 1 1 1 1 1 0 1
+</dataString>
+          </testData>
+        </entry>
+      </elementAttributes>
+      <pos x="100" y="12040"/>
+    </visualElement>
+    <visualElement>
+      <elementName>Testcase</elementName>
+      <elementAttributes>
+        <entry>
+          <string>Label</string>
+          <string>WIRE2 #201 (A1=1,A0=1,B2=0,B1=0,B0=1,C2=0,C1=0,C0=0)</string>
+        </entry>
+        <entry>
+          <string>Testdata</string>
+          <testData>
+            <dataString>A1 A0 B2 B1 B0 C2 C1 C0 a b c d e f g
+1 1 0 0 1 0 0 0 1 1 1 1 1 0 1
+</dataString>
+          </testData>
+        </entry>
+      </elementAttributes>
+      <pos x="100" y="12100"/>
+    </visualElement>
+    <visualElement>
+      <elementName>Testcase</elementName>
+      <elementAttributes>
+        <entry>
+          <string>Label</string>
+          <string>WIRE2 #202 (A1=1,A0=1,B2=0,B1=0,B0=1,C2=0,C1=0,C0=1)</string>
+        </entry>
+        <entry>
+          <string>Testdata</string>
+          <testData>
+            <dataString>A1 A0 B2 B1 B0 C2 C1 C0 a b c d e f g
+1 1 0 0 1 0 0 1 1 1 1 1 1 0 1
+</dataString>
+          </testData>
+        </entry>
+      </elementAttributes>
+      <pos x="100" y="12160"/>
+    </visualElement>
+    <visualElement>
+      <elementName>Testcase</elementName>
+      <elementAttributes>
+        <entry>
+          <string>Label</string>
+          <string>WIRE2 #203 (A1=1,A0=1,B2=0,B1=0,B0=1,C2=0,C1=1,C0=0)</string>
+        </entry>
+        <entry>
+          <string>Testdata</string>
+          <testData>
+            <dataString>A1 A0 B2 B1 B0 C2 C1 C0 a b c d e f g
+1 1 0 0 1 0 1 0 1 1 1 1 1 0 1
+</dataString>
+          </testData>
+        </entry>
+      </elementAttributes>
+      <pos x="100" y="12220"/>
+    </visualElement>
+    <visualElement>
+      <elementName>Testcase</elementName>
+      <elementAttributes>
+        <entry>
+          <string>Label</string>
+          <string>WIRE2 #204 (A1=1,A0=1,B2=0,B1=0,B0=1,C2=0,C1=1,C0=1)</string>
+        </entry>
+        <entry>
+          <string>Testdata</string>
+          <testData>
+            <dataString>A1 A0 B2 B1 B0 C2 C1 C0 a b c d e f g
+1 1 0 0 1 0 1 1 1 1 1 1 1 0 1
+</dataString>
+          </testData>
+        </entry>
+      </elementAttributes>
+      <pos x="100" y="12280"/>
+    </visualElement>
+    <visualElement>
+      <elementName>Testcase</elementName>
+      <elementAttributes>
+        <entry>
+          <string>Label</string>
+          <string>WIRE2 #205 (A1=1,A0=1,B2=0,B1=0,B0=1,C2=1,C1=0,C0=0)</string>
+        </entry>
+        <entry>
+          <string>Testdata</string>
+          <testData>
+            <dataString>A1 A0 B2 B1 B0 C2 C1 C0 a b c d e f g
+1 1 0 0 1 1 0 0 1 1 1 1 1 0 1
+</dataString>
+          </testData>
+        </entry>
+      </elementAttributes>
+      <pos x="100" y="12340"/>
+    </visualElement>
+    <visualElement>
+      <elementName>Testcase</elementName>
+      <elementAttributes>
+        <entry>
+          <string>Label</string>
+          <string>WIRE2 #206 (A1=1,A0=1,B2=0,B1=0,B0=1,C2=1,C1=0,C0=1)</string>
+        </entry>
+        <entry>
+          <string>Testdata</string>
+          <testData>
+            <dataString>A1 A0 B2 B1 B0 C2 C1 C0 a b c d e f g
+1 1 0 0 1 1 0 1 1 1 1 1 1 0 1
+</dataString>
+          </testData>
+        </entry>
+      </elementAttributes>
+      <pos x="100" y="12400"/>
+    </visualElement>
+    <visualElement>
+      <elementName>Testcase</elementName>
+      <elementAttributes>
+        <entry>
+          <string>Label</string>
+          <string>WIRE2 #207 (A1=1,A0=1,B2=0,B1=0,B0=1,C2=1,C1=1,C0=0)</string>
+        </entry>
+        <entry>
+          <string>Testdata</string>
+          <testData>
+            <dataString>A1 A0 B2 B1 B0 C2 C1 C0 a b c d e f g
+1 1 0 0 1 1 1 0 1 1 1 1 1 0 1
+</dataString>
+          </testData>
+        </entry>
+      </elementAttributes>
+      <pos x="100" y="12460"/>
+    </visualElement>
+    <visualElement>
+      <elementName>Testcase</elementName>
+      <elementAttributes>
+        <entry>
+          <string>Label</string>
+          <string>WIRE2 #208 (A1=1,A0=1,B2=0,B1=0,B0=1,C2=1,C1=1,C0=1)</string>
+        </entry>
+        <entry>
+          <string>Testdata</string>
+          <testData>
+            <dataString>A1 A0 B2 B1 B0 C2 C1 C0 a b c d e f g
+1 1 0 0 1 1 1 1 1 1 1 1 1 0 1
+</dataString>
+          </testData>
+        </entry>
+      </elementAttributes>
+      <pos x="100" y="12520"/>
+    </visualElement>
+    <visualElement>
+      <elementName>Testcase</elementName>
+      <elementAttributes>
+        <entry>
+          <string>Label</string>
+          <string>WIRE2 #209 (A1=1,A0=1,B2=0,B1=1,B0=0,C2=0,C1=0,C0=0)</string>
+        </entry>
+        <entry>
+          <string>Testdata</string>
+          <testData>
+            <dataString>A1 A0 B2 B1 B0 C2 C1 C0 a b c d e f g
+1 1 0 1 0 0 0 0 1 1 1 1 1 0 1
+</dataString>
+          </testData>
+        </entry>
+      </elementAttributes>
+      <pos x="100" y="12580"/>
+    </visualElement>
+    <visualElement>
+      <elementName>Testcase</elementName>
+      <elementAttributes>
+        <entry>
+          <string>Label</string>
+          <string>WIRE2 #210 (A1=1,A0=1,B2=0,B1=1,B0=0,C2=0,C1=0,C0=1)</string>
+        </entry>
+        <entry>
+          <string>Testdata</string>
+          <testData>
+            <dataString>A1 A0 B2 B1 B0 C2 C1 C0 a b c d e f g
+1 1 0 1 0 0 0 1 1 1 1 1 1 0 1
+</dataString>
+          </testData>
+        </entry>
+      </elementAttributes>
+      <pos x="100" y="12640"/>
+    </visualElement>
+    <visualElement>
+      <elementName>Testcase</elementName>
+      <elementAttributes>
+        <entry>
+          <string>Label</string>
+          <string>WIRE2 #211 (A1=1,A0=1,B2=0,B1=1,B0=0,C2=0,C1=1,C0=0)</string>
+        </entry>
+        <entry>
+          <string>Testdata</string>
+          <testData>
+            <dataString>A1 A0 B2 B1 B0 C2 C1 C0 a b c d e f g
+1 1 0 1 0 0 1 0 1 1 1 1 1 0 1
+</dataString>
+          </testData>
+        </entry>
+      </elementAttributes>
+      <pos x="100" y="12700"/>
+    </visualElement>
+    <visualElement>
+      <elementName>Testcase</elementName>
+      <elementAttributes>
+        <entry>
+          <string>Label</string>
+          <string>WIRE2 #212 (A1=1,A0=1,B2=0,B1=1,B0=0,C2=0,C1=1,C0=1)</string>
+        </entry>
+        <entry>
+          <string>Testdata</string>
+          <testData>
+            <dataString>A1 A0 B2 B1 B0 C2 C1 C0 a b c d e f g
+1 1 0 1 0 0 1 1 1 1 1 1 1 0 1
+</dataString>
+          </testData>
+        </entry>
+      </elementAttributes>
+      <pos x="100" y="12760"/>
+    </visualElement>
+    <visualElement>
+      <elementName>Testcase</elementName>
+      <elementAttributes>
+        <entry>
+          <string>Label</string>
+          <string>WIRE2 #213 (A1=1,A0=1,B2=0,B1=1,B0=0,C2=1,C1=0,C0=0)</string>
+        </entry>
+        <entry>
+          <string>Testdata</string>
+          <testData>
+            <dataString>A1 A0 B2 B1 B0 C2 C1 C0 a b c d e f g
+1 1 0 1 0 1 0 0 1 1 1 1 1 0 1
+</dataString>
+          </testData>
+        </entry>
+      </elementAttributes>
+      <pos x="100" y="12820"/>
+    </visualElement>
+    <visualElement>
+      <elementName>Testcase</elementName>
+      <elementAttributes>
+        <entry>
+          <string>Label</string>
+          <string>WIRE2 #214 (A1=1,A0=1,B2=0,B1=1,B0=0,C2=1,C1=0,C0=1)</string>
+        </entry>
+        <entry>
+          <string>Testdata</string>
+          <testData>
+            <dataString>A1 A0 B2 B1 B0 C2 C1 C0 a b c d e f g
+1 1 0 1 0 1 0 1 1 1 1 1 1 0 1
+</dataString>
+          </testData>
+        </entry>
+      </elementAttributes>
+      <pos x="100" y="12880"/>
+    </visualElement>
+    <visualElement>
+      <elementName>Testcase</elementName>
+      <elementAttributes>
+        <entry>
+          <string>Label</string>
+          <string>WIRE2 #215 (A1=1,A0=1,B2=0,B1=1,B0=0,C2=1,C1=1,C0=0)</string>
+        </entry>
+        <entry>
+          <string>Testdata</string>
+          <testData>
+            <dataString>A1 A0 B2 B1 B0 C2 C1 C0 a b c d e f g
+1 1 0 1 0 1 1 0 1 1 1 1 1 0 1
+</dataString>
+          </testData>
+        </entry>
+      </elementAttributes>
+      <pos x="100" y="12940"/>
+    </visualElement>
+    <visualElement>
+      <elementName>Testcase</elementName>
+      <elementAttributes>
+        <entry>
+          <string>Label</string>
+          <string>WIRE2 #216 (A1=1,A0=1,B2=0,B1=1,B0=0,C2=1,C1=1,C0=1)</string>
+        </entry>
+        <entry>
+          <string>Testdata</string>
+          <testData>
+            <dataString>A1 A0 B2 B1 B0 C2 C1 C0 a b c d e f g
+1 1 0 1 0 1 1 1 1 1 1 1 1 0 1
+</dataString>
+          </testData>
+        </entry>
+      </elementAttributes>
+      <pos x="100" y="13000"/>
+    </visualElement>
+    <visualElement>
+      <elementName>Testcase</elementName>
+      <elementAttributes>
+        <entry>
+          <string>Label</string>
+          <string>WIRE2 #217 (A1=1,A0=1,B2=0,B1=1,B0=1,C2=0,C1=0,C0=0)</string>
+        </entry>
+        <entry>
+          <string>Testdata</string>
+          <testData>
+            <dataString>A1 A0 B2 B1 B0 C2 C1 C0 a b c d e f g
+1 1 0 1 1 0 0 0 1 1 1 1 1 0 1
+</dataString>
+          </testData>
+        </entry>
+      </elementAttributes>
+      <pos x="100" y="13060"/>
+    </visualElement>
+    <visualElement>
+      <elementName>Testcase</elementName>
+      <elementAttributes>
+        <entry>
+          <string>Label</string>
+          <string>WIRE2 #218 (A1=1,A0=1,B2=0,B1=1,B0=1,C2=0,C1=0,C0=1)</string>
+        </entry>
+        <entry>
+          <string>Testdata</string>
+          <testData>
+            <dataString>A1 A0 B2 B1 B0 C2 C1 C0 a b c d e f g
+1 1 0 1 1 0 0 1 1 1 1 1 1 0 1
+</dataString>
+          </testData>
+        </entry>
+      </elementAttributes>
+      <pos x="100" y="13120"/>
+    </visualElement>
+    <visualElement>
+      <elementName>Testcase</elementName>
+      <elementAttributes>
+        <entry>
+          <string>Label</string>
+          <string>WIRE2 #219 (A1=1,A0=1,B2=0,B1=1,B0=1,C2=0,C1=1,C0=0)</string>
+        </entry>
+        <entry>
+          <string>Testdata</string>
+          <testData>
+            <dataString>A1 A0 B2 B1 B0 C2 C1 C0 a b c d e f g
+1 1 0 1 1 0 1 0 1 1 1 1 1 0 1
+</dataString>
+          </testData>
+        </entry>
+      </elementAttributes>
+      <pos x="100" y="13180"/>
+    </visualElement>
+    <visualElement>
+      <elementName>Testcase</elementName>
+      <elementAttributes>
+        <entry>
+          <string>Label</string>
+          <string>WIRE2 #220 (A1=1,A0=1,B2=0,B1=1,B0=1,C2=0,C1=1,C0=1)</string>
+        </entry>
+        <entry>
+          <string>Testdata</string>
+          <testData>
+            <dataString>A1 A0 B2 B1 B0 C2 C1 C0 a b c d e f g
+1 1 0 1 1 0 1 1 1 1 1 1 1 0 1
+</dataString>
+          </testData>
+        </entry>
+      </elementAttributes>
+      <pos x="100" y="13240"/>
+    </visualElement>
+    <visualElement>
+      <elementName>Testcase</elementName>
+      <elementAttributes>
+        <entry>
+          <string>Label</string>
+          <string>WIRE2 #221 (A1=1,A0=1,B2=0,B1=1,B0=1,C2=1,C1=0,C0=0)</string>
+        </entry>
+        <entry>
+          <string>Testdata</string>
+          <testData>
+            <dataString>A1 A0 B2 B1 B0 C2 C1 C0 a b c d e f g
+1 1 0 1 1 1 0 0 0 0 1 1 1 1 1
+</dataString>
+          </testData>
+        </entry>
+      </elementAttributes>
+      <pos x="100" y="13300"/>
+    </visualElement>
+    <visualElement>
+      <elementName>Testcase</elementName>
+      <elementAttributes>
+        <entry>
+          <string>Label</string>
+          <string>WIRE2 #222 (A1=1,A0=1,B2=0,B1=1,B0=1,C2=1,C1=0,C0=1)</string>
+        </entry>
+        <entry>
+          <string>Testdata</string>
+          <testData>
+            <dataString>A1 A0 B2 B1 B0 C2 C1 C0 a b c d e f g
+1 1 0 1 1 1 0 1 0 0 1 1 1 1 1
+</dataString>
+          </testData>
+        </entry>
+      </elementAttributes>
+      <pos x="100" y="13360"/>
+    </visualElement>
+    <visualElement>
+      <elementName>Testcase</elementName>
+      <elementAttributes>
+        <entry>
+          <string>Label</string>
+          <string>WIRE2 #223 (A1=1,A0=1,B2=0,B1=1,B0=1,C2=1,C1=1,C0=0)</string>
+        </entry>
+        <entry>
+          <string>Testdata</string>
+          <testData>
+            <dataString>A1 A0 B2 B1 B0 C2 C1 C0 a b c d e f g
+1 1 0 1 1 1 1 0 0 0 1 1 1 1 1
+</dataString>
+          </testData>
+        </entry>
+      </elementAttributes>
+      <pos x="100" y="13420"/>
+    </visualElement>
+    <visualElement>
+      <elementName>Testcase</elementName>
+      <elementAttributes>
+        <entry>
+          <string>Label</string>
+          <string>WIRE2 #224 (A1=1,A0=1,B2=0,B1=1,B0=1,C2=1,C1=1,C0=1)</string>
+        </entry>
+        <entry>
+          <string>Testdata</string>
+          <testData>
+            <dataString>A1 A0 B2 B1 B0 C2 C1 C0 a b c d e f g
+1 1 0 1 1 1 1 1 0 0 1 1 1 1 1
+</dataString>
+          </testData>
+        </entry>
+      </elementAttributes>
+      <pos x="100" y="13480"/>
+    </visualElement>
+    <visualElement>
+      <elementName>Testcase</elementName>
+      <elementAttributes>
+        <entry>
+          <string>Label</string>
+          <string>WIRE2 #225 (A1=1,A0=1,B2=1,B1=0,B0=0,C2=0,C1=0,C0=0)</string>
+        </entry>
+        <entry>
+          <string>Testdata</string>
+          <testData>
+            <dataString>A1 A0 B2 B1 B0 C2 C1 C0 a b c d e f g
+1 1 1 0 0 0 0 0 0 0 1 1 1 1 1
+</dataString>
+          </testData>
+        </entry>
+      </elementAttributes>
+      <pos x="100" y="13540"/>
+    </visualElement>
+    <visualElement>
+      <elementName>Testcase</elementName>
+      <elementAttributes>
+        <entry>
+          <string>Label</string>
+          <string>WIRE2 #226 (A1=1,A0=1,B2=1,B1=0,B0=0,C2=0,C1=0,C0=1)</string>
+        </entry>
+        <entry>
+          <string>Testdata</string>
+          <testData>
+            <dataString>A1 A0 B2 B1 B0 C2 C1 C0 a b c d e f g
+1 1 1 0 0 0 0 1 0 0 1 1 1 1 1
+</dataString>
+          </testData>
+        </entry>
+      </elementAttributes>
+      <pos x="100" y="13600"/>
+    </visualElement>
+    <visualElement>
+      <elementName>Testcase</elementName>
+      <elementAttributes>
+        <entry>
+          <string>Label</string>
+          <string>WIRE2 #227 (A1=1,A0=1,B2=1,B1=0,B0=0,C2=0,C1=1,C0=0)</string>
+        </entry>
+        <entry>
+          <string>Testdata</string>
+          <testData>
+            <dataString>A1 A0 B2 B1 B0 C2 C1 C0 a b c d e f g
+1 1 1 0 0 0 1 0 0 0 1 1 1 1 1
+</dataString>
+          </testData>
+        </entry>
+      </elementAttributes>
+      <pos x="100" y="13660"/>
+    </visualElement>
+    <visualElement>
+      <elementName>Testcase</elementName>
+      <elementAttributes>
+        <entry>
+          <string>Label</string>
+          <string>WIRE2 #228 (A1=1,A0=1,B2=1,B1=0,B0=0,C2=0,C1=1,C0=1)</string>
+        </entry>
+        <entry>
+          <string>Testdata</string>
+          <testData>
+            <dataString>A1 A0 B2 B1 B0 C2 C1 C0 a b c d e f g
+1 1 1 0 0 0 1 1 0 0 1 1 1 1 1
+</dataString>
+          </testData>
+        </entry>
+      </elementAttributes>
+      <pos x="100" y="13720"/>
+    </visualElement>
+    <visualElement>
+      <elementName>Testcase</elementName>
+      <elementAttributes>
+        <entry>
+          <string>Label</string>
+          <string>WIRE2 #229 (A1=1,A0=1,B2=1,B1=0,B0=0,C2=1,C1=0,C0=0)</string>
+        </entry>
+        <entry>
+          <string>Testdata</string>
+          <testData>
+            <dataString>A1 A0 B2 B1 B0 C2 C1 C0 a b c d e f g
+1 1 1 0 0 1 0 0 0 0 1 1 1 1 1
+</dataString>
+          </testData>
+        </entry>
+      </elementAttributes>
+      <pos x="100" y="13780"/>
+    </visualElement>
+    <visualElement>
+      <elementName>Testcase</elementName>
+      <elementAttributes>
+        <entry>
+          <string>Label</string>
+          <string>WIRE2 #230 (A1=1,A0=1,B2=1,B1=0,B0=0,C2=1,C1=0,C0=1)</string>
+        </entry>
+        <entry>
+          <string>Testdata</string>
+          <testData>
+            <dataString>A1 A0 B2 B1 B0 C2 C1 C0 a b c d e f g
+1 1 1 0 0 1 0 1 0 0 1 1 1 1 1
+</dataString>
+          </testData>
+        </entry>
+      </elementAttributes>
+      <pos x="100" y="13840"/>
+    </visualElement>
+    <visualElement>
+      <elementName>Testcase</elementName>
+      <elementAttributes>
+        <entry>
+          <string>Label</string>
+          <string>WIRE2 #231 (A1=1,A0=1,B2=1,B1=0,B0=0,C2=1,C1=1,C0=0)</string>
+        </entry>
+        <entry>
+          <string>Testdata</string>
+          <testData>
+            <dataString>A1 A0 B2 B1 B0 C2 C1 C0 a b c d e f g
+1 1 1 0 0 1 1 0 0 0 1 1 1 1 1
+</dataString>
+          </testData>
+        </entry>
+      </elementAttributes>
+      <pos x="100" y="13900"/>
+    </visualElement>
+    <visualElement>
+      <elementName>Testcase</elementName>
+      <elementAttributes>
+        <entry>
+          <string>Label</string>
+          <string>WIRE2 #232 (A1=1,A0=1,B2=1,B1=0,B0=0,C2=1,C1=1,C0=1)</string>
+        </entry>
+        <entry>
+          <string>Testdata</string>
+          <testData>
+            <dataString>A1 A0 B2 B1 B0 C2 C1 C0 a b c d e f g
+1 1 1 0 0 1 1 1 0 0 1 1 1 1 1
+</dataString>
+          </testData>
+        </entry>
+      </elementAttributes>
+      <pos x="100" y="13960"/>
+    </visualElement>
+    <visualElement>
+      <elementName>Testcase</elementName>
+      <elementAttributes>
+        <entry>
+          <string>Label</string>
+          <string>WIRE2 #233 (A1=1,A0=1,B2=1,B1=0,B0=1,C2=0,C1=0,C0=0)</string>
+        </entry>
+        <entry>
+          <string>Testdata</string>
+          <testData>
+            <dataString>A1 A0 B2 B1 B0 C2 C1 C0 a b c d e f g
+1 1 1 0 1 0 0 0 0 0 1 1 1 1 1
+</dataString>
+          </testData>
+        </entry>
+      </elementAttributes>
+      <pos x="100" y="14020"/>
+    </visualElement>
+    <visualElement>
+      <elementName>Testcase</elementName>
+      <elementAttributes>
+        <entry>
+          <string>Label</string>
+          <string>WIRE2 #234 (A1=1,A0=1,B2=1,B1=0,B0=1,C2=0,C1=0,C0=1)</string>
+        </entry>
+        <entry>
+          <string>Testdata</string>
+          <testData>
+            <dataString>A1 A0 B2 B1 B0 C2 C1 C0 a b c d e f g
+1 1 1 0 1 0 0 1 0 0 1 1 1 1 1
+</dataString>
+          </testData>
+        </entry>
+      </elementAttributes>
+      <pos x="100" y="14080"/>
+    </visualElement>
+    <visualElement>
+      <elementName>Testcase</elementName>
+      <elementAttributes>
+        <entry>
+          <string>Label</string>
+          <string>WIRE2 #235 (A1=1,A0=1,B2=1,B1=0,B0=1,C2=0,C1=1,C0=0)</string>
+        </entry>
+        <entry>
+          <string>Testdata</string>
+          <testData>
+            <dataString>A1 A0 B2 B1 B0 C2 C1 C0 a b c d e f g
+1 1 1 0 1 0 1 0 0 0 1 1 1 1 1
+</dataString>
+          </testData>
+        </entry>
+      </elementAttributes>
+      <pos x="100" y="14140"/>
+    </visualElement>
+    <visualElement>
+      <elementName>Testcase</elementName>
+      <elementAttributes>
+        <entry>
+          <string>Label</string>
+          <string>WIRE2 #236 (A1=1,A0=1,B2=1,B1=0,B0=1,C2=0,C1=1,C0=1)</string>
+        </entry>
+        <entry>
+          <string>Testdata</string>
+          <testData>
+            <dataString>A1 A0 B2 B1 B0 C2 C1 C0 a b c d e f g
+1 1 1 0 1 0 1 1 0 0 1 1 1 1 1
+</dataString>
+          </testData>
+        </entry>
+      </elementAttributes>
+      <pos x="100" y="14200"/>
+    </visualElement>
+    <visualElement>
+      <elementName>Testcase</elementName>
+      <elementAttributes>
+        <entry>
+          <string>Label</string>
+          <string>WIRE2 #237 (A1=1,A0=1,B2=1,B1=0,B0=1,C2=1,C1=0,C0=0)</string>
+        </entry>
+        <entry>
+          <string>Testdata</string>
+          <testData>
+            <dataString>A1 A0 B2 B1 B0 C2 C1 C0 a b c d e f g
+1 1 1 0 1 1 0 0 0 0 1 1 1 1 1
+</dataString>
+          </testData>
+        </entry>
+      </elementAttributes>
+      <pos x="100" y="14260"/>
+    </visualElement>
+    <visualElement>
+      <elementName>Testcase</elementName>
+      <elementAttributes>
+        <entry>
+          <string>Label</string>
+          <string>WIRE2 #238 (A1=1,A0=1,B2=1,B1=0,B0=1,C2=1,C1=0,C0=1)</string>
+        </entry>
+        <entry>
+          <string>Testdata</string>
+          <testData>
+            <dataString>A1 A0 B2 B1 B0 C2 C1 C0 a b c d e f g
+1 1 1 0 1 1 0 1 0 0 1 1 1 1 1
+</dataString>
+          </testData>
+        </entry>
+      </elementAttributes>
+      <pos x="100" y="14320"/>
+    </visualElement>
+    <visualElement>
+      <elementName>Testcase</elementName>
+      <elementAttributes>
+        <entry>
+          <string>Label</string>
+          <string>WIRE2 #239 (A1=1,A0=1,B2=1,B1=0,B0=1,C2=1,C1=1,C0=0)</string>
+        </entry>
+        <entry>
+          <string>Testdata</string>
+          <testData>
+            <dataString>A1 A0 B2 B1 B0 C2 C1 C0 a b c d e f g
+1 1 1 0 1 1 1 0 0 0 1 1 1 1 1
+</dataString>
+          </testData>
+        </entry>
+      </elementAttributes>
+      <pos x="100" y="14380"/>
+    </visualElement>
+    <visualElement>
+      <elementName>Testcase</elementName>
+      <elementAttributes>
+        <entry>
+          <string>Label</string>
+          <string>WIRE2 #240 (A1=1,A0=1,B2=1,B1=0,B0=1,C2=1,C1=1,C0=1)</string>
+        </entry>
+        <entry>
+          <string>Testdata</string>
+          <testData>
+            <dataString>A1 A0 B2 B1 B0 C2 C1 C0 a b c d e f g
+1 1 1 0 1 1 1 1 0 0 1 1 1 1 1
+</dataString>
+          </testData>
+        </entry>
+      </elementAttributes>
+      <pos x="100" y="14440"/>
+    </visualElement>
+    <visualElement>
+      <elementName>Testcase</elementName>
+      <elementAttributes>
+        <entry>
+          <string>Label</string>
+          <string>WIRE2 #241 (A1=1,A0=1,B2=1,B1=1,B0=0,C2=0,C1=0,C0=0)</string>
+        </entry>
+        <entry>
+          <string>Testdata</string>
+          <testData>
+            <dataString>A1 A0 B2 B1 B0 C2 C1 C0 a b c d e f g
+1 1 1 1 0 0 0 0 0 0 1 1 1 1 1
+</dataString>
+          </testData>
+        </entry>
+      </elementAttributes>
+      <pos x="100" y="14500"/>
+    </visualElement>
+    <visualElement>
+      <elementName>Testcase</elementName>
+      <elementAttributes>
+        <entry>
+          <string>Label</string>
+          <string>WIRE2 #242 (A1=1,A0=1,B2=1,B1=1,B0=0,C2=0,C1=0,C0=1)</string>
+        </entry>
+        <entry>
+          <string>Testdata</string>
+          <testData>
+            <dataString>A1 A0 B2 B1 B0 C2 C1 C0 a b c d e f g
+1 1 1 1 0 0 0 1 0 0 1 1 1 1 1
+</dataString>
+          </testData>
+        </entry>
+      </elementAttributes>
+      <pos x="100" y="14560"/>
+    </visualElement>
+    <visualElement>
+      <elementName>Testcase</elementName>
+      <elementAttributes>
+        <entry>
+          <string>Label</string>
+          <string>WIRE2 #243 (A1=1,A0=1,B2=1,B1=1,B0=0,C2=0,C1=1,C0=0)</string>
+        </entry>
+        <entry>
+          <string>Testdata</string>
+          <testData>
+            <dataString>A1 A0 B2 B1 B0 C2 C1 C0 a b c d e f g
+1 1 1 1 0 0 1 0 0 0 1 1 1 1 1
+</dataString>
+          </testData>
+        </entry>
+      </elementAttributes>
+      <pos x="100" y="14620"/>
+    </visualElement>
+    <visualElement>
+      <elementName>Testcase</elementName>
+      <elementAttributes>
+        <entry>
+          <string>Label</string>
+          <string>WIRE2 #244 (A1=1,A0=1,B2=1,B1=1,B0=0,C2=0,C1=1,C0=1)</string>
+        </entry>
+        <entry>
+          <string>Testdata</string>
+          <testData>
+            <dataString>A1 A0 B2 B1 B0 C2 C1 C0 a b c d e f g
+1 1 1 1 0 0 1 1 0 0 1 1 1 1 1
+</dataString>
+          </testData>
+        </entry>
+      </elementAttributes>
+      <pos x="100" y="14680"/>
+    </visualElement>
+    <visualElement>
+      <elementName>Testcase</elementName>
+      <elementAttributes>
+        <entry>
+          <string>Label</string>
+          <string>WIRE2 #245 (A1=1,A0=1,B2=1,B1=1,B0=0,C2=1,C1=0,C0=0)</string>
+        </entry>
+        <entry>
+          <string>Testdata</string>
+          <testData>
+            <dataString>A1 A0 B2 B1 B0 C2 C1 C0 a b c d e f g
+1 1 1 1 0 1 0 0 0 0 1 1 1 1 1
+</dataString>
+          </testData>
+        </entry>
+      </elementAttributes>
+      <pos x="100" y="14740"/>
+    </visualElement>
+    <visualElement>
+      <elementName>Testcase</elementName>
+      <elementAttributes>
+        <entry>
+          <string>Label</string>
+          <string>WIRE2 #246 (A1=1,A0=1,B2=1,B1=1,B0=0,C2=1,C1=0,C0=1)</string>
+        </entry>
+        <entry>
+          <string>Testdata</string>
+          <testData>
+            <dataString>A1 A0 B2 B1 B0 C2 C1 C0 a b c d e f g
+1 1 1 1 0 1 0 1 0 0 1 1 1 1 1
+</dataString>
+          </testData>
+        </entry>
+      </elementAttributes>
+      <pos x="100" y="14800"/>
+    </visualElement>
+    <visualElement>
+      <elementName>Testcase</elementName>
+      <elementAttributes>
+        <entry>
+          <string>Label</string>
+          <string>WIRE2 #247 (A1=1,A0=1,B2=1,B1=1,B0=0,C2=1,C1=1,C0=0)</string>
+        </entry>
+        <entry>
+          <string>Testdata</string>
+          <testData>
+            <dataString>A1 A0 B2 B1 B0 C2 C1 C0 a b c d e f g
+1 1 1 1 0 1 1 0 0 0 1 1 1 1 1
+</dataString>
+          </testData>
+        </entry>
+      </elementAttributes>
+      <pos x="100" y="14860"/>
+    </visualElement>
+    <visualElement>
+      <elementName>Testcase</elementName>
+      <elementAttributes>
+        <entry>
+          <string>Label</string>
+          <string>WIRE2 #248 (A1=1,A0=1,B2=1,B1=1,B0=0,C2=1,C1=1,C0=1)</string>
+        </entry>
+        <entry>
+          <string>Testdata</string>
+          <testData>
+            <dataString>A1 A0 B2 B1 B0 C2 C1 C0 a b c d e f g
+1 1 1 1 0 1 1 1 0 0 1 1 1 1 1
+</dataString>
+          </testData>
+        </entry>
+      </elementAttributes>
+      <pos x="100" y="14920"/>
+    </visualElement>
+    <visualElement>
+      <elementName>Testcase</elementName>
+      <elementAttributes>
+        <entry>
+          <string>Label</string>
+          <string>WIRE2 #249 (A1=1,A0=1,B2=1,B1=1,B0=1,C2=0,C1=0,C0=0)</string>
+        </entry>
+        <entry>
+          <string>Testdata</string>
+          <testData>
+            <dataString>A1 A0 B2 B1 B0 C2 C1 C0 a b c d e f g
+1 1 1 1 1 0 0 0 0 0 1 1 1 1 1
+</dataString>
+          </testData>
+        </entry>
+      </elementAttributes>
+      <pos x="100" y="14980"/>
+    </visualElement>
+    <visualElement>
+      <elementName>Testcase</elementName>
+      <elementAttributes>
+        <entry>
+          <string>Label</string>
+          <string>WIRE2 #250 (A1=1,A0=1,B2=1,B1=1,B0=1,C2=0,C1=0,C0=1)</string>
+        </entry>
+        <entry>
+          <string>Testdata</string>
+          <testData>
+            <dataString>A1 A0 B2 B1 B0 C2 C1 C0 a b c d e f g
+1 1 1 1 1 0 0 1 0 0 1 1 1 1 1
+</dataString>
+          </testData>
+        </entry>
+      </elementAttributes>
+      <pos x="100" y="15040"/>
+    </visualElement>
+    <visualElement>
+      <elementName>Testcase</elementName>
+      <elementAttributes>
+        <entry>
+          <string>Label</string>
+          <string>WIRE2 #251 (A1=1,A0=1,B2=1,B1=1,B0=1,C2=0,C1=1,C0=0)</string>
+        </entry>
+        <entry>
+          <string>Testdata</string>
+          <testData>
+            <dataString>A1 A0 B2 B1 B0 C2 C1 C0 a b c d e f g
+1 1 1 1 1 0 1 0 0 0 1 1 1 1 1
+</dataString>
+          </testData>
+        </entry>
+      </elementAttributes>
+      <pos x="100" y="15100"/>
+    </visualElement>
+    <visualElement>
+      <elementName>Testcase</elementName>
+      <elementAttributes>
+        <entry>
+          <string>Label</string>
+          <string>WIRE2 #252 (A1=1,A0=1,B2=1,B1=1,B0=1,C2=0,C1=1,C0=1)</string>
+        </entry>
+        <entry>
+          <string>Testdata</string>
+          <testData>
+            <dataString>A1 A0 B2 B1 B0 C2 C1 C0 a b c d e f g
+1 1 1 1 1 0 1 1 0 0 1 1 1 1 1
+</dataString>
+          </testData>
+        </entry>
+      </elementAttributes>
+      <pos x="100" y="15160"/>
+    </visualElement>
+    <visualElement>
+      <elementName>Testcase</elementName>
+      <elementAttributes>
+        <entry>
+          <string>Label</string>
+          <string>WIRE2 #253 (A1=1,A0=1,B2=1,B1=1,B0=1,C2=1,C1=0,C0=0)</string>
+        </entry>
+        <entry>
+          <string>Testdata</string>
+          <testData>
+            <dataString>A1 A0 B2 B1 B0 C2 C1 C0 a b c d e f g
+1 1 1 1 1 1 0 0 0 0 1 1 1 1 1
+</dataString>
+          </testData>
+        </entry>
+      </elementAttributes>
+      <pos x="100" y="15220"/>
+    </visualElement>
+    <visualElement>
+      <elementName>Testcase</elementName>
+      <elementAttributes>
+        <entry>
+          <string>Label</string>
+          <string>WIRE2 #254 (A1=1,A0=1,B2=1,B1=1,B0=1,C2=1,C1=0,C0=1)</string>
+        </entry>
+        <entry>
+          <string>Testdata</string>
+          <testData>
+            <dataString>A1 A0 B2 B1 B0 C2 C1 C0 a b c d e f g
+1 1 1 1 1 1 0 1 0 0 1 1 1 1 1
+</dataString>
+          </testData>
+        </entry>
+      </elementAttributes>
+      <pos x="100" y="15280"/>
+    </visualElement>
+    <visualElement>
+      <elementName>Testcase</elementName>
+      <elementAttributes>
+        <entry>
+          <string>Label</string>
+          <string>WIRE2 #255 (A1=1,A0=1,B2=1,B1=1,B0=1,C2=1,C1=1,C0=0)</string>
+        </entry>
+        <entry>
+          <string>Testdata</string>
+          <testData>
+            <dataString>A1 A0 B2 B1 B0 C2 C1 C0 a b c d e f g
+1 1 1 1 1 1 1 0 0 0 1 1 1 1 1
+</dataString>
+          </testData>
+        </entry>
+      </elementAttributes>
+      <pos x="100" y="15340"/>
+    </visualElement>
+    <visualElement>
+      <elementName>Testcase</elementName>
+      <elementAttributes>
+        <entry>
+          <string>Label</string>
+          <string>WIRE2 #256 (A1=1,A0=1,B2=1,B1=1,B0=1,C2=1,C1=1,C0=1)</string>
+        </entry>
+        <entry>
+          <string>Testdata</string>
+          <testData>
+            <dataString>A1 A0 B2 B1 B0 C2 C1 C0 a b c d e f g
+1 1 1 1 1 1 1 1 0 0 1 1 1 1 1
+</dataString>
+          </testData>
+        </entry>
+      </elementAttributes>
+      <pos x="100" y="15400"/>
+    </visualElement>
+  </visualElements>
+  <wires/>
+</circuit>
