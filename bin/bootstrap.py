@@ -1965,7 +1965,10 @@ def main() -> None:
         # score via /my-score, served by the econ_judge plugin endpoint that
         # bypasses this visibility lock.
         set_config("score_visibility", "admins")
-        set_config("account_visibility", "public")
+        # Account visibility also admin-only — hides /users entirely so the
+        # roster of other teams isn't a "who else is here" social distraction.
+        # Cascades to /api/v1/users, /users/{id}, and the navbar Users link.
+        set_config("account_visibility", "admins")
         set_config("freeze", FREEZE_AT)
         set_config("challenge_ratings", "disabled")
         # `Configs.social_shares` in templates is a @property that calls
