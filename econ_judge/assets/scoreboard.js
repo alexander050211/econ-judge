@@ -1,4 +1,4 @@
-// E-CON 논설 ICPC scoreboard — redesigned for projection on BK Hall screen.
+// E-CON 논설 live scoreboard — redesigned for projection on BK Hall screen.
 // Mounts below CTFd's stock table on /scoreboard only.
 // Auto-refreshes every 15s when visible; pauses while hidden.
 // Data contracts:
@@ -35,7 +35,7 @@
 
   function boot() {
     injectStyles();
-    render().catch((e) => console.warn("econ-judge ICPC board:", e));
+    render().catch((e) => console.warn("econ-judge scoreboard:", e));
   }
 
   // ─── Data layer (unchanged contracts) ────────────────────────────────────
@@ -198,7 +198,6 @@
     return `
       <header class="esb-head">
         <div class="esb-head-left">
-          <span class="esb-badge">ICPC</span>
           <h2 class="esb-title">도전 현황</h2>
         </div>
         <div class="esb-head-right">
@@ -491,21 +490,6 @@
   display: flex;
   align-items: center;
   gap: 0.6rem;
-}
-#${ROOT_ID} .esb-badge {
-  display: inline-flex;
-  align-items: center;
-  padding: 0.22rem 0.65rem;
-  font-family: var(--mono);
-  font-size: 0.68rem;
-  font-weight: 700;
-  letter-spacing: 0.12em;
-  color: var(--surface);
-  background: var(--brand);
-  border-radius: 5px;
-  /* Subtle inner highlight */
-  box-shadow: inset 0 1px 0 rgba(255,255,255,0.25), 0 1px 3px rgba(0,0,0,0.15);
-  user-select: none;
 }
 #${ROOT_ID} .esb-title {
   margin: 0;
