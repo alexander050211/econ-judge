@@ -61,19 +61,7 @@ def main() -> None:
     app = create_app()
     with app.app_context():
         db.create_all()
-        if get_config("setup"):
-            print(f"[bootstrap] CTFd already initialized; admin={ADMIN_NAME}")
-        else:
-            # SQLAlchemy's @validates('password') hashes automatically — pass plaintext.
-            admin = Users(
-                name=ADMIN_NAME,
-                email=ADMIN_EMAIL,
-                password=ADMIN_PASSWORD,
-                type="admin",
-                verified=True,
-                hidden=True,
-            )
-            db.session.add(admin)
+        if not get_config("setup"):
             set_config("ctf_name", CTF_NAME)
             set_config("ctf_description", "SNU SENS E-CON 논설 logic-design auto-grader")
             set_config("ctf_theme", "core-beta")
@@ -86,7 +74,31 @@ def main() -> None:
             set_config("team_size", None)
             set_config("setup", True)
             db.session.commit()
-            print(f"[bootstrap] CTFd initialized; admin={ADMIN_NAME}")
+            print(f"[bootstrap] CTFd initialized")
+        else:
+            print(f"[bootstrap] CTFd already initialized")
+
+        # Admin user upsert — env var is the source of truth for the password,
+        # so changing CTFD_ADMIN_PASSWORD in Render's Environment + redeploying
+        # actually rotates the admin password. @validates('password') re-hashes
+        # on assignment.
+        admin = Users.query.filter_by(name=ADMIN_NAME).first()
+        if admin is None:
+            admin = Users(
+                name=ADMIN_NAME,
+                email=ADMIN_EMAIL,
+                password=ADMIN_PASSWORD,
+                type="admin",
+                verified=True,
+                hidden=True,
+            )
+            db.session.add(admin)
+            db.session.commit()
+            print(f"[bootstrap] Admin '{ADMIN_NAME}' created")
+        else:
+            admin.password = ADMIN_PASSWORD
+            db.session.commit()
+            print(f"[bootstrap] Admin '{ADMIN_NAME}' password synced from env")
 
         # Smoke-test user (hidden) — pre-created so deploy_smoke.py runs
         # don't pollute the public scoreboard. Idempotent: created if missing,
