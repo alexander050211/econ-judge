@@ -383,11 +383,15 @@ def main() -> None:
         set_config("score_visibility", "public")
         set_config("account_visibility", "public")
         set_config("challenge_ratings", "disabled")
-        # CTFd stores Python False as the string "0" in a Text column, and
-        # Jinja's truthiness test treats non-empty strings as True — so
-        # `False` here does NOT actually disable the feature. Use None so
-        # the column stores NULL, which Jinja correctly reads as falsy.
-        set_config("social_shares", None)
+        # `Configs.social_shares` in templates is a @property that calls
+        # `get_config("social_shares", default=True)`. A NULL/missing row makes
+        # `_get_config` return the KeyError sentinel, which then falls through
+        # to the hardcoded `default=True` — so storing None here does NOT
+        # disable the share button. Storing the literal string "false" works:
+        # `_get_config` lowercases it and returns Python False, which Jinja
+        # then treats as falsy. (Storing False directly would persist as "0"
+        # — non-empty, hence truthy in Jinja.)
+        set_config("social_shares", "false")
         set_config("verify_emails", None)
         set_config("team_size", None)
         set_config("theme_header", THEME_HEADER_CSS)
