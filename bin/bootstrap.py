@@ -383,8 +383,12 @@ def main() -> None:
         set_config("score_visibility", "public")
         set_config("account_visibility", "public")
         set_config("challenge_ratings", "disabled")
-        set_config("social_shares", False)
-        set_config("verify_emails", False)
+        # CTFd stores Python False as the string "0" in a Text column, and
+        # Jinja's truthiness test treats non-empty strings as True — so
+        # `False` here does NOT actually disable the feature. Use None so
+        # the column stores NULL, which Jinja correctly reads as falsy.
+        set_config("social_shares", None)
+        set_config("verify_emails", None)
         set_config("team_size", None)
         set_config("theme_header", THEME_HEADER_CSS)
         first_time = not get_config("setup")
