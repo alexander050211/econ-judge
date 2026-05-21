@@ -126,6 +126,7 @@ body {
 a { color: var(--sens-brand-ink); }
 a:hover { color: var(--sens-brand-dark); text-decoration: none; }
 </style>
+<script defer src="/plugins/econ_judge/assets/scoreboard.js"></script>
 """
 
 # HTML index page (CTFd Pages.format = "html"). Designed to fit inside
