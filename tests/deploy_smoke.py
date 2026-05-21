@@ -19,6 +19,24 @@ import sys
 
 import requests
 
+
+def _load_dotenv() -> None:
+    """Best-effort .env loader (no python-dotenv dep). Values from the shell
+    env take precedence — `os.environ.setdefault` only sets unset keys."""
+    env_path = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), ".env")
+    if not os.path.exists(env_path):
+        return
+    with open(env_path, encoding="utf-8") as f:
+        for line in f:
+            line = line.strip()
+            if not line or line.startswith("#") or "=" not in line:
+                continue
+            k, _, v = line.partition("=")
+            os.environ.setdefault(k.strip(), v.strip().strip('"').strip("'"))
+
+
+_load_dotenv()
+
 BASE = os.environ.get("ECON_JUDGE_URL", "https://econ-judge.onrender.com")
 USERNAME = os.environ.get("SMOKE_USER", "smoke-test-1")
 EMAIL = os.environ.get("SMOKE_EMAIL", "smoke1@econ-judge.local")

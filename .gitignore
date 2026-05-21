@@ -49,3 +49,8 @@ tests/secret/
 
 # Local reference clones (large, read-only)
 reference/
+
+# Local secrets — admin password, etc. Use .env.example as a template.
+.env
+.env.*
+!.env.example

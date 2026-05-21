@@ -65,6 +65,10 @@ Setup:
 3. The first build is ~5 min (clones CTFd, downloads Digital.jar, installs deps).
 4. After deploy, the URL is your CTFd. Admin login uses the auto-generated `CTFD_ADMIN_PASSWORD` from the Render env (visible in the Render dashboard → Environment).
 
+### Local credentials (`.env`)
+
+Copy `.env.example` to `.env` and fill in the admin password (from Render dashboard). The `.env` file is gitignored. Tests like `tests/deploy_smoke.py` auto-load it — no need to `export` env vars manually each run.
+
 ## References
 
 - [hneemann/Digital](https://github.com/hneemann/Digital) — the simulator + its CLI test harness
