@@ -69,6 +69,10 @@ Setup:
 
 Copy `.env.example` to `.env` and fill in the admin password (from Render dashboard). The `.env` file is gitignored. Tests like `tests/deploy_smoke.py` auto-load it — no need to `export` env vars manually each run.
 
+### Demo data toggle
+
+`bin/bootstrap.py` seeds 4 demo teams (`1조`–`4조`) with realistic Solves on every boot. Useful for previewing what a populated scoreboard looks like. For the actual camp day, set **`CTFD_DEMO_DATA=false`** in Render's Environment + redeploy + delete the demo users via `/admin/users` so the production scoreboard starts empty.
+
 ## References
 
 - [hneemann/Digital](https://github.com/hneemann/Digital) — the simulator + its CLI test harness

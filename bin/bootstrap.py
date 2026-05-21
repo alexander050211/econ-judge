@@ -5,6 +5,7 @@ disk."""
 
 from __future__ import annotations
 
+import datetime
 import importlib.util
 import os
 import sys
@@ -12,7 +13,7 @@ import sys
 sys.path.insert(0, "/opt/CTFd")
 
 from CTFd import create_app
-from CTFd.models import Challenges, Pages, Users, db
+from CTFd.models import Challenges, Pages, Solves, Users, db
 from CTFd.utils import get_config, set_config
 
 ADMIN_NAME = os.environ.get("CTFD_ADMIN_NAME", "admin")
@@ -27,6 +28,69 @@ CTF_DESCRIPTION = os.environ.get(
 SMOKE_NAME = "smoke-test-1"
 SMOKE_EMAIL = "smoke1@econ-judge.local"
 SMOKE_PASSWORD = "smoketest-pw-1"
+
+# Demo data toggle — set CTFD_DEMO_DATA=false in Render env for the actual
+# camp day so the production scoreboard starts empty. Default true so
+# fresh deploys are immediately visually populated for review.
+SEED_DEMO_DATA = os.environ.get("CTFD_DEMO_DATA", "true").lower() in (
+    "1",
+    "true",
+    "yes",
+    "on",
+)
+
+# Four demo teams matching the camp's actual 4-team structure. Solves are
+# (challenge_id, minutes_ago_from_now) — spread realistically over a
+# 2-hour window to mimic mid-contest state, with easy challenges first,
+# harder composition challenges later, and progressive difficulty stacks
+# (1조 cleared 16/18, 2조 13/18, 3조 9/18, 4조 4/18).
+DEMO_PASSWORD = "demo1234"
+DEMO_TEAMS = [
+    {
+        "name": "1조",
+        "email": "team1@econ-judge.local",
+        "solves": [
+            (5, 112), (6, 108), (7, 102),       # 연습 (10 pts)
+            (8, 95), (9, 90), (10, 85), (11, 78),  # 미션 (16 pts)
+            (1, 70), (2, 55), (3, 42),          # P1 adders (18 pts)
+            (12, 38), (13, 28),                  # P1 보수/÷3 (14 pts)
+            (4, 65), (15, 32),                   # P2 비교기 (9 pts)
+            (14, 25), (17, 18),                  # P2 대피소/7-seg (11 pts)
+        ],  # total: 78 pts
+    },
+    {
+        "name": "2조",
+        "email": "team2@econ-judge.local",
+        "solves": [
+            (5, 115), (6, 110), (7, 105),
+            (8, 100), (9, 92), (10, 80),
+            (1, 75), (2, 60), (3, 48),
+            (12, 35),
+            (4, 70), (15, 40),
+            (14, 33),
+        ],  # total: 60 pts
+    },
+    {
+        "name": "3조",
+        "email": "team3@econ-judge.local",
+        "solves": [
+            (5, 110), (6, 100), (7, 88),
+            (8, 95), (9, 80),
+            (11, 70),
+            (1, 65), (2, 50),
+            (4, 60),
+        ],  # total: 38 pts
+    },
+    {
+        "name": "4조",
+        "email": "team4@econ-judge.local",
+        "solves": [
+            (5, 108), (6, 95),
+            (8, 75),
+            (1, 50),
+        ],  # total: 12 pts
+    },
+]
 
 # SENS brand palette extracted from sens.snu.ac.kr's CSS. SENS the club uses
 # warm orange/amber, distinct from SNU University's navy. Loaded globally
@@ -397,6 +461,55 @@ def main() -> None:
             print(f"[bootstrap] Seeded {created} challenges")
         else:
             print(f"[bootstrap] All {len(CHALLENGES)} challenges already present")
+
+        if SEED_DEMO_DATA:
+            _seed_demo_data()
+        else:
+            print("[bootstrap] CTFD_DEMO_DATA=false — skipping demo seed")
+
+
+def _seed_demo_data() -> None:
+    """Create the 4 demo teams + their Solves with realistic timestamp spread.
+    Idempotent: skips users that already exist, and skips Solves seeding for
+    users that already have any Solves recorded."""
+    now = datetime.datetime.utcnow()
+    for team in DEMO_TEAMS:
+        user = Users.query.filter_by(name=team["name"]).first()
+        created_user = False
+        if user is None:
+            user = Users(
+                name=team["name"],
+                email=team["email"],
+                password=DEMO_PASSWORD,
+                type="user",
+                verified=True,
+                hidden=False,
+            )
+            db.session.add(user)
+            db.session.commit()  # need user.id below
+            created_user = True
+
+        if Solves.query.filter_by(user_id=user.id).first() is not None:
+            if created_user:
+                print(f"[demo] {team['name']} created (user existed without solves? skipping seed)")
+            continue
+
+        for chal_id, minutes_ago in team["solves"]:
+            solve = Solves(
+                user_id=user.id,
+                team_id=None,
+                challenge_id=chal_id,
+                ip="127.0.0.1",
+                provided="(demo seed).dig",
+            )
+            solve.date = now - datetime.timedelta(minutes=minutes_ago)
+            db.session.add(solve)
+        db.session.commit()
+        print(
+            f"[demo] {team['name']}: "
+            f"{'created + ' if created_user else 'existing user, '}"
+            f"{len(team['solves'])} solves seeded"
+        )
 
 
 if __name__ == "__main__":
