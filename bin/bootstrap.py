@@ -4,17 +4,28 @@ the deploy survive Render free tier's ephemeral disk."""
 
 from __future__ import annotations
 
+import importlib.util
 import os
 import sys
 
 sys.path.insert(0, "/opt/CTFd")
-sys.path.insert(0, "/opt/econ-judge")
 
 from CTFd import create_app
 from CTFd.models import Challenges, Users, db
 from CTFd.utils import get_config, set_config
 from CTFd.utils.crypto import hash_password
-from tests.register_challenges import CHALLENGES
+
+
+def _load_challenges():
+    spec = importlib.util.spec_from_file_location(
+        "register_challenges", "/opt/econ-judge/tests/register_challenges.py"
+    )
+    mod = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(mod)
+    return mod.CHALLENGES
+
+
+CHALLENGES = _load_challenges()
 
 ADMIN_NAME = os.environ.get("CTFD_ADMIN_NAME", "admin")
 ADMIN_EMAIL = os.environ.get("CTFD_ADMIN_EMAIL", "admin@econ-judge.local")
