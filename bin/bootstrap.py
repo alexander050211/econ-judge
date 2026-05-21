@@ -40,6 +40,18 @@ SEED_DEMO_DATA = os.environ.get("CTFD_DEMO_DATA", "true").lower() in (
     "on",
 )
 
+# Freeze (Unix timestamp). When set and the current time is past this value,
+# the /my-score endpoint reports scores frozen at that timestamp and tags
+# the response with frozen=True. Defer: leave unset until the camp day,
+# then set CTFD_FREEZE_AT to (contest_end - desired_freeze_offset_seconds)
+# via Render's Environment panel. Unset (None) = no freeze.
+_freeze_env = os.environ.get("CTFD_FREEZE_AT", "").strip()
+try:
+    FREEZE_AT = int(_freeze_env) if _freeze_env else None
+except ValueError:
+    print(f"[bootstrap] ignoring invalid CTFD_FREEZE_AT={_freeze_env!r}")
+    FREEZE_AT = None
+
 # Four demo teams matching the camp's actual 4-team structure. Solves are
 # (challenge_id, minutes_ago_from_now) — spread realistically over a
 # 2-hour window to mimic mid-contest state, with easy challenges first,
@@ -160,6 +172,42 @@ a:hover { color: var(--sens-brand-dark); text-decoration: none; }
 }
 </style>
 <script defer src="/plugins/econ_judge/assets/scoreboard.js"></script>
+<script>
+/* Inject a "내 점수" navbar link before the Challenges link. The full
+   Scoreboard link gets hidden by CTFd itself once score_visibility=admins
+   (server-side template gate), so this gives mentees a clear destination
+   for their personal progress view. Admins keep their Scoreboard link. */
+(function() {
+  function inject() {
+    if (document.getElementById('econ-my-score-link')) return;
+    var links = document.querySelectorAll('.navbar-nav .nav-link');
+    var chalLink = null;
+    for (var i = 0; i < links.length; i++) {
+      var href = links[i].getAttribute('href') || '';
+      if (href === '/challenges' || href.endsWith('/challenges')) {
+        chalLink = links[i];
+        break;
+      }
+    }
+    if (!chalLink) return;
+    var chalLi = chalLink.parentElement;
+    if (!chalLi || chalLi.tagName !== 'LI') return;
+    var li = document.createElement('li');
+    li.className = 'nav-item';
+    li.id = 'econ-my-score-link';
+    li.innerHTML = '<a class="nav-link" href="/my-score">내 점수</a>';
+    chalLi.parentElement.insertBefore(li, chalLi);
+  }
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', inject);
+  } else {
+    inject();
+  }
+  /* CTFd re-renders the navbar after some auth flows; defensive re-tries */
+  setTimeout(inject, 200);
+  setTimeout(inject, 1000);
+})();
+</script>
 """
 
 # HTML index page (CTFd Pages.format = "html"). Designed to fit inside
@@ -897,6 +945,993 @@ INDEX_CONTENT = """\
 </div>
 """
 
+# /my-score page content — the anti-toxicity scoreboard surrogate. Mentees
+# only see their own score and the (anonymized) leader's score, never a
+# ranked list. Designed by the ui-designer subagent in matching schematic-
+# notebook aesthetic. Calls /api/v1/digital/my-score (econ_judge plugin)
+# which bypasses score_visibility=admins to serve this restricted slice.
+MY_SCORE_CONTENT = """\
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=IBM+Plex+Mono:wght@400;500&display=swap');
+  @import url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable.min.css');
+
+  :root {
+    --sens-brand:      #f5a83d;
+    --sens-brand-dark: #d69336;
+    --sens-brand-ink:  #7a5a1f;
+    --sens-brand-soft: #fff4e0;
+    --paper:           #faf6ef;
+    --paper-rule:      #e8dcc8;
+    --ink-heavy:       #1e1508;
+    --ink-mid:         #4a3b1c;
+    --ink-light:       #9a8060;
+    --border-fine:     #c8b48a;
+    --gap-behind:      #c0392b;
+    --gap-ahead:       #2e7d32;
+  }
+
+  #ms-root {
+    font-family: 'Pretendard Variable', 'Pretendard', sans-serif;
+    background-color: var(--paper);
+    background-image:
+      linear-gradient(var(--paper-rule) 1px, transparent 1px),
+      linear-gradient(90deg, var(--paper-rule) 1px, transparent 1px);
+    background-size: 24px 24px;
+    color: var(--ink-mid);
+    padding: 0;
+    margin: 0;
+    box-sizing: border-box;
+  }
+
+  #ms-root *, #ms-root *::before, #ms-root *::after {
+    box-sizing: inherit;
+  }
+
+  /* ─── OUTER FRAME ─── */
+  .ms-frame {
+    border: 1.5px solid var(--border-fine);
+    outline: 0.5px solid var(--paper-rule);
+    outline-offset: -4px;
+    background: rgba(250, 246, 239, 0.94);
+    max-width: 820px;
+    margin: 32px auto;
+    padding: 0;
+  }
+
+  /* ─── HEADER STRIP ─── */
+  .ms-header {
+    border-bottom: 1.5px solid var(--border-fine);
+    padding: 20px 28px 16px;
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 16px;
+  }
+
+  .ms-header-left {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+
+  .ms-eyebrow {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 10px;
+    font-weight: 500;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--ink-light);
+  }
+
+  .ms-eyebrow::before {
+    content: '// ';
+    color: var(--sens-brand);
+  }
+
+  .ms-title {
+    font-family: 'DM Serif Display', serif;
+    font-size: 36px;
+    line-height: 1;
+    color: var(--ink-heavy);
+    margin: 4px 0 0;
+    letter-spacing: -0.01em;
+  }
+
+  .ms-subtitle {
+    font-size: 13px;
+    color: var(--ink-light);
+    margin-top: 6px;
+    line-height: 1.45;
+    max-width: 380px;
+  }
+
+  .ms-header-right {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 10px;
+    line-height: 1.8;
+    color: var(--ink-light);
+    text-align: right;
+    flex-shrink: 0;
+    padding-top: 2px;
+  }
+
+  .ms-header-right .ms-meta-key {
+    color: var(--ink-light);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+  }
+
+  .ms-header-right .ms-meta-val {
+    color: var(--ink-mid);
+    font-weight: 500;
+  }
+
+  .ms-status-live {
+    color: var(--sens-brand-dark);
+    font-weight: 500;
+  }
+
+  .ms-status-frozen {
+    color: var(--ink-light);
+    font-weight: 500;
+  }
+
+  .ms-frozen-tag {
+    display: inline-block;
+    background: var(--paper-rule);
+    border: 1px solid var(--border-fine);
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 9px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--ink-light);
+    padding: 2px 6px;
+    margin-left: 6px;
+    vertical-align: middle;
+  }
+
+  /* ─── BODY ─── */
+  .ms-body {
+    padding: 24px 28px;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+  }
+
+  /* ─── SKELETON ─── */
+  .ms-skeleton-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+  }
+
+  .ms-skeleton-card {
+    height: 160px;
+    border: 1.5px solid var(--paper-rule);
+    background: linear-gradient(90deg, var(--paper-rule) 25%, #ede8de 50%, var(--paper-rule) 75%);
+    background-size: 200% 100%;
+    animation: ms-shimmer 1.4s ease infinite;
+  }
+
+  .ms-skeleton-bar {
+    height: 38px;
+    border: 1.5px solid var(--paper-rule);
+    background: linear-gradient(90deg, var(--paper-rule) 25%, #ede8de 50%, var(--paper-rule) 75%);
+    background-size: 200% 100%;
+    animation: ms-shimmer 1.4s ease infinite;
+  }
+
+  .ms-skeleton-delta {
+    height: 60px;
+    border: 1.5px solid var(--paper-rule);
+    background: linear-gradient(90deg, var(--paper-rule) 25%, #ede8de 50%, var(--paper-rule) 75%);
+    background-size: 200% 100%;
+    animation: ms-shimmer 1.4s ease infinite;
+  }
+
+  @keyframes ms-shimmer {
+    0%   { background-position: 200% 0; }
+    100% { background-position: -200% 0; }
+  }
+
+  /* ─── ERROR STATE ─── */
+  .ms-error-block {
+    border: 1.5px solid var(--border-fine);
+    padding: 32px 24px;
+    text-align: center;
+  }
+
+  .ms-error-label {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    color: var(--ink-light);
+    margin-bottom: 10px;
+  }
+
+  .ms-error-label::before {
+    content: '// ';
+    color: var(--sens-brand);
+  }
+
+  .ms-error-msg {
+    font-size: 14px;
+    color: var(--ink-mid);
+    margin-bottom: 18px;
+    line-height: 1.5;
+  }
+
+  .ms-retry-btn {
+    display: inline-block;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    padding: 8px 20px;
+    border: 1.5px solid var(--sens-brand);
+    background: var(--sens-brand-soft);
+    color: var(--sens-brand-ink);
+    cursor: pointer;
+    transition: background 0.15s ease;
+  }
+
+  .ms-retry-btn:hover {
+    background: var(--sens-brand);
+    color: var(--ink-heavy);
+  }
+
+  /* ─── EMPTY STATES ─── */
+  .ms-empty-block {
+    border: 1.5px solid var(--paper-rule);
+    padding: 40px 24px;
+    text-align: center;
+  }
+
+  .ms-empty-label {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    color: var(--ink-light);
+    margin-bottom: 10px;
+  }
+
+  .ms-empty-label::before {
+    content: '// ';
+    color: var(--paper-rule);
+  }
+
+  .ms-empty-msg {
+    font-size: 14px;
+    color: var(--ink-light);
+    line-height: 1.5;
+  }
+
+  /* ─── SCORE CARDS ─── */
+  .ms-cards-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0;
+    border: 1.5px solid var(--border-fine);
+  }
+
+  .ms-card {
+    padding: 22px 24px 24px;
+    position: relative;
+    transition: background 0.2s ease;
+  }
+
+  .ms-card-own {
+    background: var(--sens-brand-soft);
+    border-right: 1px solid var(--border-fine);
+  }
+
+  .ms-card-leader {
+    background: var(--paper);
+  }
+
+  .ms-card-label {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 10px;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.14em;
+    margin-bottom: 10px;
+  }
+
+  .ms-card-own .ms-card-label {
+    color: var(--sens-brand-dark);
+  }
+
+  .ms-card-own .ms-card-label::before {
+    content: '// ';
+    color: var(--sens-brand);
+  }
+
+  .ms-card-leader .ms-card-label {
+    color: var(--ink-light);
+  }
+
+  .ms-card-leader .ms-card-label::before {
+    content: '// ';
+    color: var(--paper-rule);
+  }
+
+  .ms-card-team-name {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11px;
+    color: var(--ink-light);
+    margin-bottom: 8px;
+    letter-spacing: 0.04em;
+  }
+
+  .ms-card-own .ms-card-team-name {
+    color: var(--sens-brand-ink);
+  }
+
+  .ms-score-number {
+    font-family: 'DM Serif Display', serif;
+    font-size: 64px;
+    line-height: 1;
+    letter-spacing: -0.02em;
+    color: var(--ink-heavy);
+    transition: color 0.3s ease;
+  }
+
+  .ms-card-leader .ms-score-number {
+    color: var(--ink-light);
+  }
+
+  .ms-score-unit {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 12px;
+    color: var(--ink-light);
+    margin-top: 6px;
+    letter-spacing: 0.06em;
+  }
+
+  .ms-card-own .ms-score-unit {
+    color: var(--sens-brand-ink);
+  }
+
+  .ms-score-fraction {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11px;
+    color: var(--ink-light);
+    opacity: 0.7;
+  }
+
+  /* ─── PROGRESS BAR (own card only) ─── */
+  .ms-progress-wrap {
+    margin-top: 16px;
+  }
+
+  .ms-progress-label {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 9px;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--sens-brand-ink);
+    margin-bottom: 5px;
+    opacity: 0.7;
+  }
+
+  .ms-progress-track {
+    height: 6px;
+    background: var(--paper-rule);
+    border: 1px solid var(--border-fine);
+    position: relative;
+    overflow: hidden;
+  }
+
+  .ms-progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--sens-brand-dark), var(--sens-brand));
+    transition: width 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+    width: 0%;
+  }
+
+  /* ─── DELTA ROW ─── */
+  .ms-delta-row {
+    border: 1.5px solid var(--border-fine);
+    padding: 18px 24px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    background: var(--paper);
+  }
+
+  .ms-delta-label {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    color: var(--ink-light);
+    flex-shrink: 0;
+  }
+
+  .ms-delta-label::before {
+    content: '// ';
+    color: var(--paper-rule);
+  }
+
+  .ms-delta-value {
+    font-family: 'DM Serif Display', serif;
+    font-size: 28px;
+    line-height: 1;
+    letter-spacing: -0.01em;
+  }
+
+  .ms-delta-behind {
+    color: var(--ink-mid);
+  }
+
+  .ms-delta-tied {
+    color: var(--sens-brand-dark);
+  }
+
+  .ms-delta-ahead {
+    color: var(--sens-brand-dark);
+  }
+
+  .ms-delta-sub {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 10px;
+    color: var(--ink-light);
+    text-align: right;
+    flex-shrink: 0;
+    line-height: 1.6;
+  }
+
+  /* ─── FOOTER STRIP ─── */
+  .ms-footer {
+    border-top: 1.5px solid var(--border-fine);
+    padding: 12px 28px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+  }
+
+  .ms-footer-left {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 9px;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--ink-light);
+    line-height: 1.7;
+  }
+
+  .ms-footer-right {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 9px;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--ink-light);
+    text-align: right;
+    line-height: 1.7;
+  }
+
+  .ms-footer-divider {
+    width: 1px;
+    height: 28px;
+    background: var(--border-fine);
+    flex-shrink: 0;
+  }
+
+  /* ─── LEADING STATE: own card accent ─── */
+  .ms-card-own.ms-is-leader {
+    background: linear-gradient(135deg, var(--sens-brand-soft) 0%, #fff8e8 100%);
+  }
+
+  .ms-leading-mark {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 9px;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--sens-brand-dark);
+    border: 1px solid var(--sens-brand);
+    background: rgba(245, 168, 61, 0.12);
+    padding: 2px 6px;
+    display: inline-block;
+    margin-top: 8px;
+  }
+
+  /* ─── RESPONSIVE ─── */
+  @media (max-width: 600px) {
+    .ms-frame {
+      margin: 0;
+      border-left: none;
+      border-right: none;
+    }
+
+    .ms-header {
+      flex-direction: column;
+      gap: 12px;
+      padding: 16px 18px 14px;
+    }
+
+    .ms-header-right {
+      text-align: left;
+      border-top: 1px solid var(--paper-rule);
+      padding-top: 10px;
+      width: 100%;
+    }
+
+    .ms-body {
+      padding: 16px 18px;
+    }
+
+    .ms-cards-row {
+      grid-template-columns: 1fr;
+    }
+
+    .ms-card-own {
+      border-right: none;
+      border-bottom: 1px solid var(--border-fine);
+    }
+
+    .ms-score-number {
+      font-size: 52px;
+    }
+
+    .ms-delta-row {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 8px;
+      padding: 16px 18px;
+    }
+
+    .ms-delta-sub {
+      text-align: left;
+    }
+
+    .ms-title {
+      font-size: 28px;
+    }
+
+    .ms-footer {
+      padding: 10px 18px;
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 6px;
+    }
+
+    .ms-footer-divider {
+      display: none;
+    }
+
+    .ms-footer-right {
+      text-align: left;
+    }
+  }
+</style>
+
+<div id="ms-root">
+  <div class="ms-frame">
+    <div class="ms-header">
+      <div class="ms-header-left">
+        <div class="ms-eyebrow">SNU SENS &middot; 2026 공헌 공드림 캠프</div>
+        <div class="ms-title">내 점수<span id="ms-frozen-badge"></span></div>
+        <div class="ms-subtitle">우리 조의 현재 진행 상황과 선두 조와의 격차를 확인하세요.</div>
+      </div>
+      <div class="ms-header-right">
+        <div><span class="ms-meta-key">DOC</span>&nbsp;&nbsp;<span class="ms-meta-val">E-CON / SCORE-TRACK</span></div>
+        <div><span class="ms-meta-key">STATUS</span>&nbsp;&nbsp;<span id="ms-status-val" class="ms-meta-val ms-status-live">LIVE</span></div>
+        <div><span class="ms-meta-key">REFRESH</span>&nbsp;&nbsp;<span class="ms-meta-val">20s</span></div>
+        <div><span class="ms-meta-key">UPDATED</span>&nbsp;&nbsp;<span class="ms-meta-val" id="ms-last-updated">--:--:--</span></div>
+      </div>
+    </div>
+
+    <div class="ms-body" id="ms-body">
+      <!-- content injected by JS -->
+    </div>
+
+    <div class="ms-footer">
+      <div class="ms-footer-left">
+        <div>DRAWN BY &nbsp; / &nbsp; E-CON 논설 Auto-Grader</div>
+        <div>TOOL &nbsp; CTFd 3.8.5 + Digital.jar v0.31</div>
+      </div>
+      <div class="ms-footer-divider"></div>
+      <div class="ms-footer-right">
+        <div>REV &nbsp; 2026-A</div>
+        <div>SNU SENS &nbsp; / &nbsp; 2026 SUMMER</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+(function() {
+  'use strict';
+
+  var REFRESH_MS = 20000;
+  var API_URL = '/api/v1/digital/my-score';
+
+  var body       = document.getElementById('ms-body');
+  var lastUpdEl  = document.getElementById('ms-last-updated');
+  var statusEl   = document.getElementById('ms-status-val');
+  var frozenBadge = document.getElementById('ms-frozen-badge');
+
+  var state = {
+    ownScore: null,
+    leaderScore: null,
+    totalPoints: 100,
+    frozen: false,
+    teamName: null
+  };
+
+  var animFrame = null;
+  var refreshTimer = null;
+  var isHidden = false;
+
+  /* ── VISIBILITY PAUSE ── */
+  document.addEventListener('visibilitychange', function() {
+    isHidden = document.hidden;
+    if (!isHidden) {
+      clearTimeout(refreshTimer);
+      fetchData();
+    }
+  });
+
+  /* ── TIME FORMATTING ── */
+  function nowHMS() {
+    var d = new Date();
+    var pad = function(n) { return n < 10 ? '0' + n : String(n); };
+    return pad(d.getHours()) + ':' + pad(d.getMinutes()) + ':' + pad(d.getSeconds());
+  }
+
+  /* ── COUNT-UP ANIMATION ── */
+  function animateCount(el, from, to, duration) {
+    if (animFrame) cancelAnimationFrame(animFrame);
+    var start = null;
+    function step(ts) {
+      if (!start) start = ts;
+      var prog = Math.min((ts - start) / duration, 1);
+      var eased = 1 - Math.pow(1 - prog, 3);
+      el.textContent = Math.round(from + (to - from) * eased);
+      if (prog < 1) animFrame = requestAnimationFrame(step);
+      else el.textContent = to;
+    }
+    animFrame = requestAnimationFrame(step);
+  }
+
+  /* ── SKELETON ── */
+  function renderSkeleton() {
+    body.innerHTML =
+      '<div class="ms-skeleton-row">' +
+        '<div class="ms-skeleton-card"></div>' +
+        '<div class="ms-skeleton-card"></div>' +
+      '</div>' +
+      '<div class="ms-skeleton-delta"></div>' +
+      '<div class="ms-skeleton-bar"></div>';
+  }
+
+  /* ── ERROR ── */
+  function renderError(msg) {
+    body.innerHTML =
+      '<div class="ms-error-block">' +
+        '<div class="ms-error-label">오류</div>' +
+        '<div class="ms-error-msg">' + msg + '</div>' +
+        '<button class="ms-retry-btn" id="ms-retry">다시 시도</button>' +
+      '</div>';
+    var btn = document.getElementById('ms-retry');
+    if (btn) btn.addEventListener('click', function() { fetchData(); });
+  }
+
+  /* ── EMPTY STATES ── */
+  function renderNoTeam() {
+    body.innerHTML =
+      '<div class="ms-empty-block">' +
+        '<div class="ms-empty-label">팀 정보 없음</div>' +
+        '<div class="ms-empty-msg">팀에 배정되지 않았습니다. 운영진에게 문의하세요.</div>' +
+      '</div>';
+  }
+
+  function renderNoLeader() {
+    /* we still have team data — show own score, no leader section */
+    buildScoreView(true);
+  }
+
+  /* ── MAIN SCORE VIEW ── */
+  function buildScoreView(leaderAbsent) {
+    var own     = state.ownScore;
+    var leader  = leaderAbsent ? null : state.leaderScore;
+    var total   = state.totalPoints;
+    var name    = state.teamName || '우리 조';
+
+    var gap     = leader !== null ? leader - own : null;
+    var isTied  = gap === 0;
+    var isLeader = gap !== null && gap < 0;
+
+    /* ── OWN CARD ── */
+    var ownCardClass = 'ms-card ms-card-own' + (isLeader ? ' ms-is-leader' : '');
+    var leadingMark  = isLeader
+      ? '<div class="ms-leading-mark">선두</div>'
+      : '';
+    var ownPct = total > 0 ? Math.round((own / total) * 100) : 0;
+
+    var ownCard =
+      '<div class="' + ownCardClass + '">' +
+        '<div class="ms-card-label">우리 조</div>' +
+        '<div class="ms-card-team-name">' + escHtml(name) + '</div>' +
+        '<div class="ms-score-number" id="ms-own-num">0</div>' +
+        '<div class="ms-score-unit">점 &nbsp;<span class="ms-score-fraction">/ ' + total + '</span></div>' +
+        leadingMark +
+        '<div class="ms-progress-wrap">' +
+          '<div class="ms-progress-label">달성률</div>' +
+          '<div class="ms-progress-track">' +
+            '<div class="ms-progress-fill" id="ms-prog-fill"></div>' +
+          '</div>' +
+        '</div>' +
+      '</div>';
+
+    /* ── LEADER CARD ── */
+    var leaderCard;
+    if (leaderAbsent) {
+      leaderCard =
+        '<div class="ms-card ms-card-leader">' +
+          '<div class="ms-card-label">선두 조</div>' +
+          '<div class="ms-empty-msg" style="font-size:13px;color:var(--ink-light);margin-top:16px;">' +
+            '아직 점수를 기록한 조가 없습니다.' +
+          '</div>' +
+        '</div>';
+    } else if (isLeader) {
+      leaderCard =
+        '<div class="ms-card ms-card-leader">' +
+          '<div class="ms-card-label">선두 조</div>' +
+          '<div class="ms-card-team-name" style="font-style:italic;">익명</div>' +
+          '<div class="ms-score-number" id="ms-lead-num" style="color:var(--ink-light);">0</div>' +
+          '<div class="ms-score-unit" style="color:var(--ink-light);">점 &nbsp;<span class="ms-score-fraction">/ ' + total + '</span></div>' +
+        '</div>';
+    } else {
+      leaderCard =
+        '<div class="ms-card ms-card-leader">' +
+          '<div class="ms-card-label">선두 조</div>' +
+          '<div class="ms-card-team-name" style="font-style:italic;">익명</div>' +
+          '<div class="ms-score-number" id="ms-lead-num" style="color:var(--ink-light);">0</div>' +
+          '<div class="ms-score-unit" style="color:var(--ink-light);">점 &nbsp;<span class="ms-score-fraction">/ ' + total + '</span></div>' +
+        '</div>';
+    }
+
+    /* ── DELTA ROW ── */
+    var deltaHTML;
+    if (leaderAbsent) {
+      deltaHTML = '';
+    } else if (isTied) {
+      deltaHTML =
+        '<div class="ms-delta-row">' +
+          '<div class="ms-delta-label">선두까지</div>' +
+          '<div class="ms-delta-value ms-delta-tied">동점</div>' +
+          '<div class="ms-delta-sub">선두 조와 같은 점수입니다.</div>' +
+        '</div>';
+    } else if (isLeader) {
+      var aheadBy = Math.abs(gap);
+      deltaHTML =
+        '<div class="ms-delta-row">' +
+          '<div class="ms-delta-label">격차</div>' +
+          '<div class="ms-delta-value ms-delta-ahead" id="ms-delta-num">+0점 앞서고 있음</div>' +
+          '<div class="ms-delta-sub">현재 선두입니다.<br>계속 유지하세요.</div>' +
+        '</div>';
+    } else {
+      deltaHTML =
+        '<div class="ms-delta-row">' +
+          '<div class="ms-delta-label">선두까지</div>' +
+          '<div class="ms-delta-value ms-delta-behind" id="ms-delta-num">-0점</div>' +
+          '<div class="ms-delta-sub">선두 조까지의 점수 차이입니다.<br>최대 ' + total + '점 도전 중.</div>' +
+        '</div>';
+    }
+
+    body.innerHTML =
+      '<div class="ms-cards-row">' +
+        ownCard + leaderCard +
+      '</div>' +
+      deltaHTML;
+
+    /* ── ANIMATE NUMBERS ── */
+    var ownEl = document.getElementById('ms-own-num');
+    if (ownEl) animateCount(ownEl, 0, own, 600);
+
+    var leadEl = document.getElementById('ms-lead-num');
+    if (leadEl && leader !== null) {
+      animateCount(leadEl, 0, leader, 600);
+    }
+
+    /* ── PROGRESS BAR ── */
+    var fill = document.getElementById('ms-prog-fill');
+    if (fill) {
+      setTimeout(function() {
+        fill.style.width = ownPct + '%';
+      }, 60);
+    }
+
+    /* ── DELTA TEXT ── */
+    if (!leaderAbsent && !isTied) {
+      var deltaEl = document.getElementById('ms-delta-num');
+      if (deltaEl) {
+        if (isLeader) {
+          var aheadBy = Math.abs(gap);
+          var start2 = 0;
+          var t0 = null;
+          (function anim(ts) {
+            if (!t0) t0 = ts;
+            var p = Math.min((ts - t0) / 600, 1);
+            var e = 1 - Math.pow(1 - p, 3);
+            var val = Math.round(start2 + aheadBy * e);
+            deltaEl.textContent = '+' + val + '점 앞서고 있음';
+            if (p < 1) requestAnimationFrame(anim);
+            else deltaEl.textContent = '+' + aheadBy + '점 앞서고 있음';
+          })(performance.now());
+        } else {
+          var behindBy = gap;
+          var t0b = null;
+          (function animB(ts) {
+            if (!t0b) t0b = ts;
+            var p = Math.min((ts - t0b) / 600, 1);
+            var e = 1 - Math.pow(1 - p, 3);
+            var val = Math.round(behindBy * e);
+            deltaEl.textContent = '-' + val + '점';
+            if (p < 1) requestAnimationFrame(animB);
+            else deltaEl.textContent = '-' + behindBy + '점';
+          })(performance.now());
+        }
+      }
+    }
+  }
+
+  /* ── SOFT REFRESH (numbers only, no full re-render) ── */
+  function softUpdate(own, leader, total) {
+    var ownEl = document.getElementById('ms-own-num');
+    if (ownEl) {
+      var prev = parseInt(ownEl.textContent) || 0;
+      if (prev !== own) animateCount(ownEl, prev, own, 600);
+    }
+
+    var leadEl = document.getElementById('ms-lead-num');
+    if (leadEl && leader !== null) {
+      var prevL = parseInt(leadEl.textContent) || 0;
+      if (prevL !== leader) animateCount(leadEl, prevL, leader, 600);
+    }
+
+    var fill = document.getElementById('ms-prog-fill');
+    if (fill && total > 0) {
+      fill.style.width = Math.round((own / total) * 100) + '%';
+    }
+
+    var gap = leader !== null ? leader - own : null;
+    if (gap !== null) {
+      var deltaEl = document.getElementById('ms-delta-num');
+      if (deltaEl) {
+        var isLeader = gap < 0;
+        var isTied   = gap === 0;
+        if (!isTied) {
+          var target = Math.abs(gap);
+          var prev2 = parseInt(deltaEl.textContent.replace(/[^0-9]/g, '')) || 0;
+          var t0c = null;
+          (function animC(ts) {
+            if (!t0c) t0c = ts;
+            var p = Math.min((ts - t0c) / 600, 1);
+            var e = 1 - Math.pow(1 - p, 3);
+            var val = Math.round(prev2 + (target - prev2) * e);
+            if (isLeader) deltaEl.textContent = '+' + val + '점 앞서고 있음';
+            else          deltaEl.textContent = '-' + val + '점';
+            if (p < 1) requestAnimationFrame(animC);
+            else {
+              if (isLeader) deltaEl.textContent = '+' + target + '점 앞서고 있음';
+              else          deltaEl.textContent = '-' + target + '점';
+            }
+          })(performance.now());
+        }
+      }
+    }
+  }
+
+  var firstRender = true;
+
+  /* ── FETCH ── */
+  function fetchData() {
+    if (firstRender) renderSkeleton();
+
+    fetch(API_URL, { credentials: 'same-origin' })
+      .then(function(res) {
+        if (res.status === 401) throw { type: 'auth' };
+        if (!res.ok) throw { type: 'http', status: res.status };
+        return res.json();
+      })
+      .then(function(json) {
+        var d = json.data;
+
+        /* update frozen state */
+        var frozen = d.frozen || false;
+        state.frozen = frozen;
+        frozenBadge.innerHTML = frozen
+          ? '<span class="ms-frozen-tag">현황 동결</span>'
+          : '';
+        if (frozen) {
+          statusEl.textContent = 'FROZEN';
+          statusEl.className = 'ms-meta-val ms-status-frozen';
+        } else {
+          statusEl.textContent = 'LIVE';
+          statusEl.className = 'ms-meta-val ms-status-live';
+        }
+
+        lastUpdEl.textContent = nowHMS();
+
+        /* no team */
+        if (!d.team) {
+          firstRender = true;
+          renderNoTeam();
+          scheduleNext();
+          return;
+        }
+
+        var ownScore    = d.team.score;
+        var teamName    = d.team.name;
+        var leaderScore = d.leader ? d.leader.score : null;
+        var total       = d.total_points || 100;
+
+        if (firstRender ||
+            state.teamName !== teamName ||
+            state.totalPoints !== total ||
+            leaderScore === null !== (state.leaderScore === null)) {
+          /* structural change — full re-render */
+          state.ownScore    = ownScore;
+          state.leaderScore = leaderScore;
+          state.totalPoints = total;
+          state.teamName    = teamName;
+          if (!d.leader) {
+            renderNoLeader();
+          } else {
+            buildScoreView(false);
+          }
+          firstRender = false;
+        } else {
+          /* soft update — just animate numbers */
+          state.ownScore    = ownScore;
+          state.leaderScore = leaderScore;
+          state.totalPoints = total;
+          softUpdate(ownScore, leaderScore, total);
+        }
+
+        scheduleNext();
+      })
+      .catch(function(err) {
+        lastUpdEl.textContent = 'ERROR';
+        if (err && err.type === 'auth') {
+          renderError('로그인이 필요합니다. 페이지를 새로고침하여 다시 로그인하세요.');
+        } else {
+          renderError('데이터를 불러오지 못했습니다. 네트워크 상태를 확인하세요.');
+        }
+        firstRender = true;
+        scheduleNext();
+      });
+  }
+
+  function scheduleNext() {
+    clearTimeout(refreshTimer);
+    if (!isHidden) {
+      refreshTimer = setTimeout(function() {
+        fetchData();
+      }, REFRESH_MS);
+    }
+  }
+
+  function escHtml(s) {
+    return String(s)
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/'/g, '&#39;');
+  }
+
+  /* ── BOOT ── */
+  fetchData();
+})();
+</script>
+"""
+
 
 def _load_challenges():
     spec = importlib.util.spec_from_file_location(
@@ -925,8 +1960,13 @@ def main() -> None:
         set_config("default_locale", "ko")
         set_config("challenge_visibility", "public")
         set_config("registration_visibility", "public")
-        set_config("score_visibility", "public")
+        # Score visibility is admin-only to prevent the "we're 4th of 4"
+        # demoralization. Mentees see only their own + (anonymized) leader's
+        # score via /my-score, served by the econ_judge plugin endpoint that
+        # bypasses this visibility lock.
+        set_config("score_visibility", "admins")
         set_config("account_visibility", "public")
+        set_config("freeze", FREEZE_AT)
         set_config("challenge_ratings", "disabled")
         # `Configs.social_shares` in templates is a @property that calls
         # `get_config("social_shares", default=True)`. A NULL/missing row makes
@@ -954,8 +1994,8 @@ def main() -> None:
                 {
                     "challenge_category_order": (
                         "(a, b) => { const o = {"
-                        "'Project 1': 0, 'Project 2': 1, "
-                        "'연습': 2, '미션': 3"
+                        "'연습': 0, '미션': 1, "
+                        "'Project 1': 2, 'Project 2': 3"
                         "}; return (o[a] ?? 99) - (o[b] ?? 99); }"
                     ),
                     "challenge_order": "(a, b) => a.id - b.id",
@@ -1043,27 +2083,69 @@ def main() -> None:
             db.session.commit()
             print("[bootstrap] Index page synced")
 
-        existing_ids = {c.id for c in Challenges.query.all()}
-        created = 0
-        for cid, name, category, value, description, _rows in CHALLENGES:
-            if cid in existing_ids:
-                continue
-            chal = Challenges(
-                name=name,
-                category=category,
-                value=value,
-                description=description,
-                state="visible",
-                type="digital",
-            )
-            chal.id = cid
-            db.session.add(chal)
-            created += 1
-        if created:
+        # /my-score page — auth-required, mentee-only personal progress view.
+        ms_page = Pages.query.filter_by(route="my-score").first()
+        if ms_page is None:
+            db.session.add(Pages(
+                title="내 점수",
+                route="my-score",
+                content=MY_SCORE_CONTENT,
+                draft=False,
+                hidden=True,  # hidden from the public Pages menu — accessed via /my-score
+                auth_required=True,
+                format="html",
+            ))
             db.session.commit()
-            print(f"[bootstrap] Seeded {created} challenges")
+            print("[bootstrap] /my-score page created")
         else:
-            print(f"[bootstrap] All {len(CHALLENGES)} challenges already present")
+            ms_page.title = "내 점수"
+            ms_page.content = MY_SCORE_CONTENT
+            ms_page.format = "html"
+            ms_page.auth_required = True
+            ms_page.hidden = True
+            db.session.commit()
+            print("[bootstrap] /my-score page synced")
+
+        # Challenges are upserted on every boot — source of truth is
+        # tests/register_challenges.py. The HA/FA category move (P1 → 연습)
+        # and description annotations need to apply to existing rows from
+        # previous deploys, not just newly-created ones.
+        existing_chals = {c.id: c for c in Challenges.query.all()}
+        created = 0
+        updated = 0
+        for cid, name, category, value, description, _rows in CHALLENGES:
+            chal = existing_chals.get(cid)
+            if chal is None:
+                chal = Challenges(
+                    name=name,
+                    category=category,
+                    value=value,
+                    description=description,
+                    state="visible",
+                    type="digital",
+                )
+                chal.id = cid
+                db.session.add(chal)
+                created += 1
+                continue
+            dirty = False
+            if chal.name != name:
+                chal.name = name; dirty = True
+            if chal.category != category:
+                chal.category = category; dirty = True
+            if chal.value != value:
+                chal.value = value; dirty = True
+            if chal.description != description:
+                chal.description = description; dirty = True
+            if chal.state != "visible":
+                chal.state = "visible"; dirty = True
+            if dirty:
+                updated += 1
+        if created or updated:
+            db.session.commit()
+            print(f"[bootstrap] Challenges: {created} created, {updated} updated")
+        else:
+            print(f"[bootstrap] All {len(CHALLENGES)} challenges already in sync")
 
         if SEED_DEMO_DATA:
             _seed_demo_data()

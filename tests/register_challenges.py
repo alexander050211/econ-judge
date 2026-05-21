@@ -19,53 +19,72 @@ import requests
 
 CHALLENGES = [
     # id, name, category, value, description, secret-tests-row-count
-    (1, "P1 A-1 Half Adder", "Project 1", 4,
-     "Two-bit inputs P, Q → sum S and carry-out C_out. 4 testcases.", 4),
-    (2, "P1 A-2 Full Adder", "Project 1", 7,
-     "Three-bit inputs P, Q, C_in → sum S and carry-out C_out. 8 testcases.", 8),
+    #
+    # Pedagogical ramp: 연습 problems are the on-ramp AND the building blocks
+    # for Project problems. HA (id 1) and FA (id 2) used to live in P1 but
+    # are now in 연습 — they're literally the foundation circuits, and the
+    # P1 grader auto-seeds canonical copies into the harder problems' tempdirs
+    # so solving the project problems doesn't require these to be solved first.
+    # Description annotations make that link explicit.
+    (1, "연습 #1 Half Adder", "연습", 4,
+     "두 비트 입력 P, Q → 합 S와 받아올림 C_out. 4 testcases. "
+     "💡 이 회로는 P1 3비트 가산기 / P1 Full Wiring의 부품으로 자동 활용됩니다.",
+     4),
+    (2, "연습 #2 Full Adder", "연습", 7,
+     "세 비트 입력 P, Q, C_in → 합 S와 받아올림 C_out. 8 testcases. "
+     "💡 이 회로는 P1 3비트 가산기 / P1 Full Wiring의 부품으로 자동 활용됩니다.",
+     8),
     (3, "P1 A-3 3-bit Ripple Adder", "Project 1", 7,
-     "Two 3-bit inputs X, Y → 4-bit sum S3..S0. 64 testcases.", 64),
+     "두 3비트 입력 X, Y → 4비트 합 S3..S0. 64 testcases. "
+     "💡 연습 #1 (HA) / 연습 #2 (FA) 회로가 표준 구현으로 자동 제공되므로, "
+     "두 연습 문제를 먼저 풀지 않아도 이 문제를 풀 수 있습니다.",
+     64),
     (4, "P2 A-1 2-bit Comparator", "Project 2", 6,
-     "Two 2-bit inputs A, B → G/L/E (greater/less/equal). 16 testcases.", 16),
-    (5, "연습 #1 Truth Table → Boolean", "연습", 3,
-     "Implement the truth table {00→1, 01→0, 10→0, 11→1} (XNOR). 4 testcases.", 4),
-    (6, "연습 #2 3-input AND", "연습", 3,
-     "Build a 3-input AND using only 2-input AND gates. 8 testcases.", 8),
-    (7, "연습 #3 2:1 MUX", "연습", 4,
-     "Y = X0 if S=0 else X1. 8 testcases.", 8),
+     "두 2비트 입력 A, B → G/L/E (greater/less/equal). 16 testcases.", 16),
+    (5, "연습 #3 Truth Table → Boolean", "연습", 3,
+     "진리표 {00→1, 01→0, 10→0, 11→1} (XNOR) 구현. 4 testcases.", 4),
+    (6, "연습 #4 3-input AND", "연습", 3,
+     "2-입력 AND 게이트만으로 3-입력 AND 구성. 8 testcases.", 8),
+    (7, "연습 #5 2:1 MUX", "연습", 4,
+     "Y = X0 if S=0 else X1. 8 testcases. "
+     "💡 멀티플렉서 구성은 P2 B 대피소 배정의 핵심 패턴입니다.",
+     8),
     (8, "미션 T1#1 NOR → NOT", "미션", 2,
-     "Realize NOT using NOR gates only (gate budget honor-system). 2 testcases.", 2),
+     "NOR 게이트만으로 NOT 구현 (게이트 수는 명예 제도). 2 testcases.", 2),
     (9, "미션 T1#2 NOR → AND", "미션", 3,
-     "Realize AND using NOR gates only (gate budget honor-system). 4 testcases.", 4),
+     "NOR 게이트만으로 AND 구현 (게이트 수는 명예 제도). 4 testcases.", 4),
     (10, "미션 T1#3 NOR → XOR", "미션", 5,
-     "Realize XOR using NOR gates only (gate budget honor-system). 4 testcases.", 4),
+     "NOR 게이트만으로 XOR 구현 (게이트 수는 명예 제도). 4 testcases.", 4),
     (11, "미션 T2#4 Leap Year Detector (2000-2099)", "미션", 6,
-     "BCD inputs A3..A0 (tens), B3..B0 (ones) → L. Only BCD-valid digits "
-     "(both ≤ 9) are tested. 100 testcases.", 100),
+     "BCD 입력 A3..A0 (10의 자리), B3..B0 (1의 자리) → L. "
+     "BCD 유효 자릿수 (둘 다 ≤ 9)만 채점. 100 testcases.", 100),
     (12, "P1 B 보수 계산기", "Project 1", 7,
-     "S3..S0 → R2..R0 where R = max(7-S, 0) clamped to 3 bits. 16 testcases.", 16),
+     "S3..S0 → R2..R0, 여기서 R = max(7-S, 0)를 3비트로 클램프. 16 testcases. "
+     "💡 P1 A 시리즈의 표준 구현이 부품으로 자동 제공됩니다.",
+     16),
     (13, "P1 C ÷3 Round-up", "Project 1", 7,
-     "R2..R0 → T1, T0 where T = ⌈R/3⌉. 8 testcases.", 8),
+     "R2..R0 → T1, T0, 여기서 T = ⌈R/3⌉. 8 testcases.", 8),
     (14, "P2 B 대피소 배정", "Project 2", 6,
-     "G, L, E, C2..C0 → Y (0=A, 1=B). Only one-hot G/L/E rows are tested. "
-     "24 testcases.", 24),
+     "G, L, E, C2..C0 → Y (0=A, 1=B). G/L/E one-hot 행만 채점. 24 testcases. "
+     "💡 연습 #5 (2:1 MUX) 패턴이 이 문제 풀이의 핵심 힌트입니다.",
+     24),
     (15, "P2 A-2 2,3-bit Comparator", "Project 2", 3,
-     "A1, A0 (2-bit) vs B2..B0 (3-bit) → G, L, E. A is zero-padded to 3 bits. "
-     "Canonical P2 A-1 is seeded so this can be solved before P2 A-1. "
+     "A1, A0 (2비트) vs B2..B0 (3비트) → G, L, E. A는 3비트로 zero-pad. "
+     "P2 A-1 표준 구현이 부품으로 자동 제공되므로 P2 A-1 전에도 풀 수 있습니다. "
      "32 testcases.", 32),
     (16, "P1 Full Wiring (X, Y → T1, T0)", "Project 1", 10,
-     "X2..X0, Y2..Y0 → T1, T0 — full pipeline ⌈max(7-(X+Y), 0)/3⌉. "
-     "All P1 sub-circuits (A1, A2, A3, B, C) are seeded as canonical, so "
-     "this can be solved standalone. 64 testcases.", 64),
+     "X2..X0, Y2..Y0 → T1, T0 — 전체 파이프라인 ⌈max(7-(X+Y), 0)/3⌉. 64 testcases. "
+     "💡 P1의 모든 부품 회로 (연습 #1 HA, 연습 #2 FA, P1 A-3 3비트 가산기, "
+     "P1 B 보수, P1 C ÷3) 표준 구현이 자동 제공되므로 독립적으로 풀 수 있습니다.",
+     64),
     (17, "P2 C 7-segment Driver", "Project 2", 5,
-     "Y → a, b, c, d, e, f, g (Out pins driving the camp's 7-seg display). "
-     "Y=0 lights 'a' (a b c d e g); Y=1 lights 'b' (c d e f g). "
-     "2 testcases.", 2),
+     "Y → a, b, c, d, e, f, g (캠프 7-seg 디스플레이 Out 핀). "
+     "Y=0이면 'a' 점등 (a b c d e g); Y=1이면 'b' 점등 (c d e f g). 2 testcases.", 2),
     (18, "P2 Full Wiring (A, B, C → 7-seg)", "Project 2", 12,
-     "A1 A0 (2-bit), B2..B0 (3-bit), C2..C0 (3-bit) → a..g. Full pipeline "
-     "through A1, A2, B, C. 256 testcases. NOTE: needs canonical "
-     "C_7segment출력기.dig with Out pins (deferred to 2026 skeleton "
-     "authoring); will surface a grader-misconfigured error until present.",
+     "A1 A0 (2비트), B2..B0 (3비트), C2..C0 (3비트) → a..g. P2 A1, A2, B, C 전체 "
+     "파이프라인. 256 testcases. NOTE: 표준 C_7segment출력기.dig (Out 핀 포함) "
+     "필요 — 2026 skeleton 작성 시 추가 예정. 그 전까지는 grader-misconfigured "
+     "에러로 응답함.",
      256),
 ]
 
