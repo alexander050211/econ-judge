@@ -16,6 +16,7 @@ skeleton)."""
 import os
 import re
 import sys
+import time
 
 import requests
 
@@ -89,15 +90,25 @@ def authed_session() -> requests.Session:
 
 
 def submit(s: requests.Session, cid: int, path: str) -> dict:
+    """Submit with retry on transient connection drops (Render free tier
+    occasionally closes connections mid-sequence under sequential load)."""
     abs_path = os.path.abspath(path)
-    with open(abs_path, "rb") as f:
-        r = s.post(
-            f"{BASE}/api/v1/digital/challenges/{cid}/attempt",
-            files={"file": (os.path.basename(abs_path), f, "application/octet-stream")},
-            timeout=60,
-        )
-    r.raise_for_status()
-    return r.json()["data"]
+    last_exc = None
+    for attempt in range(3):
+        try:
+            with open(abs_path, "rb") as f:
+                r = s.post(
+                    f"{BASE}/api/v1/digital/challenges/{cid}/attempt",
+                    files={"file": (os.path.basename(abs_path), f, "application/octet-stream")},
+                    timeout=60,
+                )
+            r.raise_for_status()
+            return r.json()["data"]
+        except (requests.exceptions.ConnectionError, requests.exceptions.Timeout) as exc:
+            last_exc = exc
+            if attempt < 2:
+                time.sleep(2 * (attempt + 1))
+    raise last_exc
 
 
 def main() -> int:
