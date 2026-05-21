@@ -7,10 +7,14 @@
 @import url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable.min.css');
 
 #econ-submit-root {
-  --navy: #003876;
-  --navy-ink: #002553;
-  --navy-soft: rgba(0, 56, 118, 0.05);
-  --navy-line: rgba(0, 56, 118, 0.22);
+  /* SENS brand — see bin/bootstrap.py THEME_HEADER_CSS for the global tokens.
+     Re-declared here so the submission card stays consistent even if the
+     theme_header CSS hasn't loaded yet (e.g., modal opening before <head>). */
+  --brand: #f5a83d;
+  --brand-dark: #d69336;
+  --brand-ink: #7a5a1f;
+  --brand-soft: rgba(245, 168, 61, 0.07);
+  --brand-line: rgba(245, 168, 61, 0.32);
   --pass: #047857;
   --pass-soft: #ecfdf5;
   --pass-line: #a7f3d0;
@@ -38,7 +42,7 @@
 #econ-submit-root .dropzone {
   display: block;
   position: relative;
-  border: 1.5px dashed var(--navy-line);
+  border: 1.5px dashed var(--brand-line);
   border-radius: 14px;
   background: var(--surface);
   padding: 40px 24px 36px;
@@ -47,12 +51,12 @@
   transition: border-color 180ms ease, background 180ms ease, transform 180ms ease;
 }
 #econ-submit-root .dropzone:hover {
-  background: var(--navy-soft);
-  border-color: var(--navy);
+  background: var(--brand-soft);
+  border-color: var(--brand);
 }
 #econ-submit-root .dropzone.is-active {
-  background: var(--navy-soft);
-  border-color: var(--navy);
+  background: var(--brand-soft);
+  border-color: var(--brand);
   border-style: solid;
   transform: scale(0.998);
 }
@@ -69,7 +73,7 @@
   width: 44px;
   height: 44px;
   border-radius: 12px;
-  background: var(--navy);
+  background: var(--brand);
   color: #fff;
   margin-bottom: 14px;
 }
@@ -83,7 +87,7 @@
 }
 #econ-submit-root .dropzone .headline em {
   font-style: normal;
-  color: var(--navy);
+  color: var(--brand);
   text-decoration: underline;
   text-underline-offset: 3px;
   text-decoration-thickness: 1.5px;
@@ -106,7 +110,7 @@
   display: flex;
   align-items: center;
   gap: 14px;
-  border: 1px solid var(--navy-line);
+  border: 1px solid var(--brand-line);
   background: var(--surface);
   border-radius: 12px;
   padding: 14px 16px;
@@ -117,7 +121,7 @@
   width: 40px;
   height: 40px;
   border-radius: 8px;
-  background: var(--navy);
+  background: var(--brand);
   color: #fff;
   display: flex;
   align-items: center;
@@ -172,14 +176,14 @@
   gap: 14px;
   padding: 18px 20px;
   border-radius: 12px;
-  background: var(--navy-soft);
-  border: 1px solid var(--navy-line);
+  background: var(--brand-soft);
+  border: 1px solid var(--brand-line);
 }
 #econ-submit-root .grading .spinner {
   width: 22px;
   height: 22px;
-  border: 2.5px solid var(--navy-line);
-  border-top-color: var(--navy);
+  border: 2.5px solid var(--brand-line);
+  border-top-color: var(--brand);
   border-radius: 50%;
   animation: econ-spin 780ms linear infinite;
   flex-shrink: 0;
@@ -187,7 +191,7 @@
 #econ-submit-root .grading .copy {
   font-size: 14px;
   font-weight: 500;
-  color: var(--navy-ink);
+  color: var(--brand-ink);
 }
 #econ-submit-root .grading .copy .sub {
   display: block;
@@ -310,8 +314,8 @@
   width: 100%;
   padding: 10px 16px;
   background: transparent;
-  border: 1px solid var(--navy-line);
-  color: var(--navy);
+  border: 1px solid var(--brand-line);
+  color: var(--brand);
   border-radius: 10px;
   font-size: 13.5px;
   font-weight: 500;
@@ -321,8 +325,8 @@
   letter-spacing: -0.005em;
 }
 #econ-submit-root .resubmit:hover {
-  background: var(--navy-soft);
-  border-color: var(--navy);
+  background: var(--brand-soft);
+  border-color: var(--brand);
 }
 </style>
 
