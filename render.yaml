@@ -26,3 +26,9 @@ services:
         value: econ-judge
       - key: SECRET_KEY
         generateValue: true
+      # Per-grade timeout — Render free tier's 0.5 vCPU adds 5–10s of JVM
+      # cold-start overhead on top of Digital's testcase execution. 45s
+      # comfortably covers chal 3 (64 rows + 2 canonicals) and chal 16 (64
+      # rows + 5 canonicals) even when the service is freshly woken.
+      - key: ECON_JUDGE_TIMEOUT
+        value: "45"

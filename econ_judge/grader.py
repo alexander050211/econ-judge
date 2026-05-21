@@ -13,7 +13,7 @@ CANONICAL_DIR = Path(
     os.environ.get("ECON_JUDGE_CANONICAL_DIR", REPO_ROOT / "canonical")
 )
 JAVA = os.environ.get("ECON_JUDGE_JAVA", "java")
-TIMEOUT_SEC = int(os.environ.get("ECON_JUDGE_TIMEOUT", "15"))
+TIMEOUT_SEC = int(os.environ.get("ECON_JUDGE_TIMEOUT", "45"))
 
 # Per-challenge canonical sub-circuit filenames seeded next to the submission
 # so Digital can resolve sub-circuit imports without the mentee needing to
