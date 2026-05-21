@@ -1,6 +1,379 @@
 {% extends "challenge.html" %}
 
 {% block input %}
-  <input id="challenge-id" class="challenge-id" type="hidden" value="{{ challenge.id }}">
-  <input id="challenge-file" type="file" accept=".dig" class="form-control">
+<input id="challenge-id" class="challenge-id" type="hidden" value="{{ challenge.id }}">
+
+<style>
+@import url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable.min.css');
+
+#econ-submit-root {
+  --navy: #003876;
+  --navy-ink: #002553;
+  --navy-soft: rgba(0, 56, 118, 0.05);
+  --navy-line: rgba(0, 56, 118, 0.22);
+  --pass: #047857;
+  --pass-soft: #ecfdf5;
+  --pass-line: #a7f3d0;
+  --warn: #b45309;
+  --warn-soft: #fffbeb;
+  --warn-line: #fde68a;
+  --fail: #b91c1c;
+  --fail-soft: #fef2f2;
+  --fail-line: #fecaca;
+  --ink: #0f172a;
+  --muted: #64748b;
+  --surface: #ffffff;
+  --line: #e2e8f0;
+
+  font-family: 'Pretendard Variable', Pretendard, -apple-system, BlinkMacSystemFont,
+    'Apple SD Gothic Neo', 'Malgun Gothic', sans-serif;
+  color: var(--ink);
+  line-height: 1.55;
+  font-feature-settings: 'tnum' on, 'cv11' on;
+}
+
+#econ-submit-root [data-state][hidden] { display: none; }
+
+/* ---------- Drop zone ---------- */
+#econ-submit-root .dropzone {
+  display: block;
+  position: relative;
+  border: 1.5px dashed var(--navy-line);
+  border-radius: 14px;
+  background: var(--surface);
+  padding: 40px 24px 36px;
+  text-align: center;
+  cursor: pointer;
+  transition: border-color 180ms ease, background 180ms ease, transform 180ms ease;
+}
+#econ-submit-root .dropzone:hover {
+  background: var(--navy-soft);
+  border-color: var(--navy);
+}
+#econ-submit-root .dropzone.is-active {
+  background: var(--navy-soft);
+  border-color: var(--navy);
+  border-style: solid;
+  transform: scale(0.998);
+}
+#econ-submit-root .dropzone input[type="file"] {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  cursor: pointer;
+}
+#econ-submit-root .dropzone .glyph {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  border-radius: 12px;
+  background: var(--navy);
+  color: #fff;
+  margin-bottom: 14px;
+}
+#econ-submit-root .dropzone .glyph svg { display: block; }
+#econ-submit-root .dropzone .headline {
+  font-size: 15px;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  color: var(--ink);
+  margin-bottom: 4px;
+}
+#econ-submit-root .dropzone .headline em {
+  font-style: normal;
+  color: var(--navy);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  text-decoration-thickness: 1.5px;
+}
+#econ-submit-root .dropzone .subline {
+  font-size: 12.5px;
+  color: var(--muted);
+  letter-spacing: -0.005em;
+}
+
+#econ-submit-root .file-error {
+  margin-top: 10px;
+  font-size: 13px;
+  color: var(--fail);
+  text-align: center;
+}
+
+/* ---------- File card (ready state) ---------- */
+#econ-submit-root .filecard {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  border: 1px solid var(--navy-line);
+  background: var(--surface);
+  border-radius: 12px;
+  padding: 14px 16px;
+  box-shadow: 0 1px 2px rgba(15, 23, 42, 0.04);
+}
+#econ-submit-root .filecard .badge {
+  flex-shrink: 0;
+  width: 40px;
+  height: 40px;
+  border-radius: 8px;
+  background: var(--navy);
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: ui-monospace, 'SF Mono', 'JetBrains Mono', 'Consolas', monospace;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+}
+#econ-submit-root .filecard .meta {
+  flex: 1;
+  min-width: 0;
+}
+#econ-submit-root .filecard .name {
+  font-family: ui-monospace, 'SF Mono', 'JetBrains Mono', 'Consolas', monospace;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--ink);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+#econ-submit-root .filecard .size {
+  margin-top: 3px;
+  font-size: 11.5px;
+  color: var(--muted);
+  font-variant-numeric: tabular-nums;
+}
+#econ-submit-root .filecard .clear {
+  flex-shrink: 0;
+  background: transparent;
+  border: 0;
+  width: 28px;
+  height: 28px;
+  border-radius: 6px;
+  cursor: pointer;
+  color: var(--muted);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 150ms ease, color 150ms ease;
+}
+#econ-submit-root .filecard .clear:hover {
+  background: rgba(15, 23, 42, 0.06);
+  color: var(--ink);
+}
+
+/* ---------- Grading state ---------- */
+#econ-submit-root .grading {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 18px 20px;
+  border-radius: 12px;
+  background: var(--navy-soft);
+  border: 1px solid var(--navy-line);
+}
+#econ-submit-root .grading .spinner {
+  width: 22px;
+  height: 22px;
+  border: 2.5px solid var(--navy-line);
+  border-top-color: var(--navy);
+  border-radius: 50%;
+  animation: econ-spin 780ms linear infinite;
+  flex-shrink: 0;
+}
+#econ-submit-root .grading .copy {
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--navy-ink);
+}
+#econ-submit-root .grading .copy .sub {
+  display: block;
+  margin-top: 2px;
+  font-size: 12px;
+  font-weight: 400;
+  color: var(--muted);
+}
+@keyframes econ-spin { to { transform: rotate(360deg); } }
+
+/* ---------- Result panel ---------- */
+#econ-submit-root .result {
+  border-radius: 12px;
+  border: 1px solid var(--line);
+  padding: 18px 20px 16px;
+  background: var(--surface);
+}
+#econ-submit-root .result.is-pass    { background: var(--pass-soft); border-color: var(--pass-line); }
+#econ-submit-root .result.is-partial { background: var(--warn-soft); border-color: var(--warn-line); }
+#econ-submit-root .result.is-fail    { background: var(--fail-soft); border-color: var(--fail-line); }
+
+#econ-submit-root .result .head {
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+}
+#econ-submit-root .result .marker {
+  flex-shrink: 0;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+}
+#econ-submit-root .result.is-pass    .marker { background: var(--pass); }
+#econ-submit-root .result.is-partial .marker { background: var(--warn); }
+#econ-submit-root .result.is-fail    .marker { background: var(--fail); }
+#econ-submit-root .result .text { flex: 1; min-width: 0; }
+#econ-submit-root .result .title {
+  font-size: 17px;
+  font-weight: 600;
+  letter-spacing: -0.015em;
+  line-height: 1.3;
+  color: var(--ink);
+}
+#econ-submit-root .result .title .count {
+  font-family: ui-monospace, 'SF Mono', 'JetBrains Mono', 'Consolas', monospace;
+  font-variant-numeric: tabular-nums;
+  font-size: 19px;
+  margin-right: 2px;
+}
+#econ-submit-root .result.is-pass    .title .count { color: var(--pass); }
+#econ-submit-root .result.is-partial .title .count { color: var(--warn); }
+#econ-submit-root .result.is-fail    .title .count { color: var(--fail); }
+#econ-submit-root .result .subtitle {
+  margin-top: 2px;
+  font-size: 12.5px;
+  color: var(--muted);
+}
+#econ-submit-root .result .bar {
+  margin-top: 14px;
+  height: 6px;
+  background: rgba(15, 23, 42, 0.07);
+  border-radius: 3px;
+  overflow: hidden;
+}
+#econ-submit-root .result .bar > i {
+  display: block;
+  height: 100%;
+  border-radius: 3px;
+  width: 0%;
+  transition: width 700ms cubic-bezier(0.22, 0.61, 0.36, 1);
+}
+#econ-submit-root .result.is-pass    .bar > i { background: var(--pass); }
+#econ-submit-root .result.is-partial .bar > i { background: var(--warn); }
+#econ-submit-root .result.is-fail    .bar > i { background: var(--fail); }
+
+#econ-submit-root .result details {
+  margin-top: 12px;
+}
+#econ-submit-root .result details summary {
+  cursor: pointer;
+  font-size: 12.5px;
+  color: var(--muted);
+  user-select: none;
+  list-style: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 2px 0;
+}
+#econ-submit-root .result details summary::-webkit-details-marker { display: none; }
+#econ-submit-root .result details summary::before {
+  content: '▸';
+  font-size: 9px;
+  transition: transform 150ms ease;
+}
+#econ-submit-root .result details[open] summary::before { transform: rotate(90deg); }
+#econ-submit-root .result details summary:hover { color: var(--ink); }
+#econ-submit-root .result details pre {
+  margin: 8px 0 0;
+  padding: 12px 14px;
+  background: rgba(15, 23, 42, 0.04);
+  border-radius: 8px;
+  font-size: 11.5px;
+  line-height: 1.55;
+  font-family: ui-monospace, 'SF Mono', 'JetBrains Mono', 'Consolas', monospace;
+  max-height: 240px;
+  overflow: auto;
+  white-space: pre-wrap;
+  word-break: break-word;
+  color: var(--ink);
+}
+
+/* ---------- Resubmit button ---------- */
+#econ-submit-root .resubmit {
+  margin-top: 12px;
+  width: 100%;
+  padding: 10px 16px;
+  background: transparent;
+  border: 1px solid var(--navy-line);
+  color: var(--navy);
+  border-radius: 10px;
+  font-size: 13.5px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 150ms ease, border-color 150ms ease;
+  font-family: inherit;
+  letter-spacing: -0.005em;
+}
+#econ-submit-root .resubmit:hover {
+  background: var(--navy-soft);
+  border-color: var(--navy);
+}
+</style>
+
+<div id="econ-submit-root">
+  <!-- 1: empty -->
+  <div data-state="empty">
+    <label class="dropzone" id="econ-dropzone">
+      <input type="file" id="challenge-file" accept=".dig">
+      <span class="glyph" aria-hidden="true">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z"/>
+          <polyline points="14 3 14 9 20 9"/>
+          <line x1="12" y1="13" x2="12" y2="19"/>
+          <polyline points="9 16 12 19 15 16"/>
+        </svg>
+      </span>
+      <div class="headline"><em>.dig</em> 파일을 끌어다 놓거나 클릭해서 선택</div>
+      <div class="subline">Digital 시뮬레이터로 작성한 회로 파일</div>
+    </label>
+    <div class="file-error" id="econ-file-error" hidden></div>
+  </div>
+
+  <!-- 2: ready -->
+  <div data-state="ready" hidden>
+    <div class="filecard">
+      <div class="badge">.dig</div>
+      <div class="meta">
+        <div class="name" id="econ-file-name"></div>
+        <div class="size" id="econ-file-size"></div>
+      </div>
+      <button class="clear" id="econ-file-clear" type="button" aria-label="파일 제거">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+          <line x1="6" y1="6" x2="18" y2="18"/>
+          <line x1="18" y1="6" x2="6" y2="18"/>
+        </svg>
+      </button>
+    </div>
+  </div>
+
+  <!-- 3: grading -->
+  <div data-state="grading" hidden>
+    <div class="grading">
+      <span class="spinner" aria-hidden="true"></span>
+      <span class="copy">채점 중<span class="sub">Digital 시뮬레이터로 회로를 검증하고 있습니다</span></span>
+    </div>
+  </div>
+
+  <!-- 4: result -->
+  <div data-state="result" hidden>
+    <div class="result" id="econ-result"></div>
+    <button class="resubmit" id="econ-resubmit" type="button">다시 제출하기</button>
+  </div>
+</div>
 {% endblock %}
