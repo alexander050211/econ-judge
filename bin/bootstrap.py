@@ -20,6 +20,13 @@ ADMIN_EMAIL = os.environ.get("CTFD_ADMIN_EMAIL", "admin@econ-judge.local")
 ADMIN_PASSWORD = os.environ.get("CTFD_ADMIN_PASSWORD", "demo1234")
 CTF_NAME = os.environ.get("CTFD_NAME", "econ-judge")
 
+# Hidden user reserved for tests/deploy_smoke.py runs. Pre-creating it
+# (a) keeps the public scoreboard free of smoke-test pollution, and
+# (b) ensures the password stays in sync with what deploy_smoke.py expects.
+SMOKE_NAME = "smoke-test-1"
+SMOKE_EMAIL = "smoke1@econ-judge.local"
+SMOKE_PASSWORD = "smoketest-pw-1"
+
 INDEX_CONTENT = """\
 # E-CON 논설 Auto-grader
 
@@ -80,6 +87,35 @@ def main() -> None:
             set_config("setup", True)
             db.session.commit()
             print(f"[bootstrap] CTFd initialized; admin={ADMIN_NAME}")
+
+        # Smoke-test user (hidden) — pre-created so deploy_smoke.py runs
+        # don't pollute the public scoreboard. Idempotent: created if missing,
+        # otherwise hidden flag + password reset to canonical values.
+        smoke = Users.query.filter_by(name=SMOKE_NAME).first()
+        if smoke is None:
+            smoke = Users(
+                name=SMOKE_NAME,
+                email=SMOKE_EMAIL,
+                password=SMOKE_PASSWORD,
+                type="user",
+                verified=True,
+                hidden=True,
+            )
+            db.session.add(smoke)
+            db.session.commit()
+            print(f"[bootstrap] Smoke user '{SMOKE_NAME}' created (hidden)")
+        else:
+            changed = False
+            if not smoke.hidden:
+                smoke.hidden = True
+                changed = True
+            # @validates('password') re-hashes on assignment
+            smoke.password = SMOKE_PASSWORD
+            if changed:
+                db.session.commit()
+                print(f"[bootstrap] Smoke user '{SMOKE_NAME}' marked hidden")
+            else:
+                db.session.commit()
 
         # Index page so `/` renders instead of 404.
         if not Pages.query.filter_by(route="index").first():
