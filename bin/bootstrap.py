@@ -383,6 +383,7 @@ def main() -> None:
         set_config("score_visibility", "public")
         set_config("account_visibility", "public")
         set_config("challenge_ratings", "disabled")
+        set_config("social_shares", False)
         set_config("verify_emails", False)
         set_config("team_size", None)
         set_config("theme_header", THEME_HEADER_CSS)

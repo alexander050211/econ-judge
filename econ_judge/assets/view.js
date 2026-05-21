@@ -23,6 +23,16 @@ CTFd._internal.challenge.postRender = function () {};
       const match = el.dataset.state === name;
       el.hidden = !match;
     });
+    // CTFd's stock submit button lives outside our root in the parent
+    // template. Hide it once we're grading or showing the result panel
+    // (our "다시 제출하기" button handles the result-state action). Restore
+    // it when we go back to empty / ready so the next submission can fire.
+    const ctfdSubmit = document.getElementById("challenge-submit");
+    if (ctfdSubmit) {
+      const ctfdCol = ctfdSubmit.closest(".key-submit") || ctfdSubmit;
+      const hide = name === "grading" || name === "result";
+      ctfdCol.style.display = hide ? "none" : "";
+    }
   }
 
   function humanSize(bytes) {
