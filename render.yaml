@@ -1,0 +1,28 @@
+# Render.com deployment config. Connect a Web Service to this repo and Render
+# auto-detects render.yaml.
+#
+# Free tier notes:
+# - Disk is ephemeral: SQLite gets wiped on every deploy/restart. bootstrap.py
+#   recreates the admin + challenges on every boot, so the deploy is
+#   self-healing — only Solves/Fails history is lost. If persistent history
+#   matters, add a Render Postgres service and set DATABASE_URL.
+# - Service spins down after 15 min of idle. First request after sleep takes
+#   ~30 s (cold start + Java warmup).
+services:
+  - type: web
+    name: econ-judge
+    runtime: docker
+    region: singapore
+    plan: free
+    healthCheckPath: /
+    envVars:
+      - key: CTFD_ADMIN_NAME
+        value: admin
+      - key: CTFD_ADMIN_EMAIL
+        value: admin@econ-judge.local
+      - key: CTFD_ADMIN_PASSWORD
+        generateValue: true
+      - key: CTFD_NAME
+        value: econ-judge
+      - key: SECRET_KEY
+        generateValue: true

@@ -2,7 +2,7 @@
 
 Auto-grader + live scoreboard for the **SNU SENS 공헌 E-CON** 논설 (logic-design) task. Built as a CTFd custom challenge type plugin: mentees upload `.dig` files (Digital simulator format) via a web UI, the server runs the file against secret testcases using Digital's CLI, partial credit is computed from pass-N-of-M, and a live scoreboard projects on the BK Hall screen.
 
-> Status — **spike complete, pre-implementation**. Awaits 5/21 3차 기획부 sign-off before real code lands.
+> Status — **working slice, 18 challenges / 100 pts** as of 2026-05-21. Hierarchical submissions resolved via canonical seeding; 7-seg display sink resolved via skeleton-stamped Out pins (truth table locked).
 
 ## Why it exists
 
@@ -50,6 +50,20 @@ econ-judge/
 2. 김범준's appetite for owning the testcase authoring?
 3. Anonymized vs named scoreboard until the last hour?
 4. Partial credit mechanic: split each problem into sub-challenges (scoreboard inflation) vs custom solve model (more code)?
+
+## Deploy to Render
+
+A `Dockerfile` + `render.yaml` ship a one-click deploy via Render. Free-tier specifics:
+
+- Disk is ephemeral; `bin/bootstrap.py` re-seeds the admin user + 18 challenges on every container start, so the deploy is self-healing. Solves/Fails history is lost between restarts. For persistent history, add a Render Postgres service and set `DATABASE_URL`.
+- The service spins down after 15 min idle; cold start is ~30 s (Java warmup on first grading).
+
+Setup:
+
+1. In Render: New → Web Service → connect this GitHub repo.
+2. Render auto-detects `render.yaml` and picks Docker runtime.
+3. The first build is ~5 min (clones CTFd, downloads Digital.jar, installs deps).
+4. After deploy, the URL is your CTFd. Admin login uses the auto-generated `CTFD_ADMIN_PASSWORD` from the Render env (visible in the Render dashboard → Environment).
 
 ## References
 

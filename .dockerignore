@@ -1,0 +1,16 @@
+.git
+.gitignore
+README.md
+__pycache__
+*.pyc
+.venv
+venv
+.vscode
+.idea
+.DS_Store
+tests/samples
+tests/smoke_submit.py
+Digital.jar
+*.db
+*.sqlite
+ctfd-data
