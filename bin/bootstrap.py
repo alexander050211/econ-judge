@@ -125,6 +125,30 @@ body {
 }
 a { color: var(--sens-brand-ink); }
 a:hover { color: var(--sens-brand-dark); text-decoration: none; }
+
+/* Stack the submit button below the input block instead of CTFd's default
+   col-sm-8 / col-sm-4 side-by-side. For a drag-drop dropzone, putting the
+   submit beside it makes the zone awkwardly narrow. */
+.submit-row > .col-sm-8,
+.submit-row > .col-sm-4 {
+  flex: 0 0 100% !important;
+  max-width: 100% !important;
+}
+.submit-row > .key-submit {
+  margin-top: 0.85rem !important;
+}
+.submit-row > .key-submit .challenge-submit {
+  height: auto !important;
+  padding: 0.65rem 1rem !important;
+  background: var(--sens-brand) !important;
+  border-color: var(--sens-brand) !important;
+  color: #fff !important;
+  font-weight: 600 !important;
+}
+.submit-row > .key-submit .challenge-submit:hover {
+  background: var(--sens-brand-dark) !important;
+  border-color: var(--sens-brand-dark) !important;
+}
 </style>
 <script defer src="/plugins/econ_judge/assets/scoreboard.js"></script>
 """
@@ -358,6 +382,7 @@ def main() -> None:
         set_config("registration_visibility", "public")
         set_config("score_visibility", "public")
         set_config("account_visibility", "public")
+        set_config("challenge_ratings", "disabled")
         set_config("verify_emails", False)
         set_config("team_size", None)
         set_config("theme_header", THEME_HEADER_CSS)
