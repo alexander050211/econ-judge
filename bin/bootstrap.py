@@ -302,13 +302,106 @@ button[type="submit"]:hover {
   display: none !important;
 }
 
-/* Hide CTFd's built-in light/dark theme toggle. Direction D is light-only;
-   the toggle flips a CTFd theme variable that conflicts with our overrides
-   and leaves the page in a half-styled state. The CD v2 dark-mode tokens
-   in step2/system-d.css were intentionally not integrated for the camp. */
-.navbar li.nav-item:has(button.theme-switch) {
-  display: none !important;
+/* ── Dark mode ────────────────────────────────────────────────────
+ *
+ * CTFd's color_mode_switcher.js sets `data-bs-theme="dark"` on <html>
+ * (Bootstrap 5.3 convention) when the navbar sun/moon button is clicked
+ * or when prefers-color-scheme: dark is detected. We swap the token
+ * palette under that selector — warm charcoal paper, cream phosphor ink,
+ * amber stays as the brand accent. Every surface that uses `var(--d-*)`
+ * inherits the swap automatically (landing, /my-score, /projector, s2
+ * challenges table, s7 login). A handful of inverted-treatment elements
+ * (the ink-filled primary button, admin tags, drop-zone glyph) need
+ * element-level overrides because they treat --d-ink as a background —
+ * flipping ink to cream alone would produce cream-on-dark mush.
+ */
+
+:root[data-bs-theme="dark"] {
+  --d-paper:       #0e0b07;
+  --d-paper-soft:  #161108;
+  --d-paper-sunk:  #1f1810;
+
+  --d-ink:         #f5ecd6;
+  --d-ink-mid:     #c9b88e;
+  --d-ink-light:   #8e7a52;
+  --d-ink-soft:    #5a4d33;
+
+  --d-hair:        rgba(245, 168, 61, 0.10);
+  --d-hair-strong: rgba(245, 168, 61, 0.22);
+
+  --d-brand:       #f5a83d;
+  --d-brand-dark:  #ffc26a;
+  --d-brand-ink:   #ffc26a;
+  --d-brand-soft:  rgba(245, 168, 61, 0.10);
+  --d-brand-line:  rgba(245, 168, 61, 0.32);
+
+  --d-pass:        #6fb368;
+  --d-pass-soft:   rgba(111, 179, 104, 0.10);
+  --d-pass-line:   rgba(111, 179, 104, 0.32);
+  --d-fail:        #d97757;
+  --d-fail-soft:   rgba(217, 119, 87, 0.10);
+  --d-fail-line:   rgba(217, 119, 87, 0.32);
+  --d-warn:        #f5a83d;
+  --d-warn-soft:   rgba(245, 168, 61, 0.10);
+  --d-warn-line:   rgba(245, 168, 61, 0.32);
 }
+
+/* Inverted-treatment overrides — these elements use --d-ink as a
+   BACKGROUND in light mode (dark-on-light contrast block). In dark
+   mode flip to amber-filled with dark ink as text, echoing Direction
+   E's "RUN" key chrome rather than producing cream-on-dark mush. */
+:root[data-bs-theme="dark"] .btn-primary,
+:root[data-bs-theme="dark"] button[type="submit"],
+:root[data-bs-theme="dark"] .submit-row > .key-submit .challenge-submit,
+:root[data-bs-theme="dark"] .d-btn-primary {
+  background-color: var(--d-brand) !important;
+  border-color: var(--d-brand) !important;
+  color: #0e0b07 !important;
+}
+:root[data-bs-theme="dark"] .btn-primary:hover,
+:root[data-bs-theme="dark"] button[type="submit"]:hover,
+:root[data-bs-theme="dark"] .submit-row > .key-submit .challenge-submit:hover,
+:root[data-bs-theme="dark"] .d-btn-primary:hover {
+  background-color: var(--d-brand-dark) !important;
+  border-color: var(--d-brand-dark) !important;
+  color: #0e0b07 !important;
+  box-shadow: 0 0 18px rgba(245, 168, 61, 0.22);
+}
+
+/* Phosphor glow on the key numeric heroes in dark mode — gives the
+   projector + my-score cards a CRT-instrument quality without changing
+   their light-mode rendering. */
+:root[data-bs-theme="dark"] .s4-score-n,
+:root[data-bs-theme="dark"] .s4-gap-n,
+:root[data-bs-theme="dark"] .s4m-score-n,
+:root[data-bs-theme="dark"] .s4m-gap-n,
+:root[data-bs-theme="dark"] .s5p-score-n,
+:root[data-bs-theme="dark"] .s5p-fstat-n,
+:root[data-bs-theme="dark"] .s5j-stat-v,
+:root[data-bs-theme="dark"] .s1-stat-num,
+:root[data-bs-theme="dark"] .s2-prog-val {
+  text-shadow: 0 0 14px rgba(245, 168, 61, 0.18),
+               0 0 28px rgba(245, 168, 61, 0.06);
+}
+:root[data-bs-theme="dark"] .s5-mark,
+:root[data-bs-theme="dark"] .s5-clock,
+:root[data-bs-theme="dark"] .s5-phase {
+  text-shadow: 0 0 6px rgba(245, 168, 61, 0.25);
+}
+
+/* Dark-mode adjustments for the project-phase matrix — the brand-soft
+   submitted cell needs a slightly stronger bg to read on charcoal. */
+:root[data-bs-theme="dark"] .s5j-cell-sub {
+  background: rgba(245, 168, 61, 0.18);
+}
+:root[data-bs-theme="dark"] .s5j-cell-empty {
+  background: rgba(245, 168, 61, 0.03);
+}
+
+/* CTFd Pages content authored before the token system uses raw hex —
+   nothing we can do server-side; the user-authored Page CSS stays light.
+   Anything WE author (INDEX_CONTENT, MY_SCORE_CONTENT, PROJECTOR_CONTENT,
+   s2/s7) uses var(--d-*) and inherits the dark swap above. */
 
 /* Stacked submit-row (kept from original — required by drag-drop dropzone in view.html) */
 .submit-row > .col-sm-8,
