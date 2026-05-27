@@ -52,8 +52,13 @@ def load(app):
     # auto-initialises and the modal flow works); the s2 layout is JS-
     # injected by challenges.js — loaded from THEME_HEADER_CSS, gated to
     # window.location.pathname === '/challenges'.
-    override_template("users/login.html",    _read_template("users", "login.html"))
-    override_template("users/register.html", _read_template("users", "register.html"))
+    # NB: CTFd 3.8.5's auth.py calls `render_template("login.html", ...)` and
+    # `render_template("register.html", ...)` — they resolve to the active
+    # theme's templates/{name}.html (not users/{name}.html, despite the URL
+    # path being /users/login). Override targets must match the render_template
+    # name verbatim, otherwise the DictLoader miss and the stock theme wins.
+    override_template("login.html",    _read_template("users", "login.html"))
+    override_template("register.html", _read_template("users", "register.html"))
 
     from .endpoints import register_endpoints
     register_endpoints(app)
