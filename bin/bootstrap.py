@@ -197,12 +197,33 @@ a:hover { color: var(--d-brand-dark); text-decoration: none; }
 
 /* ── CTFd navbar / jumbotron / buttons overrides ─────────────────── */
 
-.navbar {
+.navbar,
+.navbar.navbar-dark,
+.navbar.bg-dark {
   background-color: var(--d-paper) !important;
+  background-image: none !important;
   border-bottom: 1px solid var(--d-hair-strong);
   box-shadow: 0 1px 0 var(--d-paper-sunk);
 }
-.navbar .nav-link {
+/* CTFd's stock navbar carries Bootstrap classes `navbar-dark bg-dark`,
+   which paint .navbar-brand + .nav-link white on the assumption of a
+   dark background. We flip the bg to warm paper above, so the text
+   needs explicit overrides — otherwise the brand wordmark and link text
+   render in white and become invisible. */
+.navbar .navbar-brand,
+.navbar.navbar-dark .navbar-brand {
+  color: var(--d-ink) !important;
+  font-family: var(--d-f-sans);
+  font-weight: 700;
+  letter-spacing: -0.015em;
+  font-size: 16px;
+}
+.navbar .navbar-brand:hover,
+.navbar.navbar-dark .navbar-brand:hover {
+  color: var(--d-brand-dark) !important;
+}
+.navbar .nav-link,
+.navbar.navbar-dark .nav-link {
   color: var(--d-ink-mid) !important;
   font-family: var(--d-f-ko);
   font-weight: 500;
@@ -212,16 +233,28 @@ a:hover { color: var(--d-brand-dark); text-decoration: none; }
   border-bottom: 2px solid transparent !important;
   border-radius: 6px;
 }
-.navbar .nav-link:hover {
+.navbar .nav-link:hover,
+.navbar.navbar-dark .nav-link:hover {
   color: var(--d-ink) !important;
   background: var(--d-paper-soft);
 }
 .navbar .nav-link.active,
+.navbar.navbar-dark .nav-link.active,
 .navbar .nav-item.active > .nav-link {
   color: var(--d-ink) !important;
   border-bottom: 2px solid var(--d-brand-dark) !important;
   border-radius: 0;
   background: transparent !important;
+}
+.navbar .navbar-toggler,
+.navbar.navbar-dark .navbar-toggler {
+  border-color: var(--d-hair-strong) !important;
+  color: var(--d-ink) !important;
+}
+.navbar.navbar-dark .navbar-toggler-icon {
+  /* Bootstrap renders the hamburger as a white SVG background-image;
+     invert it so it shows on warm paper. */
+  filter: invert(1) brightness(0.4);
 }
 
 .jumbotron {
@@ -266,6 +299,14 @@ button[type="submit"]:hover {
 
 /* Korean-only camp — hide CTFd language switcher (Chrome 105+, Safari 15.4+, FF 121+) */
 .navbar li.nav-item:has(form[x-data="LanguageForm"]) {
+  display: none !important;
+}
+
+/* Hide CTFd's built-in light/dark theme toggle. Direction D is light-only;
+   the toggle flips a CTFd theme variable that conflicts with our overrides
+   and leaves the page in a half-styled state. The CD v2 dark-mode tokens
+   in step2/system-d.css were intentionally not integrated for the camp. */
+.navbar li.nav-item:has(button.theme-switch) {
   display: none !important;
 }
 
