@@ -4,59 +4,35 @@
 <input id="challenge-id" class="challenge-id" type="hidden" value="{{ challenge.id }}">
 
 <style>
-@import url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable.min.css');
-
+/* ─── s3 challenge submission modal — Direction D ─── */
 #econ-submit-root {
-  /* SENS brand — see bin/bootstrap.py THEME_HEADER_CSS for the global tokens.
-     Re-declared here so the submission card stays consistent even if the
-     theme_header CSS hasn't loaded yet (e.g., modal opening before <head>). */
-  --brand: #f5a83d;
-  --brand-dark: #d69336;
-  --brand-ink: #7a5a1f;
-  --brand-soft: rgba(245, 168, 61, 0.07);
-  --brand-line: rgba(245, 168, 61, 0.32);
-  --pass: #047857;
-  --pass-soft: #ecfdf5;
-  --pass-line: #a7f3d0;
-  --warn: #b45309;
-  --warn-soft: #fffbeb;
-  --warn-line: #fde68a;
-  --fail: #b91c1c;
-  --fail-soft: #fef2f2;
-  --fail-line: #fecaca;
-  --ink: #0f172a;
-  --muted: #64748b;
-  --surface: #ffffff;
-  --line: #e2e8f0;
-
-  font-family: 'Pretendard Variable', Pretendard, -apple-system, BlinkMacSystemFont,
-    'Apple SD Gothic Neo', 'Malgun Gothic', sans-serif;
-  color: var(--ink);
+  font-family: var(--d-f-ko, 'Pretendard Variable', sans-serif);
+  color: var(--d-ink, #15110a);
   line-height: 1.55;
-  font-feature-settings: 'tnum' on, 'cv11' on;
+  font-feature-settings: 'tnum' on;
 }
 
 #econ-submit-root [data-state][hidden] { display: none; }
 
-/* ---------- Drop zone ---------- */
+/* ── Dropzone (empty) ───────────────────────────────────────── */
 #econ-submit-root .dropzone {
   display: block;
   position: relative;
-  border: 1.5px dashed var(--brand-line);
-  border-radius: 14px;
-  background: var(--surface);
-  padding: 40px 24px 36px;
+  border: 1.5px dashed var(--d-brand-line, rgba(245,168,61,0.32));
+  border-radius: 8px;
+  background: var(--d-paper, #fbfaf6);
+  padding: 36px 24px 32px;
   text-align: center;
   cursor: pointer;
   transition: border-color 180ms ease, background 180ms ease, transform 180ms ease;
 }
 #econ-submit-root .dropzone:hover {
-  background: var(--brand-soft);
-  border-color: var(--brand);
+  background: var(--d-brand-soft, #fff4e0);
+  border-color: var(--d-brand, #f5a83d);
 }
 #econ-submit-root .dropzone.is-active {
-  background: var(--brand-soft);
-  border-color: var(--brand);
+  background: var(--d-brand-soft, #fff4e0);
+  border-color: var(--d-brand-dark, #d69336);
   border-style: solid;
   transform: scale(0.998);
 }
@@ -70,148 +46,170 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 44px;
-  height: 44px;
-  border-radius: 12px;
-  background: var(--brand);
-  color: #fff;
-  margin-bottom: 14px;
+  width: 40px;
+  height: 40px;
+  border-radius: 8px;
+  background: var(--d-ink, #15110a);
+  color: var(--d-paper, #fbfaf6);
+  margin-bottom: 12px;
 }
 #econ-submit-root .dropzone .glyph svg { display: block; }
 #econ-submit-root .dropzone .headline {
-  font-size: 15px;
-  font-weight: 600;
-  letter-spacing: -0.01em;
-  color: var(--ink);
-  margin-bottom: 4px;
+  font-family: var(--d-f-ko);
+  font-size: 14.5px;
+  font-weight: 500;
+  letter-spacing: -0.005em;
+  color: var(--d-ink);
+  margin-bottom: 6px;
+  line-height: 1.5;
 }
 #econ-submit-root .dropzone .headline em {
+  font-family: var(--d-f-mono);
   font-style: normal;
-  color: var(--brand);
-  text-decoration: underline;
-  text-underline-offset: 3px;
-  text-decoration-thickness: 1.5px;
+  background: var(--d-brand-soft);
+  padding: 2px 6px;
+  border-radius: 4px;
+  color: var(--d-brand-ink);
+  font-size: 0.92em;
 }
 #econ-submit-root .dropzone .subline {
+  font-family: var(--d-f-ko);
   font-size: 12.5px;
-  color: var(--muted);
+  color: var(--d-ink-light);
   letter-spacing: -0.005em;
+  margin-bottom: 12px;
+}
+#econ-submit-root .dropzone::after {
+  content: '≤ 256 KB · COMBINATIONAL ONLY';
+  display: block;
+  font-family: var(--d-f-mono);
+  font-size: 10px;
+  letter-spacing: 0.12em;
+  color: var(--d-ink-light);
+  text-transform: uppercase;
+  padding-top: 12px;
+  border-top: 1px dashed var(--d-hair);
+  margin: 12px 16px 0;
 }
 
 #econ-submit-root .file-error {
   margin-top: 10px;
+  padding: 10px 12px;
+  border-radius: 6px;
+  background: var(--d-fail-soft, #fbece3);
+  border: 1px solid var(--d-fail-line, #ecbeb0);
+  font-family: var(--d-f-ko);
   font-size: 13px;
-  color: var(--fail);
+  color: var(--d-fail, #b04a3a);
   text-align: center;
 }
 
-/* ---------- File card (ready state) ---------- */
+/* ── File card (ready) ──────────────────────────────────────── */
 #econ-submit-root .filecard {
   display: flex;
   align-items: center;
   gap: 14px;
-  border: 1px solid var(--brand-line);
-  background: var(--surface);
-  border-radius: 12px;
-  padding: 14px 16px;
-  box-shadow: 0 1px 2px rgba(15, 23, 42, 0.04);
+  border: 1px solid var(--d-brand-line);
+  background: var(--d-brand-soft);
+  border-radius: 6px;
+  padding: 12px 14px;
 }
 #econ-submit-root .filecard .badge {
   flex-shrink: 0;
-  width: 40px;
-  height: 40px;
-  border-radius: 8px;
-  background: var(--brand);
-  color: #fff;
+  width: 38px;
+  height: 38px;
+  border-radius: 6px;
+  background: var(--d-brand);
+  color: var(--d-ink);
   display: flex;
   align-items: center;
   justify-content: center;
-  font-family: ui-monospace, 'SF Mono', 'JetBrains Mono', 'Consolas', monospace;
-  font-size: 11px;
-  font-weight: 700;
+  font-family: var(--d-f-mono);
+  font-size: 10.5px;
+  font-weight: 600;
   letter-spacing: 0.04em;
 }
-#econ-submit-root .filecard .meta {
-  flex: 1;
-  min-width: 0;
-}
+#econ-submit-root .filecard .meta { flex: 1; min-width: 0; }
 #econ-submit-root .filecard .name {
-  font-family: ui-monospace, 'SF Mono', 'JetBrains Mono', 'Consolas', monospace;
+  font-family: var(--d-f-mono);
   font-size: 13px;
   font-weight: 500;
-  color: var(--ink);
+  color: var(--d-ink);
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
 }
 #econ-submit-root .filecard .size {
-  margin-top: 3px;
-  font-size: 11.5px;
-  color: var(--muted);
-  font-variant-numeric: tabular-nums;
+  margin-top: 2px;
+  font-family: var(--d-f-mono);
+  font-size: 11px;
+  color: var(--d-brand-ink);
+  letter-spacing: 0.02em;
 }
 #econ-submit-root .filecard .clear {
   flex-shrink: 0;
   background: transparent;
   border: 0;
-  width: 28px;
-  height: 28px;
-  border-radius: 6px;
+  width: 26px;
+  height: 26px;
+  border-radius: 4px;
   cursor: pointer;
-  color: var(--muted);
+  color: var(--d-brand-ink);
   display: flex;
   align-items: center;
   justify-content: center;
   transition: background 150ms ease, color 150ms ease;
 }
 #econ-submit-root .filecard .clear:hover {
-  background: rgba(15, 23, 42, 0.06);
-  color: var(--ink);
+  background: var(--d-paper-sunk);
+  color: var(--d-ink);
 }
 
-/* ---------- Grading state ---------- */
+/* ── Grading state ──────────────────────────────────────────── */
 #econ-submit-root .grading {
   display: flex;
   align-items: center;
   gap: 14px;
-  padding: 18px 20px;
-  border-radius: 12px;
-  background: var(--brand-soft);
-  border: 1px solid var(--brand-line);
+  padding: 16px 18px;
+  border-radius: 6px;
+  background: var(--d-paper-soft);
+  border: 1px solid var(--d-hair-strong);
 }
 #econ-submit-root .grading .spinner {
-  width: 22px;
-  height: 22px;
-  border: 2.5px solid var(--brand-line);
-  border-top-color: var(--brand);
+  width: 24px;
+  height: 24px;
+  border: 2.5px solid var(--d-brand-line);
+  border-top-color: var(--d-brand-dark);
   border-radius: 50%;
   animation: econ-spin 780ms linear infinite;
   flex-shrink: 0;
 }
 #econ-submit-root .grading .copy {
-  font-size: 14px;
-  font-weight: 500;
-  color: var(--brand-ink);
+  font-family: var(--d-f-ko);
+  font-size: 14.5px;
+  font-weight: 600;
+  color: var(--d-ink);
 }
 #econ-submit-root .grading .copy .sub {
   display: block;
   margin-top: 2px;
-  font-size: 12px;
+  font-family: var(--d-f-ko);
+  font-size: 12.5px;
   font-weight: 400;
-  color: var(--muted);
+  color: var(--d-ink-light);
 }
 @keyframes econ-spin { to { transform: rotate(360deg); } }
 
-/* ---------- Result panel ---------- */
+/* ── Result panel ───────────────────────────────────────────── */
 #econ-submit-root .result {
-  border-radius: 12px;
-  border: 1px solid var(--line);
-  padding: 18px 20px 16px;
-  background: var(--surface);
+  border-radius: 8px;
+  border: 1px solid var(--d-hair);
+  padding: 16px 18px 14px;
+  background: var(--d-paper);
 }
-#econ-submit-root .result.is-pass    { background: var(--pass-soft); border-color: var(--pass-line); }
-#econ-submit-root .result.is-partial { background: var(--warn-soft); border-color: var(--warn-line); }
-#econ-submit-root .result.is-fail    { background: var(--fail-soft); border-color: var(--fail-line); }
+#econ-submit-root .result.is-pass    { background: var(--d-pass-soft, #e6f1e7); border-color: var(--d-pass-line, #b9d6bf); }
+#econ-submit-root .result.is-partial { background: var(--d-warn-soft, #fff4dd); border-color: var(--d-warn-line, #e9c98c); }
+#econ-submit-root .result.is-fail    { background: var(--d-fail-soft, #fbece3); border-color: var(--d-fail-line, #ecbeb0); }
 
 #econ-submit-root .result .head {
   display: flex;
@@ -220,113 +218,123 @@
 }
 #econ-submit-root .result .marker {
   flex-shrink: 0;
-  width: 36px;
-  height: 36px;
+  width: 32px;
+  height: 32px;
   border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
   color: #fff;
 }
-#econ-submit-root .result.is-pass    .marker { background: var(--pass); }
-#econ-submit-root .result.is-partial .marker { background: var(--warn); }
-#econ-submit-root .result.is-fail    .marker { background: var(--fail); }
+#econ-submit-root .result.is-pass    .marker { background: var(--d-pass, #2e7d52); }
+#econ-submit-root .result.is-partial .marker { background: var(--d-warn, #a8761d); }
+#econ-submit-root .result.is-fail    .marker { background: var(--d-fail, #b04a3a); }
 #econ-submit-root .result .text { flex: 1; min-width: 0; }
 #econ-submit-root .result .title {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  font-family: var(--d-f-ko);
   font-size: 17px;
   font-weight: 600;
   letter-spacing: -0.015em;
-  line-height: 1.3;
-  color: var(--ink);
+  color: var(--d-ink);
 }
 #econ-submit-root .result .title .count {
-  font-family: ui-monospace, 'SF Mono', 'JetBrains Mono', 'Consolas', monospace;
-  font-variant-numeric: tabular-nums;
-  font-size: 19px;
-  margin-right: 2px;
+  font-family: var(--d-f-sans);
+  font-weight: 600;
+  font-feature-settings: 'tnum';
+  font-size: 20px;
+  letter-spacing: -0.01em;
 }
-#econ-submit-root .result.is-pass    .title .count { color: var(--pass); }
-#econ-submit-root .result.is-partial .title .count { color: var(--warn); }
-#econ-submit-root .result.is-fail    .title .count { color: var(--fail); }
+#econ-submit-root .result.is-pass    .title .count { color: var(--d-pass); }
+#econ-submit-root .result.is-partial .title .count { color: var(--d-warn); }
+#econ-submit-root .result.is-fail    .title .count { color: var(--d-fail); }
 #econ-submit-root .result .subtitle {
-  margin-top: 2px;
-  font-size: 12.5px;
-  color: var(--muted);
+  margin-top: 4px;
+  font-family: var(--d-f-ko);
+  font-size: 13px;
+  color: var(--d-ink-mid);
+  line-height: 1.5;
 }
 #econ-submit-root .result .bar {
   margin-top: 14px;
-  height: 6px;
-  background: rgba(15, 23, 42, 0.07);
-  border-radius: 3px;
+  height: 4px;
+  background: rgba(21, 17, 10, 0.08);
+  border-radius: 2px;
   overflow: hidden;
 }
 #econ-submit-root .result .bar > i {
   display: block;
   height: 100%;
-  border-radius: 3px;
+  border-radius: 2px;
   width: 0%;
   transition: width 700ms cubic-bezier(0.22, 0.61, 0.36, 1);
 }
-#econ-submit-root .result.is-pass    .bar > i { background: var(--pass); }
-#econ-submit-root .result.is-partial .bar > i { background: var(--warn); }
-#econ-submit-root .result.is-fail    .bar > i { background: var(--fail); }
+#econ-submit-root .result.is-pass    .bar > i { background: var(--d-pass); }
+#econ-submit-root .result.is-partial .bar > i { background: var(--d-warn); }
+#econ-submit-root .result.is-fail    .bar > i { background: var(--d-fail); }
 
 #econ-submit-root .result details {
   margin-top: 12px;
 }
 #econ-submit-root .result details summary {
   cursor: pointer;
-  font-size: 12.5px;
-  color: var(--muted);
+  font-family: var(--d-f-mono);
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--d-ink-light);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
   user-select: none;
   list-style: none;
   display: inline-flex;
   align-items: center;
-  gap: 4px;
+  gap: 5px;
   padding: 2px 0;
 }
 #econ-submit-root .result details summary::-webkit-details-marker { display: none; }
 #econ-submit-root .result details summary::before {
   content: '▸';
-  font-size: 9px;
+  font-size: 8px;
   transition: transform 150ms ease;
 }
 #econ-submit-root .result details[open] summary::before { transform: rotate(90deg); }
-#econ-submit-root .result details summary:hover { color: var(--ink); }
+#econ-submit-root .result details summary:hover { color: var(--d-ink); }
 #econ-submit-root .result details pre {
   margin: 8px 0 0;
-  padding: 12px 14px;
-  background: rgba(15, 23, 42, 0.04);
-  border-radius: 8px;
-  font-size: 11.5px;
-  line-height: 1.55;
-  font-family: ui-monospace, 'SF Mono', 'JetBrains Mono', 'Consolas', monospace;
-  max-height: 240px;
+  padding: 10px 12px;
+  background: var(--d-paper);
+  border: 1px solid var(--d-hair);
+  border-radius: 4px;
+  font-family: var(--d-f-mono);
+  font-size: 10.5px;
+  line-height: 1.5;
+  max-height: 200px;
   overflow: auto;
   white-space: pre-wrap;
   word-break: break-word;
-  color: var(--ink);
+  color: var(--d-ink);
 }
 
-/* ---------- Resubmit button ---------- */
 #econ-submit-root .resubmit {
   margin-top: 12px;
   width: 100%;
   padding: 10px 16px;
   background: transparent;
-  border: 1px solid var(--brand-line);
-  color: var(--brand);
-  border-radius: 10px;
-  font-size: 13.5px;
-  font-weight: 500;
+  border: 1px solid var(--d-hair-strong);
+  color: var(--d-ink);
+  border-radius: 999px;
+  font-family: var(--d-f-sans);
+  font-size: 14px;
+  font-weight: 600;
   cursor: pointer;
   transition: background 150ms ease, border-color 150ms ease;
-  font-family: inherit;
   letter-spacing: -0.005em;
 }
 #econ-submit-root .resubmit:hover {
-  background: var(--brand-soft);
-  border-color: var(--brand);
+  background: var(--d-paper-soft);
+  border-color: var(--d-ink);
 }
 </style>
 
@@ -336,7 +344,7 @@
     <label class="dropzone" id="econ-dropzone">
       <input type="file" id="challenge-file" accept=".dig">
       <span class="glyph" aria-hidden="true">
-        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
           <path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z"/>
           <polyline points="14 3 14 9 20 9"/>
           <line x1="12" y1="13" x2="12" y2="19"/>
@@ -370,7 +378,7 @@
   <div data-state="grading" hidden>
     <div class="grading">
       <span class="spinner" aria-hidden="true"></span>
-      <span class="copy">채점 중<span class="sub">Digital 시뮬레이터로 회로를 검증하고 있습니다</span></span>
+      <span class="copy">채점 중<span class="sub">Digital 시뮬레이터로 회로를 검증하고 있습니다 · 평균 2–5초</span></span>
     </div>
   </div>
 

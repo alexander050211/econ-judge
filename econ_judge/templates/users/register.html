@@ -1,0 +1,240 @@
+{% extends "base.html" %}
+
+{% block stylesheets %}
+{{ super() }}
+<style>
+/* ─── Register — Direction D editorial-minimal (mirrors s7 login) ─── */
+.s7-login-root {
+  width: 100%;
+  min-height: calc(100vh - 120px);
+  background: var(--d-paper);
+  display: grid;
+  grid-template-columns: 1fr 1.05fr;
+  overflow: hidden;
+  margin: 0;
+  border-top: 1px solid var(--d-hair);
+}
+.s7-login-root *, .s7-login-root *::before, .s7-login-root *::after { box-sizing: border-box; }
+
+.s7-login-aside {
+  padding: 48px 56px;
+  background: var(--d-paper-soft);
+  border-right: 1px solid var(--d-hair);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 32px;
+  position: relative;
+  min-height: 600px;
+}
+.s7-login-aside::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image:
+    linear-gradient(var(--d-paper-sunk) 1px, transparent 1px),
+    linear-gradient(90deg, var(--d-paper-sunk) 1px, transparent 1px);
+  background-size: 22px 22px;
+  opacity: 0.55;
+  pointer-events: none;
+}
+.s7-login-aside > * { position: relative; z-index: 1; }
+.s7-aside-top { display: flex; align-items: center; gap: 12px; }
+.s7-aside-mark {
+  font-family: var(--d-f-mono);
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 0.16em;
+  color: var(--d-brand-dark);
+}
+.s7-aside-mid { padding-bottom: 12px; }
+.s7-aside-title {
+  font-family: var(--d-f-sans);
+  font-weight: 700;
+  font-size: 64px;
+  line-height: 0.95;
+  letter-spacing: -0.045em;
+  color: var(--d-ink);
+  margin: 0;
+}
+.s7-aside-dot { color: var(--d-brand-dark); }
+.s7-aside-tag {
+  font-family: var(--d-f-ko);
+  font-size: 18px;
+  color: var(--d-ink-mid);
+  margin: 18px 0 0;
+  line-height: 1.5;
+  max-width: 320px;
+}
+.s7-aside-foot { display: flex; flex-direction: column; gap: 4px; }
+.s7-aside-foot .d-tiny { font-size: 11px; }
+
+.s7-login-main {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 56px 48px;
+}
+.s7-login-card {
+  width: 100%;
+  max-width: 420px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.s7-login-h {
+  font-family: var(--d-f-sans);
+  font-weight: 600;
+  font-size: 36px;
+  letter-spacing: -0.03em;
+  margin: 6px 0 4px;
+  color: var(--d-ink);
+  line-height: 1.05;
+}
+.s7-login-sub {
+  font-family: var(--d-f-ko);
+  font-size: 14.5px;
+  color: var(--d-ink-light);
+  margin: 0 0 22px;
+  line-height: 1.55;
+}
+
+.s7-form { display: flex; flex-direction: column; gap: 16px; margin: 0; }
+.s7-field { display: flex; flex-direction: column; gap: 6px; }
+.s7-label {
+  font-family: var(--d-f-mono);
+  font-size: 10.5px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--d-ink-light);
+  font-weight: 600;
+  margin: 0;
+}
+.s7-input {
+  font-family: var(--d-f-ko);
+  font-size: 15px;
+  padding: 12px 14px;
+  background: var(--d-paper);
+  border: 1px solid var(--d-hair-strong);
+  border-radius: 6px;
+  color: var(--d-ink);
+  outline: none;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+  width: 100%;
+}
+.s7-input:focus {
+  border-color: var(--d-brand-dark);
+  box-shadow: 0 0 0 3px rgba(245,168,61,0.18);
+}
+
+.s7-submit {
+  margin-top: 14px;
+  justify-content: center;
+  width: 100%;
+  font-size: 15px;
+  cursor: pointer;
+  border: 1px solid var(--d-ink) !important;
+}
+
+.s7-back {
+  font-family: var(--d-f-ko);
+  font-size: 14px;
+  color: var(--d-ink-mid);
+  text-decoration: none;
+  align-self: center;
+  margin-top: 22px;
+}
+.s7-back:hover { color: var(--d-ink); }
+
+.s7-errors {
+  margin: 0 0 18px;
+  padding: 12px 14px;
+  background: var(--d-fail-soft);
+  border: 1px solid var(--d-fail-line);
+  color: var(--d-fail);
+  border-radius: 6px;
+  font-family: var(--d-f-ko);
+  font-size: 13.5px;
+  line-height: 1.5;
+}
+.s7-errors ul { margin: 0; padding-left: 18px; }
+
+@media (max-width: 880px) {
+  .s7-login-root { grid-template-columns: 1fr; min-height: auto; }
+  .s7-login-aside { padding: 28px 22px; min-height: 0; }
+  .s7-aside-title { font-size: 48px; }
+  .s7-login-main { padding: 32px 22px 48px; }
+}
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="s7-login-root">
+
+  <aside class="s7-login-aside">
+    <div class="s7-aside-top">
+      <span class="s7-aside-mark">◤ SNU · SENS</span>
+    </div>
+    <div class="s7-aside-mid">
+      <h1 class="s7-aside-title">
+        E&#8209;CON 논설<span class="s7-aside-dot">.</span>
+      </h1>
+      <p class="s7-aside-tag">
+        새 계정을 만드세요.<br/>
+        디지털 회로 채점 시스템.
+      </p>
+    </div>
+    <div class="s7-aside-foot">
+      <div class="d-tiny">2026 공헌 공드림 캠프 · SNU SENS</div>
+      <div class="d-tiny">SENS-2026-001 / v1.0</div>
+    </div>
+  </aside>
+
+  <main class="s7-login-main">
+    <div class="s7-login-card">
+      <div class="d-meta">REGISTER · 회원가입</div>
+      <h2 class="s7-login-h">새 계정 만들기</h2>
+      <p class="s7-login-sub">
+        팀명(또는 사용자명) · 이메일 · 비밀번호를 입력하세요.
+      </p>
+
+      {% if errors %}
+      <div class="s7-errors">
+        <ul>{% for error in errors %}<li>{{ error }}</li>{% endfor %}</ul>
+      </div>
+      {% endif %}
+
+      <form class="s7-form" method="post" accept-charset="utf-8">
+        <div class="s7-field">
+          <label class="s7-label" for="name">사용자명</label>
+          <input id="name" class="s7-input" name="name" type="text" required
+                 autocomplete="username" autofocus />
+        </div>
+        <div class="s7-field">
+          <label class="s7-label" for="email">이메일</label>
+          <input id="email" class="s7-input" name="email" type="email" required
+                 autocomplete="email" />
+        </div>
+        <div class="s7-field">
+          <label class="s7-label" for="password">비밀번호</label>
+          <input id="password" class="s7-input" name="password" type="password" required
+                 autocomplete="new-password" />
+        </div>
+
+        <button type="submit" name="_submit" value="제출"
+                class="d-btn d-btn-primary s7-submit">
+          가입하기
+          <svg width="14" height="14" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+            <path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </button>
+
+        <input id="nonce" name="nonce" type="hidden" value="{{ Session.nonce }}">
+      </form>
+
+      <a href="/login" class="s7-back">이미 계정이 있다면 로그인 →</a>
+    </div>
+  </main>
+
+</div>
+{% endblock %}

@@ -444,6 +444,7 @@ button[type="submit"]:hover {
 .d-rule { height: 1px; background: var(--d-hair); border: none; margin: var(--d-s-7) 0; }
 </style>
 <script defer src="/plugins/econ_judge/assets/scoreboard.js"></script>
+<script defer src="/plugins/econ_judge/assets/challenges.js"></script>
 <script>
 /* Inject a "내 점수" navbar link before the Challenges link. The full
    Scoreboard link gets hidden by CTFd itself once score_visibility=admins

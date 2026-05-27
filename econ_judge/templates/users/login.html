@@ -1,0 +1,333 @@
+{% extends "base.html" %}
+
+{% block stylesheets %}
+{{ super() }}
+<style>
+/* ─── s7 Login layout — Direction D editorial-minimal ─── */
+.s7-login-root {
+  width: 100%;
+  min-height: calc(100vh - 120px);
+  background: var(--d-paper);
+  display: grid;
+  grid-template-columns: 1fr 1.05fr;
+  overflow: hidden;
+  margin: 0;
+  border-top: 1px solid var(--d-hair);
+}
+.s7-login-root *, .s7-login-root *::before, .s7-login-root *::after { box-sizing: border-box; }
+
+.s7-login-aside {
+  padding: 48px 56px;
+  background: var(--d-paper-soft);
+  border-right: 1px solid var(--d-hair);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 32px;
+  position: relative;
+  min-height: 600px;
+}
+.s7-login-aside::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image:
+    linear-gradient(var(--d-paper-sunk) 1px, transparent 1px),
+    linear-gradient(90deg, var(--d-paper-sunk) 1px, transparent 1px);
+  background-size: 22px 22px;
+  opacity: 0.55;
+  pointer-events: none;
+}
+.s7-login-aside > * { position: relative; z-index: 1; }
+.s7-aside-top { display: flex; align-items: center; gap: 12px; }
+.s7-aside-mark {
+  font-family: var(--d-f-mono);
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 0.16em;
+  color: var(--d-brand-dark);
+}
+.s7-aside-mid { padding-bottom: 12px; }
+.s7-aside-title {
+  font-family: var(--d-f-sans);
+  font-weight: 700;
+  font-size: 64px;
+  line-height: 0.95;
+  letter-spacing: -0.045em;
+  color: var(--d-ink);
+  margin: 0;
+}
+.s7-aside-dot { color: var(--d-brand-dark); }
+.s7-aside-tag {
+  font-family: var(--d-f-ko);
+  font-size: 18px;
+  color: var(--d-ink-mid);
+  margin: 18px 0 0;
+  line-height: 1.5;
+  max-width: 320px;
+}
+.s7-aside-fig {
+  max-width: 280px;
+  align-self: flex-start;
+  opacity: 0.9;
+}
+.s7-aside-fig svg { width: 100%; height: auto; }
+.s7-aside-foot { display: flex; flex-direction: column; gap: 4px; }
+.s7-aside-foot .d-tiny { font-size: 11px; }
+
+.s7-login-main {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 56px 48px;
+}
+.s7-login-card {
+  width: 100%;
+  max-width: 380px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.s7-login-h {
+  font-family: var(--d-f-sans);
+  font-weight: 600;
+  font-size: 36px;
+  letter-spacing: -0.03em;
+  margin: 6px 0 4px;
+  color: var(--d-ink);
+  line-height: 1.05;
+}
+.s7-login-sub {
+  font-family: var(--d-f-ko);
+  font-size: 14.5px;
+  color: var(--d-ink-light);
+  margin: 0 0 22px;
+  line-height: 1.55;
+}
+
+.s7-form { display: flex; flex-direction: column; gap: 16px; margin: 0; }
+.s7-field { display: flex; flex-direction: column; gap: 6px; }
+.s7-label-row { display: flex; justify-content: space-between; align-items: baseline; }
+.s7-label {
+  font-family: var(--d-f-mono);
+  font-size: 10.5px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--d-ink-light);
+  font-weight: 600;
+  margin: 0;
+}
+.s7-input {
+  font-family: var(--d-f-ko);
+  font-size: 15px;
+  padding: 12px 14px;
+  background: var(--d-paper);
+  border: 1px solid var(--d-hair-strong);
+  border-radius: 6px;
+  color: var(--d-ink);
+  outline: none;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+  width: 100%;
+}
+.s7-input:focus {
+  border-color: var(--d-brand-dark);
+  box-shadow: 0 0 0 3px rgba(245,168,61,0.18);
+}
+.s7-link {
+  font-family: var(--d-f-ko);
+  font-size: 12px;
+  color: var(--d-ink-light);
+  text-decoration: none;
+  border-bottom: 1px dotted var(--d-ink-light);
+}
+.s7-link:hover { color: var(--d-brand-dark); border-bottom-color: var(--d-brand-dark); }
+
+.s7-submit {
+  margin-top: 14px;
+  justify-content: center;
+  width: 100%;
+  font-size: 15px;
+  cursor: pointer;
+  border: 1px solid var(--d-ink) !important;
+}
+
+.s7-divider {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin: 22px 0 18px;
+}
+.s7-divider::before, .s7-divider::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: var(--d-hair);
+}
+
+.s7-register {
+  font-family: var(--d-f-ko);
+  font-size: 14px;
+  color: var(--d-ink-mid);
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  align-self: center;
+  padding: 10px 16px;
+  border: 1px solid var(--d-hair-strong);
+  border-radius: 999px;
+  transition: border-color 0.15s ease, color 0.15s ease, background 0.15s ease;
+}
+.s7-register strong { color: var(--d-ink); font-weight: 600; }
+.s7-register:hover { border-color: var(--d-ink); color: var(--d-ink); background: var(--d-paper-soft); text-decoration: none; }
+.s7-register svg { transition: transform 0.15s ease; }
+.s7-register:hover svg { transform: translateX(2px); }
+
+.s7-errors {
+  margin: 0 0 18px;
+  padding: 12px 14px;
+  background: var(--d-fail-soft);
+  border: 1px solid var(--d-fail-line);
+  color: var(--d-fail);
+  border-radius: 6px;
+  font-family: var(--d-f-ko);
+  font-size: 13.5px;
+  line-height: 1.5;
+}
+.s7-errors ul { margin: 0; padding-left: 18px; }
+
+.s7-infos {
+  margin: 0 0 18px;
+  padding: 12px 14px;
+  background: var(--d-paper-soft);
+  border: 1px solid var(--d-hair-strong);
+  color: var(--d-ink-mid);
+  border-radius: 6px;
+  font-family: var(--d-f-ko);
+  font-size: 13.5px;
+}
+
+@media (max-width: 880px) {
+  .s7-login-root { grid-template-columns: 1fr; min-height: auto; }
+  .s7-login-aside { padding: 28px 22px; min-height: 0; }
+  .s7-aside-title { font-size: 48px; }
+  .s7-aside-fig { display: none; }
+  .s7-login-main { padding: 32px 22px 48px; }
+}
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="s7-login-root">
+
+  <aside class="s7-login-aside">
+    <div class="s7-aside-top">
+      <span class="s7-aside-mark">◤ SNU · SENS</span>
+    </div>
+
+    <div class="s7-aside-mid">
+      <h1 class="s7-aside-title">
+        E&#8209;CON 논설<span class="s7-aside-dot">.</span>
+      </h1>
+      <p class="s7-aside-tag">
+        디지털 논리회로 설계<br/>
+        자동채점 시스템.
+      </p>
+    </div>
+
+    <div class="s7-aside-fig">
+      <svg viewBox="0 0 280 200" xmlns="http://www.w3.org/2000/svg"
+           fill="none" stroke="var(--d-brand-dark)" stroke-width="1"
+           stroke-linecap="round" stroke-linejoin="round">
+        <line x1="20" y1="62" x2="110" y2="62"/>
+        <line x1="20" y1="138" x2="110" y2="138"/>
+        <circle cx="92" cy="62" r="2" fill="var(--d-brand-dark)" stroke="none"/>
+        <line x1="92" y1="62" x2="92" y2="162"/>
+        <circle cx="92" cy="138" r="2" fill="var(--d-brand-dark)" stroke="none"/>
+        <line x1="92" y1="138" x2="92" y2="162"/>
+        <path d="M110 42 Q132 62 110 82"/>
+        <path d="M116 42 Q138 62 116 82 L142 82 Q180 62 142 42 Z"/>
+        <line x1="180" y1="62" x2="252" y2="62"/>
+        <path d="M110 152 L110 184 L140 184 Q172 184 172 168 Q172 152 140 152 Z"/>
+        <line x1="92" y1="162" x2="110" y2="162"/>
+        <line x1="92" y1="176" x2="110" y2="176"/>
+        <line x1="172" y1="168" x2="252" y2="168"/>
+      </svg>
+    </div>
+
+    <div class="s7-aside-foot">
+      <div class="d-tiny">2026 공헌 공드림 캠프 · SNU SENS</div>
+      <div class="d-tiny">SENS-2026-001 / v1.0</div>
+    </div>
+  </aside>
+
+  <main class="s7-login-main">
+    <div class="s7-login-card">
+      <div class="d-meta">LOGIN · 로그인</div>
+      <h2 class="s7-login-h">계정으로 로그인</h2>
+      <p class="s7-login-sub">
+        캠프 운영진에게 받은 사용자명과 비밀번호를 입력하세요.
+      </p>
+
+      {% if errors %}
+      <div class="s7-errors">
+        <ul>
+        {% for error in errors %}
+          <li>{{ error }}</li>
+        {% endfor %}
+        </ul>
+      </div>
+      {% endif %}
+
+      {% if infos %}
+      <div class="s7-infos">
+        {% for info in infos %}<div>{{ info }}</div>{% endfor %}
+      </div>
+      {% endif %}
+
+      <form class="s7-form" method="post" accept-charset="utf-8">
+        <div class="s7-field">
+          <label class="s7-label" for="name">사용자명 또는 이메일</label>
+          <input id="name" class="s7-input"
+                 name="name" type="text" required
+                 autocomplete="username email" autofocus
+                 placeholder="2조 / team2@..." />
+        </div>
+        <div class="s7-field">
+          <div class="s7-label-row">
+            <label class="s7-label" for="password">비밀번호</label>
+            <a href="/reset_password" class="s7-link">비밀번호 분실 시</a>
+          </div>
+          <input id="password" class="s7-input"
+                 name="password" type="password" required
+                 autocomplete="current-password"
+                 placeholder="••••••••" />
+        </div>
+
+        <button type="submit" name="_submit" value="제출"
+                class="d-btn d-btn-primary s7-submit">
+          로그인
+          <svg width="14" height="14" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+            <path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </button>
+
+        <input id="nonce" name="nonce" type="hidden" value="{{ Session.nonce }}">
+      </form>
+
+      {% if registration_visible() %}
+      <div class="s7-divider">
+        <span class="d-tiny">또는</span>
+      </div>
+      <a href="/register" class="s7-register">
+        계정이 없다면&nbsp;<strong>회원가입</strong>
+        <svg width="12" height="12" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+          <path d="M5 4l4 4-4 4" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </a>
+      {% endif %}
+    </div>
+  </main>
+
+</div>
+{% endblock %}
