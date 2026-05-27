@@ -111,27 +111,11 @@ DEMO_TEAMS = [
 # pick up the same Pretendard + color tokens without per-page styling.
 THEME_HEADER_CSS = """\
 <style id="econ-judge-theme">
-/*
- * E-CON 논설 · drop-in theme (Direction D · Editorial Minimal)
- * ─────────────────────────────────────────────────────────────
- * Paste this file's CONTENTS into bootstrap.py's THEME_HEADER_CSS
- * string (between the existing <style id="econ-judge-theme">…</style>
- * tags). It supersedes the SENS amber/Pretendard block and the
- * .navbar / .jumbotron / .btn-primary overrides in the same file.
- *
- * Mandated:
- *   - SENS amber (#f5a83d) is preserved as --d-brand and exposed via
- *     CTFd legacy aliases (--theme-color, --sens-brand*).
- *   - Korean is the default locale; CTFd's language switcher stays hidden.
- *   - Pretendard Variable + Inter Tight + IBM Plex Mono — 3 fonts total.
- *
- * Drop-in audit:
- *   1) Remove old @import for DM Serif Display (no longer used).
- *   2) Keep submit-row stacking rule from the original (challenge modal
- *      drag-drop layout depends on it).
- *   3) Keep the <script defer src="…/scoreboard.js"> and "내 점수"
- *      navbar-inject script blocks — they live outside the <style> tag.
- */
+/* E-CON 논설 — Direction D editorial-minimal theme (see
+   docs/theme-drop-in.css for the source of truth + audit notes;
+   the comment is kept short here so its literal text does NOT
+   include any HTML tag sequences that the browser's HTML parser
+   would interpret as terminating this style block. */
 
 /* ── Font imports ────────────────────────────────────────────────── */
 
