@@ -296,9 +296,12 @@ main > .jumbotron:has(+ .container [x-data="ChallengeBoard"]),
       });
     }
 
-    /* Build the s2 container and insert at the top of .container (before the
-       Alpine wrapper, which contains the modal we want to keep). */
-    const container = document.querySelector("main .container");
+    /* Build the s2 container and insert at the top of the OUTER .container
+       (the direct child of <main>, sibling of .jumbotron). The jumbotron also
+       wraps a .container internally, but we hide the jumbotron — if we
+       inserted into that inner container, our s2 markup would inherit the
+       hidden parent. `main > .container` is unambiguous. */
+    const container = document.querySelector("main > .container");
     if (!container) return;
 
     const root = document.createElement("div");
