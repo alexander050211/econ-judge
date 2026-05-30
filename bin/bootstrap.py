@@ -2196,7 +2196,11 @@ def main() -> None:
         set_config("user_mode", "users")
         set_config("default_locale", "ko")
         set_config("challenge_visibility", "public")
-        set_config("registration_visibility", "public")
+        # Pre-issued team accounts only — no public self-signup. The grade
+        # endpoint runs a JVM subprocess on uploaded files, so the auth wall is
+        # part of the attack-surface control. Flip to "public" only for a
+        # controlled onboarding window, then flip back.
+        set_config("registration_visibility", "private")
         # Score visibility is admin-only to prevent the "we're 4th of 4"
         # demoralization. Mentees see only their own + (anonymized) leader's
         # score via /my-score, served by the econ_judge plugin endpoint that

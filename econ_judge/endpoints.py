@@ -23,6 +23,20 @@ def _reject(message: str):
     )
 
 
+# Mentee-facing messages for grader system/config errors. These are NOT wrong
+# answers — they are logged server-side and never record a Fail. The raw grader
+# detail is deliberately kept out of these strings (it can carry server paths
+# and Java stack traces).
+_ERROR_MESSAGES = {
+    "no_test": "이 문제는 아직 채점 준비가 되지 않았습니다. 운영진에게 알려주세요.",
+    "misconfigured": "채점기 설정 오류입니다. 운영진에게 알려주세요.",
+    "timeout": "채점 시간이 초과되었습니다 (회로가 너무 크거나 멈춰 있을 수 있어요). 회로를 점검한 뒤 다시 제출해주세요.",
+    "java_missing": "채점기를 일시적으로 사용할 수 없습니다. 잠시 후 다시 시도해주세요.",
+    "grader_error": "회로를 평가할 수 없습니다. Digital에서 정상적으로 열리는지, 지원되는 부품만 사용했는지 확인해주세요.",
+    "unsafe_xml": "안전하지 않은 XML 구문이 포함되어 파일이 거부되었습니다.",
+}
+
+
 # ── Projector category mapping ────────────────────────────────────────
 # Project-phase challenge ids — fixed by the camp problem set, matching
 # tests/register_challenges.py. Order = column order in the projector
@@ -135,6 +149,25 @@ def register_endpoints(app):
         user = get_current_user()
         team = get_current_team()
         ip = get_ip(request)
+
+        # System / config errors and rejected input are not wrong answers:
+        # log the real detail for operators, do NOT record a Fail, and show a
+        # generic retry message (never the raw grader output).
+        if result.get("status") != "graded":
+            app.logger.warning(
+                "digital grade non-graded: chal=%s user=%s status=%s reason=%s detail=%s",
+                challenge_id,
+                getattr(user, "id", "?"),
+                result.get("status"),
+                result.get("reason"),
+                (result.get("detail") or "")[:500],
+            )
+            return _reject(
+                _ERROR_MESSAGES.get(
+                    result.get("reason"),
+                    "채점 중 오류가 발생했습니다. 잠시 후 다시 시도해주세요.",
+                )
+            )
 
         if result["total"] > 0 and result["passed"] == result["total"]:
             already = Solves.query.filter_by(
