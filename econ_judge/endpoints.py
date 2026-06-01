@@ -171,9 +171,13 @@ def register_endpoints(app):
             )
 
         # Concept manifest drives the testbench UI. It is purely educational —
-        # the list of aspects a challenge checks — and carries NO per-case
-        # pass/fail signal, so it is safe to send on every response.
-        concept = concept_info(challenge_id)
+        # the ordered list of aspects a challenge checks — and carries NO
+        # per-case pass/fail signal, so it is safe to send on every response.
+        # `concepts` = aspect labels (bench animation); `hints` = the parallel
+        # directional "확인해 볼 점" checklist shown on a wrong/partial answer.
+        manifest = concept_info(challenge_id)
+        concepts = [c["label"] for c in manifest]
+        hints = [c["hint"] for c in manifest]
         passed = int(result["passed"])
         total = int(result["total"])
 
@@ -199,7 +203,7 @@ def register_endpoints(app):
                         "message": f"All {total} testcases passed.",
                         "passed": passed,
                         "total": total,
-                        "concepts": concept["concepts"],
+                        "concepts": concepts,
                     },
                 }
             )
@@ -214,11 +218,14 @@ def register_endpoints(app):
         db.session.add(wrong)
         db.session.commit()
 
-        # Conceptual-only feedback: aggregate count + one generic hint. The raw
-        # per-case grader detail (which case index failed) is deliberately NOT
-        # sent — it would let a student pinpoint the failing input combo — and
-        # is intentionally discarded here (only the non-graded error branch
-        # above logs detail server-side; a normal wrong answer logs nothing).
+        # Conceptual-only feedback: aggregate count + a directional checklist
+        # (one hint per concept). The raw per-case grader detail (which case
+        # index failed) is deliberately NOT sent — it would let a student
+        # pinpoint the failing input combo — and is intentionally discarded
+        # here (only the non-graded error branch above logs detail server-side;
+        # a normal wrong answer logs nothing). Since Digital grades whole rows,
+        # the checklist covers every aspect — it cannot single out the failing
+        # one, by design.
         return jsonify(
             {
                 "success": True,
@@ -227,8 +234,8 @@ def register_endpoints(app):
                     "message": f"{passed}/{total} testcases passed.",
                     "passed": passed,
                     "total": total,
-                    "concepts": concept["concepts"],
-                    "hint": concept["hint"],
+                    "concepts": concepts,
+                    "hints": hints,
                 },
             }
         )

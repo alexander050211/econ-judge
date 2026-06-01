@@ -355,26 +355,49 @@
 #econ-submit-root .result.is-partial .bar > i { background: var(--d-warn); }
 #econ-submit-root .result.is-fail    .bar > i { background: var(--d-fail); }
 
-#econ-submit-root .result .hint {
+#econ-submit-root .result .hints {
   margin-top: 12px;
+  padding: 11px 13px;
+  border-radius: 6px;
+  /* Sit on the paper surface, not the brand tint: on a partial result the
+     panel is already amber (--d-warn-soft), which in dark mode is the SAME
+     rgba as --d-brand-soft — a brand-tinted box would vanish against it.
+     --d-paper contrasts against every result class in both themes. */
+  background: var(--d-paper, #fbfaf6);
+  border: 1px solid var(--d-brand-line, rgba(245,168,61,0.32));
+}
+#econ-submit-root .result .hints-title {
+  font-family: var(--d-f-mono);
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--d-brand-ink, #7a5a1f);
+  margin-bottom: 7px;
+}
+#econ-submit-root .result .hints-list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+#econ-submit-root .result .hints-list li {
   display: flex;
   gap: 8px;
   align-items: baseline;
-  padding: 10px 12px;
-  border-radius: 6px;
-  background: var(--d-brand-soft, #fff4e0);
-  border: 1px solid var(--d-brand-line, rgba(245,168,61,0.32));
   font-family: var(--d-f-ko);
   font-size: 12.5px;
   line-height: 1.5;
   color: var(--d-brand-ink, #7a5a1f);
 }
-#econ-submit-root .result .hint .hint-mark {
+#econ-submit-root .result .hints-list .hint-mark {
   flex-shrink: 0;
   font-family: var(--d-f-mono);
   color: var(--d-brand-dark, #d69336);
 }
-#econ-submit-root .result .hint .hint-text { flex: 1; }
+#econ-submit-root .result .hints-list .hint-text { flex: 1; }
 
 #econ-submit-root .result details {
   margin-top: 12px;

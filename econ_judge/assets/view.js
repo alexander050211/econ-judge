@@ -296,9 +296,16 @@ CTFd._internal.challenge.postRender = function () {};
     // the parsed message (older payloads / error states with no counts).
     const passed = (data && typeof data.passed === "number") ? data.passed : parsed.passed;
     const total = (data && typeof data.total === "number") ? data.total : parsed.total;
-    // Conceptual hint replaces the old raw grader detail. Shown only on a
-    // non-passing graded result; never carries a case index or input vector.
-    const hint = data && typeof data.hint === "string" ? data.hint : "";
+    // Directional checklist replaces the old raw grader detail. Shown only on a
+    // non-passing graded result; one hint per concept, never a case index or
+    // input vector. Accepts the new `hints` array, falling back to a legacy
+    // single `hint` string for forward/backward compatibility.
+    const hints =
+      data && Array.isArray(data.hints)
+        ? data.hints.filter((h) => typeof h === "string" && h)
+        : data && typeof data.hint === "string" && data.hint
+        ? [data.hint]
+        : [];
 
     let klass, icon, titleHtml, subtitleText, showBar = false, pct = 0;
 
@@ -357,14 +364,24 @@ CTFd._internal.challenge.postRender = function () {};
       (showBar
         ? '<div class="bar"><i style="width: 0%"></i></div>'
         : "") +
-      (hint
-        ? '<div class="hint"><span class="hint-mark" aria-hidden="true">↳</span><span class="hint-text"></span></div>'
+      (hints.length
+        ? '<div class="hints">' +
+            '<div class="hints-title">확인해 볼 점</div>' +
+            '<ul class="hints-list"></ul>' +
+          "</div>"
         : "");
 
-    // hint text set via textContent (never trust server strings as HTML)
-    if (hint) {
-      const ht = card.querySelector(".hint .hint-text");
-      if (ht) ht.textContent = hint;
+    // hint items set via textContent (never trust server strings as HTML)
+    if (hints.length) {
+      const ul = card.querySelector(".hints-list");
+      if (ul) {
+        hints.forEach((h) => {
+          const li = document.createElement("li");
+          li.innerHTML = '<span class="hint-mark" aria-hidden="true">↳</span><span class="hint-text"></span>';
+          li.querySelector(".hint-text").textContent = h;
+          ul.appendChild(li);
+        });
+      }
     }
 
     setState("result");
