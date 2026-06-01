@@ -35,6 +35,20 @@ services:
       # rows + 5 canonicals) even when the service is freshly woken.
       - key: ECON_JUDGE_TIMEOUT
         value: "45"
+      # Grading concurrency guard. Each grade spawns a ~400MB Digital JVM;
+      # -Xmx caps only heap, so concurrent grades would OOM the 512MB free
+      # tier. The grader serializes JVM runs with a per-process semaphore.
+      # NOTE: the cap is PER worker — keep WEB_WORKERS=1 on the 512MB tier, or
+      # the effective concurrency is WEB_WORKERS * ECON_JUDGE_CONCURRENCY and
+      # the OOM guard no longer bounds total JVMs. Raise ECON_JUDGE_CONCURRENCY
+      # only on a larger plan. ECON_JUDGE_QUEUE_WAIT is how long a queued grade
+      # waits for a slot before returning a retryable "busy" message (no Fail
+      # recorded); it is ADDITIVE to ECON_JUDGE_TIMEOUT against gunicorn's 60s
+      # request timeout — keep QUEUE_WAIT + TIMEOUT well under 60 (8+45=53).
+      - key: ECON_JUDGE_CONCURRENCY
+        value: "1"
+      - key: ECON_JUDGE_QUEUE_WAIT
+        value: "8"
       # Camp team-account passwords. The roster (1조–4조) is re-seeded on every
       # boot from bin/bootstrap.py so a cold-start can't lock teams out; these
       # set the login passwords (out of git, like the admin password). Set a

@@ -2,6 +2,7 @@ import os
 import re
 import shutil
 import subprocess
+import threading
 from pathlib import Path
 
 REPO_ROOT = Path(__file__).resolve().parent.parent
@@ -13,7 +14,54 @@ CANONICAL_DIR = Path(
     os.environ.get("ECON_JUDGE_CANONICAL_DIR", REPO_ROOT / "canonical")
 )
 JAVA = os.environ.get("ECON_JUDGE_JAVA", "java")
-TIMEOUT_SEC = int(os.environ.get("ECON_JUDGE_TIMEOUT", "45"))
+
+
+def _int_env(name: str, default: int) -> int:
+    """Read an integer env var, falling back to `default` on a missing or
+    malformed value. These run at import, so an unguarded int() on a dashboard
+    typo (e.g. "45s") would raise at plugin-load and crash-loop the worker —
+    degrade gracefully instead. Mirrors endpoints._freeze_state's guard."""
+    raw = os.environ.get(name)
+    if raw is None:
+        return default
+    try:
+        return int(raw)
+    except (TypeError, ValueError):
+        print(f"[grader] ignoring invalid {name}={raw!r}, using {default}")
+        return default
+
+
+TIMEOUT_SEC = _int_env("ECON_JUDGE_TIMEOUT", 45)
+
+# ── Grading concurrency guard ────────────────────────────────────────────
+# Each grade spawns a Digital JVM. `-Xmx256m` caps only the Java heap; total
+# per-JVM RSS (heap + metaspace + thread stacks + JIT) is ~350-450MB, so two
+# concurrent grades would exceed the 512MB free-tier limit and OOM-kill the
+# worker. We serialize JVM execution with a semaphore (default 1 slot).
+#
+# The web server runs as a SINGLE gunicorn worker with the `gevent` worker
+# class (see bin/entrypoint.sh). gunicorn monkey-patches stdlib `threading`
+# BEFORE importing the app, so this `threading.BoundedSemaphore` is actually a
+# cooperative gevent lock: a grade waiting for a slot YIELDS the event loop, so
+# the rest of the site (scoreboard polls, page loads) stays responsive while
+# grades queue one at a time. (Without gevent — e.g. canonical_self_test.py
+# importing this module directly — it's an ordinary semaphore, still correct;
+# the single-threaded self-test never contends.)
+#
+# ⚠️ PER-PROCESS cap: this semaphore lives in one worker process, so the OOM
+# guarantee holds only with WEB_WORKERS=1 (entrypoint.sh default). With N
+# workers the effective JVM concurrency is N * GRADE_CONCURRENCY — keep
+# WEB_WORKERS=1 on the 512MB tier, or lower GRADE_CONCURRENCY accordingly.
+#
+# ECON_JUDGE_CONCURRENCY: grading slots (raise on a larger plan). Default 1.
+# ECON_JUDGE_QUEUE_WAIT: max seconds to wait for a slot before returning a
+#   retryable "busy" error. Keep QUEUE_WAIT + ECON_JUDGE_TIMEOUT comfortably
+#   under gunicorn's --timeout (60s) — a queued grade's wait is ADDITIVE to its
+#   subprocess budget against that ceiling (8 + 45 = 53s leaves headroom for
+#   request/file/seeding/response overhead on the 0.5 vCPU tier).
+GRADE_CONCURRENCY = max(1, _int_env("ECON_JUDGE_CONCURRENCY", 1))
+QUEUE_WAIT_SEC = _int_env("ECON_JUDGE_QUEUE_WAIT", 8)
+_grade_sem = threading.BoundedSemaphore(GRADE_CONCURRENCY)
 
 # Per-challenge canonical sub-circuit filenames seeded next to the submission
 # so Digital can resolve sub-circuit imports without the mentee needing to
@@ -118,6 +166,18 @@ def grade_submission(challenge_id: int, submission_path: str) -> dict:
             "detail": danger,
         }
 
+    # Only the JVM execution is serialized — the cheap validation above runs
+    # freely. Acquire a grading slot, bounded by QUEUE_WAIT_SEC so a backlog
+    # returns a retryable "busy" (no Fail recorded; see endpoints status
+    # contract) rather than piling up past the request timeout.
+    if not _grade_sem.acquire(timeout=QUEUE_WAIT_SEC):
+        return {
+            "status": "error",
+            "reason": "busy",
+            "passed": 0,
+            "total": 0,
+            "detail": f"Grader busy — all {GRADE_CONCURRENCY} slot(s) in use for {QUEUE_WAIT_SEC}s",
+        }
     try:
         proc = subprocess.run(
             [
@@ -152,6 +212,8 @@ def grade_submission(challenge_id: int, submission_path: str) -> dict:
             "total": 0,
             "detail": f"Java executable '{JAVA}' not found",
         }
+    finally:
+        _grade_sem.release()
 
     stdout = _decode_subprocess(proc.stdout)
     stderr = _decode_subprocess(proc.stderr)
