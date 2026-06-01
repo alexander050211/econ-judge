@@ -41,6 +41,158 @@ CTFd._internal.challenge.postRender = function () {};
     return (bytes / 1024 / 1024).toFixed(2) + " MB";
   }
 
+  // ---------- Testbench (grading-state instrument log) ----------
+  //
+  // There is no streaming from the grader — the submit POST blocks and returns
+  // one JSON result. The bench is therefore an HONEST post-result replay: while
+  // the POST is in flight we show an indeterminate bar; once the result lands we
+  // reveal the challenge's concept manifest one line at a time, paced to the
+  // REAL grading duration (a fast 200ms grade just flashes complete). The lines
+  // come from the server's `concepts` array (educational aspects of the
+  // challenge), never per-case pass/fail data.
+
+  const BENCH_PREF_KEY = "econ_bench_detail"; // "1" = 자세히, "0" = 간단히
+  const prefersReducedMotion =
+    window.matchMedia &&
+    window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+  function benchDetailOn() {
+    try {
+      return localStorage.getItem(BENCH_PREF_KEY) !== "0"; // default 자세히
+    } catch (e) {
+      return true;
+    }
+  }
+  function setBenchDetail(on) {
+    try {
+      localStorage.setItem(BENCH_PREF_KEY, on ? "1" : "0");
+    } catch (e) {}
+  }
+
+  // Bench runtime state, so a fast result can cancel an in-flight replay.
+  const bench = { timers: [], cancelled: false };
+
+  function benchClearTimers() {
+    bench.timers.forEach((t) => clearTimeout(t));
+    bench.timers = [];
+  }
+
+  function applyBenchMode() {
+    const on = benchDetailOn();
+    const simple = $("#econ-grading-simple");
+    const detail = $("#econ-grading-bench");
+    const toggle = $("#econ-bench-toggle");
+    if (simple) simple.hidden = on;
+    if (detail) detail.hidden = !on;
+    if (toggle) {
+      toggle.textContent = on ? "간단히 보기" : "자세히 보기";
+      toggle.setAttribute("aria-pressed", on ? "true" : "false");
+    }
+  }
+
+  // Enter the grading state: reset the bench to an indeterminate "running" look.
+  function benchStart() {
+    benchClearTimers();
+    bench.cancelled = false;
+    applyBenchMode();
+    const bar = $("#econ-bench-bar");
+    const term = $("#econ-bench-term");
+    if (bar) {
+      bar.className = "s3-bench-bar-i is-working is-indeterminate";
+      bar.style.width = "";
+    }
+    if (term) {
+      term.innerHTML =
+        '<div class="s3-bench-line">' +
+        '<span class="s3-bench-prompt">$</span>' +
+        '<span class="s3-bench-label s3-bench-run">회로 컴파일 · 시뮬레이션 준비 중</span>' +
+        '<span class="s3-bench-cursor" aria-hidden="true"></span>' +
+        "</div>";
+    }
+  }
+
+  // Replay the concept manifest after the result resolves, then hand off to
+  // `done()` (which renders the result panel). `elapsedMs` is the real grading
+  // time so the animation never outruns or lags reality by much.
+  function benchReplay(data, elapsedMs, done) {
+    const term = $("#econ-bench-term");
+    const bar = $("#econ-bench-bar");
+    const allPassed =
+      (data && data.status) === "correct" ||
+      (data && data.total > 0 && data.passed === data.total);
+    const concepts =
+      (data && Array.isArray(data.concepts) && data.concepts.length
+        ? data.concepts
+        : ["회로 동작"]);
+
+    // If the bench isn't the active view (간단히) or motion is reduced, skip the
+    // animation entirely and go straight to the result.
+    if (!benchDetailOn() || prefersReducedMotion || !term || !bar) {
+      done();
+      return;
+    }
+
+    bar.className = "s3-bench-bar-i is-working";
+    // Pace lines to the real duration: total replay ~= min(elapsed, cap),
+    // floored so it's perceptible, split across the concept lines.
+    const budget = Math.max(360, Math.min(elapsedMs || 0, 1400));
+    const step = Math.max(120, Math.round(budget / (concepts.length + 1)));
+
+    term.innerHTML = "";
+    let i = 0;
+
+    const addLine = () => {
+      // A stale replay (superseded by a newer submit) still completes the
+      // handoff so the awaiting promise can never hang the modal.
+      if (bench.cancelled) { done(); return; }
+      if (i < concepts.length) {
+        const label = concepts[i];
+        const verdict = allPassed
+          ? '<span class="s3-bench-ok">✓ 통과</span>'
+          : '<span class="s3-bench-run">검증</span>';
+        const line = document.createElement("div");
+        line.className = "s3-bench-line";
+        line.innerHTML =
+          '<span class="s3-bench-prompt">$</span>' +
+          '<span class="s3-bench-label"></span>' +
+          verdict;
+        // label via textContent — never trust server strings as HTML
+        line.querySelector(".s3-bench-label").textContent = label;
+        term.appendChild(line);
+        bar.style.width = Math.round(((i + 1) / (concepts.length + 1)) * 100) + "%";
+        i += 1;
+        bench.timers.push(setTimeout(addLine, step));
+      } else {
+        // Summary line. Tier the tone to match the result panel: a partial
+        // pass (0 < passed < total) reads as amber/encouraging (not a hard
+        // red ✗), so the bench and the result card tell the same story. Red
+        // ✗ is reserved for a genuine 0/N. Counts are Number()-coerced so a
+        // non-numeric value can never reach innerHTML.
+        const p = Number(data.passed) || 0;
+        const t = Number(data.total) || 0;
+        const sum = document.createElement("div");
+        sum.className = "s3-bench-line";
+        let verdict;
+        if (allPassed) {
+          verdict = '<span class="s3-bench-ok">✓ 전체 통과</span>';
+        } else if (p > 0) {
+          verdict = '<span class="s3-bench-warn">' + p + " / " + t + " 통과</span>";
+        } else {
+          verdict = '<span class="s3-bench-fail">✗ ' + p + " / " + t + " 통과</span>";
+        }
+        sum.innerHTML =
+          '<span class="s3-bench-prompt">$</span>' +
+          '<span class="s3-bench-label s3-bench-sum">testbench</span>' +
+          verdict;
+        term.appendChild(sum);
+        bar.style.width = "100%";
+        // Brief beat on the completed bench, then the result panel.
+        bench.timers.push(setTimeout(done, allPassed ? 420 : 620));
+      }
+    };
+    addLine();
+  }
+
   function showFileError(msg) {
     const el = $("#econ-file-error");
     if (!el) return;
@@ -138,7 +290,15 @@ CTFd._internal.challenge.postRender = function () {};
     const card = $("#econ-result");
     if (!card) return;
     const status = (data && data.status) || "incorrect";
-    const { head, detail, passed, total } = parseResult(data && data.message);
+    const parsed = parseResult(data && data.message);
+    const head = parsed.head;
+    // Prefer the structured count when the endpoint provides it; fall back to
+    // the parsed message (older payloads / error states with no counts).
+    const passed = (data && typeof data.passed === "number") ? data.passed : parsed.passed;
+    const total = (data && typeof data.total === "number") ? data.total : parsed.total;
+    // Conceptual hint replaces the old raw grader detail. Shown only on a
+    // non-passing graded result; never carries a case index or input vector.
+    const hint = data && typeof data.hint === "string" ? data.hint : "";
 
     let klass, icon, titleHtml, subtitleText, showBar = false, pct = 0;
 
@@ -197,9 +357,15 @@ CTFd._internal.challenge.postRender = function () {};
       (showBar
         ? '<div class="bar"><i style="width: 0%"></i></div>'
         : "") +
-      (detail
-        ? '<details><summary>상세 보기</summary><pre>' + escapeHtml(detail) + "</pre></details>"
+      (hint
+        ? '<div class="hint"><span class="hint-mark" aria-hidden="true">↳</span><span class="hint-text"></span></div>'
         : "");
+
+    // hint text set via textContent (never trust server strings as HTML)
+    if (hint) {
+      const ht = card.querySelector(".hint .hint-text");
+      if (ht) ht.textContent = hint;
+    }
 
     setState("result");
 
@@ -251,6 +417,15 @@ CTFd._internal.challenge.postRender = function () {};
     if (clearBtn) clearBtn.addEventListener("click", clearSelection);
     if (resubmitBtn) resubmitBtn.addEventListener("click", clearSelection);
 
+    const benchToggle = $("#econ-bench-toggle", r);
+    if (benchToggle) {
+      benchToggle.addEventListener("click", () => {
+        setBenchDetail(!benchDetailOn());
+        applyBenchMode();
+      });
+    }
+    applyBenchMode();
+
     r.dataset.bound = "1";
   }
 
@@ -283,6 +458,8 @@ CTFd._internal.challenge.postRender = function () {};
     }
 
     setState("grading");
+    benchStart();
+    const t0 = (window.performance && performance.now) ? performance.now() : Date.now();
 
     const fd = new FormData();
     fd.append("file", input.files[0]);
@@ -305,7 +482,19 @@ CTFd._internal.challenge.postRender = function () {};
       };
     }
 
-    renderResult(result.data || {});
+    const t1 = (window.performance && performance.now) ? performance.now() : Date.now();
+    const data = result.data || {};
+
+    // Replay the concept manifest paced to the real grading time, THEN render
+    // the result panel. benchReplay short-circuits to done() immediately when
+    // 간단히 mode or reduced-motion is active.
+    await new Promise((resolve) => {
+      benchReplay(data, t1 - t0, () => {
+        renderResult(data);
+        resolve();
+      });
+    });
+
     return result;
   };
 })();

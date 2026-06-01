@@ -12,6 +12,7 @@ from CTFd.utils import get_config
 from CTFd.utils.decorators import admins_only, authed_only
 from CTFd.utils.user import get_current_team, get_current_user, get_ip
 
+from .concepts import concept_info
 from .grader import grade_submission
 
 MAX_UPLOAD_BYTES = 256 * 1024
@@ -169,7 +170,14 @@ def register_endpoints(app):
                 )
             )
 
-        if result["total"] > 0 and result["passed"] == result["total"]:
+        # Concept manifest drives the testbench UI. It is purely educational —
+        # the list of aspects a challenge checks — and carries NO per-case
+        # pass/fail signal, so it is safe to send on every response.
+        concept = concept_info(challenge_id)
+        passed = int(result["passed"])
+        total = int(result["total"])
+
+        if total > 0 and passed == total:
             already = Solves.query.filter_by(
                 user_id=user.id, challenge_id=challenge_id
             ).first()
@@ -188,7 +196,10 @@ def register_endpoints(app):
                     "success": True,
                     "data": {
                         "status": "correct",
-                        "message": f"All {result['total']} testcases passed.",
+                        "message": f"All {total} testcases passed.",
+                        "passed": passed,
+                        "total": total,
+                        "concepts": concept["concepts"],
                     },
                 }
             )
@@ -203,15 +214,21 @@ def register_endpoints(app):
         db.session.add(wrong)
         db.session.commit()
 
-        msg_lines = [f"{result['passed']}/{result['total']} testcases passed."]
-        if result["detail"]:
-            msg_lines.append(result["detail"])
+        # Conceptual-only feedback: aggregate count + one generic hint. The raw
+        # per-case grader detail (which case index failed) is deliberately NOT
+        # sent — it would let a student pinpoint the failing input combo — and
+        # is intentionally discarded here (only the non-graded error branch
+        # above logs detail server-side; a normal wrong answer logs nothing).
         return jsonify(
             {
                 "success": True,
                 "data": {
                     "status": "incorrect",
-                    "message": "\n".join(msg_lines),
+                    "message": f"{passed}/{total} testcases passed.",
+                    "passed": passed,
+                    "total": total,
+                    "concepts": concept["concepts"],
+                    "hint": concept["hint"],
                 },
             }
         )

@@ -200,6 +200,86 @@
 }
 @keyframes econ-spin { to { transform: rotate(360deg); } }
 
+/* ── Grading: testbench (자세히) ─────────────────────────────── */
+#econ-submit-root .grading-toolbar {
+  display: flex;
+  justify-content: flex-end;
+  margin-bottom: 9px;
+}
+#econ-submit-root .bench-toggle {
+  background: transparent;
+  border: 1px solid var(--d-hair-strong);
+  border-radius: 999px;
+  padding: 4px 11px;
+  font-family: var(--d-f-mono);
+  font-size: 10.5px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--d-ink-light);
+  cursor: pointer;
+  transition: border-color 150ms ease, color 150ms ease;
+}
+#econ-submit-root .bench-toggle:hover {
+  border-color: var(--d-ink);
+  color: var(--d-ink);
+}
+.s3-bench { display: flex; flex-direction: column; gap: 13px; flex: 1; }
+.s3-bench-micro {
+  font-family: var(--d-f-mono); font-size: 10px; color: var(--d-ink-light);
+  letter-spacing: 0.12em; text-transform: uppercase;
+}
+.s3-bench-micro::before { content: '//'; opacity: 0.55; margin-right: 6px; }
+.s3-bench-bar {
+  height: 12px; border: 1px solid var(--d-hair-strong);
+  background: rgba(0,0,0,0.04); position: relative; overflow: hidden;
+}
+.s3-bench-bar-i {
+  position: absolute; inset: 0; width: 0%;
+  background: repeating-linear-gradient(45deg, var(--d-brand) 0 6px, var(--d-brand-dark) 6px 12px);
+  background-size: 17px 17px;
+  transition: width 0.42s cubic-bezier(0.22,0.61,0.36,1);
+}
+/* Stripe drift conveys "working"; runs in both indeterminate and fill states. */
+.s3-bench-bar-i.is-working { animation: s3-stripe 0.6s linear infinite; }
+.s3-bench-bar-i.is-indeterminate {
+  width: 35%;
+  animation: s3-stripe 0.6s linear infinite, s3-indet 1.25s ease-in-out infinite;
+}
+@keyframes s3-stripe { to { background-position: 17px 0; } }
+@keyframes s3-indet {
+  0%   { left: -35%; }
+  100% { left: 100%; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .s3-bench-bar-i.is-working,
+  .s3-bench-bar-i.is-indeterminate { animation: none; }
+  .s3-bench-bar-i.is-indeterminate { width: 100%; left: 0; }
+}
+.s3-bench-term {
+  flex: 1; padding: 12px 14px; border-radius: 3px;
+  background: #1e1508; color: #fde6c2;
+  box-shadow: inset 0 0 0 1px rgba(245,168,61,0.18);
+  font-family: var(--d-f-mono); font-size: 11.5px; line-height: 1.75; letter-spacing: 0.02em;
+  min-height: 92px;
+}
+.s3-bench-line { display: flex; gap: 10px; align-items: baseline; }
+.s3-bench-prompt { color: #f5a83d; flex-shrink: 0; }
+.s3-bench-label { flex: 1; }
+.s3-bench-ok { color: #a7d68c; white-space: nowrap; }
+.s3-bench-run { color: rgba(253,230,194,0.55); white-space: nowrap; }
+.s3-bench-fail { color: #e8926e; white-space: nowrap; }
+.s3-bench-warn { color: #f0c070; white-space: nowrap; }
+.s3-bench-sum { color: #fde6c2; font-weight: 600; }
+.s3-bench-cursor {
+  display: inline-block; width: 7px; height: 13px; margin-top: 4px;
+  background: #fde6c2; vertical-align: middle;
+  animation: s3-blink 1.05s steps(2) infinite;
+}
+@keyframes s3-blink { 50% { opacity: 0; } }
+@media (prefers-reduced-motion: reduce) {
+  .s3-bench-cursor { animation: none; }
+}
+
 /* ── Result panel ───────────────────────────────────────────── */
 #econ-submit-root .result {
   border-radius: 8px;
@@ -274,6 +354,27 @@
 #econ-submit-root .result.is-pass    .bar > i { background: var(--d-pass); }
 #econ-submit-root .result.is-partial .bar > i { background: var(--d-warn); }
 #econ-submit-root .result.is-fail    .bar > i { background: var(--d-fail); }
+
+#econ-submit-root .result .hint {
+  margin-top: 12px;
+  display: flex;
+  gap: 8px;
+  align-items: baseline;
+  padding: 10px 12px;
+  border-radius: 6px;
+  background: var(--d-brand-soft, #fff4e0);
+  border: 1px solid var(--d-brand-line, rgba(245,168,61,0.32));
+  font-family: var(--d-f-ko);
+  font-size: 12.5px;
+  line-height: 1.5;
+  color: var(--d-brand-ink, #7a5a1f);
+}
+#econ-submit-root .result .hint .hint-mark {
+  flex-shrink: 0;
+  font-family: var(--d-f-mono);
+  color: var(--d-brand-dark, #d69336);
+}
+#econ-submit-root .result .hint .hint-text { flex: 1; }
 
 #econ-submit-root .result details {
   margin-top: 12px;
@@ -376,9 +477,21 @@
 
   <!-- 3: grading -->
   <div data-state="grading" hidden>
-    <div class="grading">
+    <div class="grading-toolbar">
+      <button class="bench-toggle" id="econ-bench-toggle" type="button" aria-pressed="true"></button>
+    </div>
+
+    <!-- 3a: simple (간단히) — the honest quiet fallback -->
+    <div class="grading" id="econ-grading-simple" hidden>
       <span class="spinner" aria-hidden="true"></span>
       <span class="copy">채점 중<span class="sub">Digital 시뮬레이터로 회로를 검증하고 있습니다 · 평균 2–5초</span></span>
+    </div>
+
+    <!-- 3b: testbench (자세히) -->
+    <div class="s3-bench" id="econ-grading-bench" hidden>
+      <div class="s3-bench-micro">testbench</div>
+      <div class="s3-bench-bar" aria-hidden="true"><div class="s3-bench-bar-i" id="econ-bench-bar"></div></div>
+      <div class="s3-bench-term" id="econ-bench-term" aria-live="polite"></div>
     </div>
   </div>
 

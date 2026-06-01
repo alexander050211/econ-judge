@@ -54,3 +54,7 @@ reference/
 .env
 .env.*
 !.env.example
+
+# Design hand-off bundles + scratch probes (not source)
+*.zip
+_fs_probe.txt
