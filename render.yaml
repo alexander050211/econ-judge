@@ -3,11 +3,14 @@
 #
 # Free tier notes:
 # - Disk is ephemeral: SQLite gets wiped on every deploy/restart. bootstrap.py
-#   recreates the admin + challenges on every boot, so the deploy is
-#   self-healing — only Solves/Fails history is lost. If persistent history
-#   matters, add a Render Postgres service and set DATABASE_URL.
+#   recreates the admin + challenges + the team roster (_seed_roster) on every
+#   boot, so a wipe never locks teams out — only Solves/Fails HISTORY is lost.
+#   If persistent history matters, add a Render Postgres service + DATABASE_URL.
 # - Service spins down after 15 min of idle. First request after sleep takes
-#   ~30 s (cold start + Java warmup).
+#   ~30 s (cold start + Java warmup). To avoid spin-down during the camp, enable
+#   the .github/workflows/keep-warm.yml pinger (gated on the KEEPWARM_ENABLED
+#   repo variable — enable for camp days only; 24/7 would exhaust the free-tier
+#   monthly hour cap).
 services:
   - type: web
     name: econ-judge
@@ -32,3 +35,36 @@ services:
       # rows + 5 canonicals) even when the service is freshly woken.
       - key: ECON_JUDGE_TIMEOUT
         value: "45"
+      # Camp team-account passwords. The roster (1조–4조) is re-seeded on every
+      # boot from bin/bootstrap.py so a cold-start can't lock teams out; these
+      # set the login passwords (out of git, like the admin password). Set a
+      # shared default and/or per-team overrides in Render's Environment.
+      # NOTE: mid-camp password changes MUST be made here (env) + redeploy — a
+      # change via the CTFd admin UI is non-durable and gets overwritten by the
+      # env value on the next cold-start re-seed. If left unset in real-camp
+      # mode (CTFD_DEMO_DATA=false), bootstrap logs a loud WARNING and all teams
+      # fall back to the public demo password — set this before camp.
+      - key: CTFD_TEAM_PASSWORD   # shared default for all teams
+        sync: false
+      - key: CTFD_TEAM1_PASSWORD  # optional per-team override (beats shared)
+        sync: false
+      - key: CTFD_TEAM2_PASSWORD
+        sync: false
+      - key: CTFD_TEAM3_PASSWORD
+        sync: false
+      - key: CTFD_TEAM4_PASSWORD
+        sync: false
+      # Camp day: set to "false" to start the board empty (roster still seeded).
+      - key: CTFD_DEMO_DATA
+        value: "true"
+#
+# ── CAMP-DAY PRE-FLIGHT CHECKLIST ──────────────────────────────────────
+# In Render → econ-judge → Environment, before the contest:
+#   1. CTFD_TEAM_PASSWORD = <real shared pw>  (or per-team CTFD_TEAM{1..4}_PASSWORD)
+#   2. CTFD_DEMO_DATA = false                 (empty board, no fabricated solves)
+#   3. (optional) CTFD_FREEZE_AT = <unix ts>  (scoreboard freeze near contest end)
+# In GitHub → repo → Settings → Variables (keep-warm pinger):
+#   4. KEEPWARM_ENABLED = true                (prevents idle spin-down during camp)
+#   5. AFTER camp: KEEPWARM_ENABLED = false   (else it burns Render's free hours)
+# Deploy with a CLEAR CACHE rebuild after any plugin-code change (the COPY
+# econ_judge layer caches stale), then live-verify a team login + a submission.

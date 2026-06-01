@@ -105,6 +105,37 @@ DEMO_TEAMS = [
     },
 ]
 
+# DEMO_TEAMS' name/email double as the canonical CAMP ROSTER (the `solves`
+# field is demo-only). The roster is re-seeded on every boot (see
+# _seed_roster) so a Render redeploy / free-tier cold-start — which wipes the
+# ephemeral SQLite — can never lock teams out. Real camp passwords live in
+# Render's Environment, out of git, same as the admin password:
+#   CTFD_TEAM_PASSWORD          shared default for all teams
+#   CTFD_TEAM<N>_PASSWORD       per-team override (N = digits in the name,
+#                               e.g. "1조" -> CTFD_TEAM1_PASSWORD)
+# Falls back to DEMO_PASSWORD if neither is set (fine for review deploys).
+TEAM_PASSWORD = os.environ.get("CTFD_TEAM_PASSWORD", DEMO_PASSWORD)
+
+
+def _team_password(name: str) -> str:
+    digits = "".join(c for c in name if c.isdigit())
+    if digits:
+        per = os.environ.get(f"CTFD_TEAM{digits}_PASSWORD")
+        if per:
+            return per
+    return TEAM_PASSWORD
+
+
+def _team_password_is_set() -> bool:
+    """True if ANY team password env var is set (shared or per-team). Used to
+    warn when a real camp deploy would silently fall back to the demo password."""
+    if os.environ.get("CTFD_TEAM_PASSWORD"):
+        return True
+    return any(
+        os.environ.get(f"CTFD_TEAM{''.join(c for c in t['name'] if c.isdigit())}_PASSWORD")
+        for t in DEMO_TEAMS
+    )
+
 # SENS brand palette extracted from sens.snu.ac.kr's CSS. SENS the club uses
 # warm orange/amber, distinct from SNU University's navy. Loaded globally
 # via CTFd's `theme_header` config so all pages (login, scoreboard, admin)
@@ -2419,36 +2450,88 @@ def main() -> None:
         else:
             print(f"[bootstrap] All {len(CHALLENGES)} challenges already in sync")
 
+        # Roster ALWAYS runs (independent of the demo toggle) so a wiped DB
+        # re-seeds the team accounts and no team can be locked out by a
+        # redeploy / cold-start. Demo SOLVES are the only demo-toggle-gated part.
+        _seed_roster()
+
         if SEED_DEMO_DATA:
             _seed_demo_data()
         else:
-            print("[bootstrap] CTFD_DEMO_DATA=false — skipping demo seed")
+            print("[bootstrap] CTFD_DEMO_DATA=false — skipping demo solves (roster still seeded)")
+
+
+def _seed_roster() -> None:
+    """Idempotently ensure the 4 camp team accounts exist, on EVERY boot.
+
+    This is the durability fix for Render's ephemeral SQLite: a redeploy or
+    free-tier cold-start wipes the DB, and bootstrap restores admin +
+    challenges — but without this the team roster would be gone and every
+    team locked out (registration is private). Passwords are re-synced from
+    env each boot (see _team_password), mirroring the admin-password pattern,
+    so rotating a team password = set the env var + redeploy.
+
+    Solves are never touched here — only account identity. Demo solves (if
+    enabled) are layered on separately by _seed_demo_data.
+
+    Camp-day safety: if real-contest mode (CTFD_DEMO_DATA=false) is active but
+    no team password env var is set, every team would silently get the public
+    demo password — so we warn loudly. We do NOT hard-fail: refusing to boot
+    during a mid-camp cold-start would cause the very lockout this function
+    exists to prevent; a working-but-weak roster + a loud log is the safer
+    failure mode. Each team is committed independently so one bad row (e.g. a
+    stray unique-constraint clash) can't roll back the whole roster."""
+    if not SEED_DEMO_DATA and not _team_password_is_set():
+        print(
+            "[bootstrap] WARNING: CTFD_DEMO_DATA=false (real camp) but no "
+            "CTFD_TEAM_PASSWORD / CTFD_TEAM<N>_PASSWORD is set — all teams are "
+            "using the PUBLIC demo password. Set a team password in Render's "
+            "Environment and redeploy."
+        )
+    created = synced = failed = 0
+    for team in DEMO_TEAMS:
+        pw = _team_password(team["name"])
+        try:
+            user = Users.query.filter_by(name=team["name"]).first()
+            if user is None:
+                user = Users(
+                    name=team["name"],
+                    email=team["email"],
+                    password=pw,
+                    type="user",
+                    verified=True,
+                    hidden=False,
+                )
+                db.session.add(user)
+                created += 1
+            else:
+                # Re-sync password (env is source of truth) and ensure visible.
+                user.password = pw  # @validates('password') re-hashes on assign
+                if user.hidden:
+                    user.hidden = False
+                synced += 1
+            db.session.commit()  # per-team: one failure can't sink the rest
+        except Exception as exc:  # noqa: BLE001 — keep seeding the other teams
+            db.session.rollback()
+            failed += 1
+            print(f"[bootstrap] Roster: FAILED to seed {team['name']}: {exc}")
+    tail = f", {failed} FAILED" if failed else ""
+    print(f"[bootstrap] Roster: {created} created, {synced} synced{tail} ({len(DEMO_TEAMS)} total)")
 
 
 def _seed_demo_data() -> None:
-    """Create the 4 demo teams + their Solves with realistic timestamp spread.
-    Idempotent: skips users that already exist, and skips Solves seeding for
-    users that already have any Solves recorded."""
+    """Layer fabricated Solves onto the (already-seeded) roster for review
+    deploys. Idempotent: skips Solves seeding for any user that already has
+    Solves. Assumes _seed_roster has created the accounts."""
     now = datetime.datetime.utcnow()
     for team in DEMO_TEAMS:
         user = Users.query.filter_by(name=team["name"]).first()
-        created_user = False
         if user is None:
-            user = Users(
-                name=team["name"],
-                email=team["email"],
-                password=DEMO_PASSWORD,
-                type="user",
-                verified=True,
-                hidden=False,
-            )
-            db.session.add(user)
-            db.session.commit()  # need user.id below
-            created_user = True
+            # Roster seeding should have created this; guard defensively.
+            print(f"[demo] {team['name']} missing after roster seed — skipping solves")
+            continue
 
         if Solves.query.filter_by(user_id=user.id).first() is not None:
-            if created_user:
-                print(f"[demo] {team['name']} created (user existed without solves? skipping seed)")
             continue
 
         for chal_id, minutes_ago in team["solves"]:
@@ -2462,11 +2545,7 @@ def _seed_demo_data() -> None:
             solve.date = now - datetime.timedelta(minutes=minutes_ago)
             db.session.add(solve)
         db.session.commit()
-        print(
-            f"[demo] {team['name']}: "
-            f"{'created + ' if created_user else 'existing user, '}"
-            f"{len(team['solves'])} solves seeded"
-        )
+        print(f"[demo] {team['name']}: {len(team['solves'])} solves seeded")
 
 
 if __name__ == "__main__":

@@ -1,0 +1,67 @@
+name: keep-warm
+
+# Pings the live econ-judge service so Render's free tier doesn't spin it down
+# after 15 min idle. A cold-start wipes the ephemeral SQLite — bootstrap
+# re-seeds admin + challenges + the team roster (see bin/bootstrap.py
+# _seed_roster), but Solves/Fails history is lost — so during the camp we want
+# to avoid spin-down entirely, not just rely on re-seeding.
+#
+# IMPORTANT — enable only around the camp, not permanently:
+#   Keeping the instance warm 24/7 runs it continuously (~744 h/month), which
+#   would exhaust Render free tier's ~750 h/month cap and starve any other free
+#   service. So this workflow is GATED on a repo variable and is a no-op until
+#   you turn it on.
+#
+# To enable for camp day:
+#   gh variable set KEEPWARM_ENABLED --body true
+#   (or: repo → Settings → Secrets and variables → Actions → Variables)
+# To disable afterwards:
+#   gh variable set KEEPWARM_ENABLED --body false
+#
+# Optionally override the target:
+#   gh variable set KEEPWARM_URL --body https://econ-judge.onrender.com/
+
+on:
+  schedule:
+    # Every 10 minutes. GitHub's scheduler is best-effort (can lag a few min
+    # under load) — fine for keep-warm, which only needs a hit inside each
+    # 15-min idle window.
+    - cron: "*/10 * * * *"
+  workflow_dispatch: {}  # allow manual "run now" from the Actions tab
+
+# Don't pile up runs if a ping is slow / the scheduler bursts.
+concurrency:
+  group: keep-warm
+  cancel-in-progress: true
+
+jobs:
+  ping:
+    # Job-level gate: when disabled, a scheduled run starts NO runner at all
+    # (a skipped job consumes zero Actions minutes). The value must be the
+    # literal lowercase string "true" — case-sensitive, unlike bootstrap.py's
+    # looser CTFD_DEMO_DATA parser. workflow_dispatch still respects this gate;
+    # to force a one-off ping, set the variable true (or temporarily edit here).
+    if: ${{ vars.KEEPWARM_ENABLED == 'true' }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Ping health endpoint
+        env:
+          URL: ${{ vars.KEEPWARM_URL || 'https://econ-judge.onrender.com/' }}
+        run: |
+          echo "Pinging $URL"
+          # Retry a few times: a genuine cold start can take ~30s, so a single
+          # request might time out while the instance is still waking.
+          for attempt in 1 2 3 4 5; do
+            code=$(curl -sS -o /dev/null -w "%{http_code}" --max-time 60 "$URL" || echo "000")
+            echo "attempt $attempt -> HTTP $code"
+            if [ "$code" = "200" ]; then
+              echo "awake."
+              exit 0
+            fi
+            sleep 15
+          done
+          echo "::warning::econ-judge did not return 200 after 5 attempts (last=$code)"
+          # Don't fail the job — a transient miss shouldn't spam failure emails;
+          # the next scheduled run will try again.
+          exit 0
