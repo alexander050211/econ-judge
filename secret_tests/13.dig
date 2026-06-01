@@ -8,7 +8,7 @@
       <elementAttributes>
         <entry>
           <string>Label</string>
-          <string>DIV3 #001 (R2=0,R1=0,R0=0)</string>
+          <string>DIV3 #001</string>
         </entry>
         <entry>
           <string>Testdata</string>
@@ -26,7 +26,7 @@
       <elementAttributes>
         <entry>
           <string>Label</string>
-          <string>DIV3 #002 (R2=0,R1=0,R0=1)</string>
+          <string>DIV3 #002</string>
         </entry>
         <entry>
           <string>Testdata</string>
@@ -44,7 +44,7 @@
       <elementAttributes>
         <entry>
           <string>Label</string>
-          <string>DIV3 #003 (R2=0,R1=1,R0=0)</string>
+          <string>DIV3 #003</string>
         </entry>
         <entry>
           <string>Testdata</string>
@@ -62,7 +62,7 @@
       <elementAttributes>
         <entry>
           <string>Label</string>
-          <string>DIV3 #004 (R2=0,R1=1,R0=1)</string>
+          <string>DIV3 #004</string>
         </entry>
         <entry>
           <string>Testdata</string>
@@ -80,7 +80,7 @@
       <elementAttributes>
         <entry>
           <string>Label</string>
-          <string>DIV3 #005 (R2=1,R1=0,R0=0)</string>
+          <string>DIV3 #005</string>
         </entry>
         <entry>
           <string>Testdata</string>
@@ -98,7 +98,7 @@
       <elementAttributes>
         <entry>
           <string>Label</string>
-          <string>DIV3 #006 (R2=1,R1=0,R0=1)</string>
+          <string>DIV3 #006</string>
         </entry>
         <entry>
           <string>Testdata</string>
@@ -116,7 +116,7 @@
       <elementAttributes>
         <entry>
           <string>Label</string>
-          <string>DIV3 #007 (R2=1,R1=1,R0=0)</string>
+          <string>DIV3 #007</string>
         </entry>
         <entry>
           <string>Testdata</string>
@@ -134,7 +134,7 @@
       <elementAttributes>
         <entry>
           <string>Label</string>
-          <string>DIV3 #008 (R2=1,R1=1,R0=1)</string>
+          <string>DIV3 #008</string>
         </entry>
         <entry>
           <string>Testdata</string>

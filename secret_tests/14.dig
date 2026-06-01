@@ -8,7 +8,7 @@
       <elementAttributes>
         <entry>
           <string>Label</string>
-          <string>SHEL #001 (G=0,L=0,E=1,C2=0,C1=0,C0=0)</string>
+          <string>SHEL #001</string>
         </entry>
         <entry>
           <string>Testdata</string>
@@ -26,7 +26,7 @@
       <elementAttributes>
         <entry>
           <string>Label</string>
-          <string>SHEL #002 (G=0,L=0,E=1,C2=0,C1=0,C0=1)</string>
+          <string>SHEL #002</string>
         </entry>
         <entry>
           <string>Testdata</string>
@@ -44,7 +44,7 @@
       <elementAttributes>
         <entry>
           <string>Label</string>
-          <string>SHEL #003 (G=0,L=0,E=1,C2=0,C1=1,C0=0)</string>
+          <string>SHEL #003</string>
         </entry>
         <entry>
           <string>Testdata</string>
@@ -62,7 +62,7 @@
       <elementAttributes>
         <entry>
           <string>Label</string>
-          <string>SHEL #004 (G=0,L=0,E=1,C2=0,C1=1,C0=1)</string>
+          <string>SHEL #004</string>
         </entry>
         <entry>
           <string>Testdata</string>
@@ -80,7 +80,7 @@
       <elementAttributes>
         <entry>
           <string>Label</string>
-          <string>SHEL #005 (G=0,L=0,E=1,C2=1,C1=0,C0=0)</string>
+          <string>SHEL #005</string>
         </entry>
         <entry>
           <string>Testdata</string>
@@ -98,7 +98,7 @@
       <elementAttributes>
         <entry>
           <string>Label</string>
-          <string>SHEL #006 (G=0,L=0,E=1,C2=1,C1=0,C0=1)</string>
+          <string>SHEL #006</string>
         </entry>
         <entry>
           <string>Testdata</string>
@@ -116,7 +116,7 @@
       <elementAttributes>
         <entry>
           <string>Label</string>
-          <string>SHEL #007 (G=0,L=0,E=1,C2=1,C1=1,C0=0)</string>
+          <string>SHEL #007</string>
         </entry>
         <entry>
           <string>Testdata</string>
@@ -134,7 +134,7 @@
       <elementAttributes>
         <entry>
           <string>Label</string>
-          <string>SHEL #008 (G=0,L=0,E=1,C2=1,C1=1,C0=1)</string>
+          <string>SHEL #008</string>
         </entry>
         <entry>
           <string>Testdata</string>
@@ -152,7 +152,7 @@
       <elementAttributes>
         <entry>
           <string>Label</string>
-          <string>SHEL #009 (G=0,L=1,E=0,C2=0,C1=0,C0=0)</string>
+          <string>SHEL #009</string>
         </entry>
         <entry>
           <string>Testdata</string>
@@ -170,7 +170,7 @@
       <elementAttributes>
         <entry>
           <string>Label</string>
-          <string>SHEL #010 (G=0,L=1,E=0,C2=0,C1=0,C0=1)</string>
+          <string>SHEL #010</string>
         </entry>
         <entry>
           <string>Testdata</string>
@@ -188,7 +188,7 @@
       <elementAttributes>
         <entry>
           <string>Label</string>
-          <string>SHEL #011 (G=0,L=1,E=0,C2=0,C1=1,C0=0)</string>
+          <string>SHEL #011</string>
         </entry>
         <entry>
           <string>Testdata</string>
@@ -206,7 +206,7 @@
       <elementAttributes>
         <entry>
           <string>Label</string>
-          <string>SHEL #012 (G=0,L=1,E=0,C2=0,C1=1,C0=1)</string>
+          <string>SHEL #012</string>
         </entry>
         <entry>
           <string>Testdata</string>
@@ -224,7 +224,7 @@
       <elementAttributes>
         <entry>
           <string>Label</string>
-          <string>SHEL #013 (G=0,L=1,E=0,C2=1,C1=0,C0=0)</string>
+          <string>SHEL #013</string>
         </entry>
         <entry>
           <string>Testdata</string>
@@ -242,7 +242,7 @@
       <elementAttributes>
         <entry>
           <string>Label</string>
-          <string>SHEL #014 (G=0,L=1,E=0,C2=1,C1=0,C0=1)</string>
+          <string>SHEL #014</string>
         </entry>
         <entry>
           <string>Testdata</string>
@@ -260,7 +260,7 @@
       <elementAttributes>
         <entry>
           <string>Label</string>
-          <string>SHEL #015 (G=0,L=1,E=0,C2=1,C1=1,C0=0)</string>
+          <string>SHEL #015</string>
         </entry>
         <entry>
           <string>Testdata</string>
@@ -278,7 +278,7 @@
       <elementAttributes>
         <entry>
           <string>Label</string>
-          <string>SHEL #016 (G=0,L=1,E=0,C2=1,C1=1,C0=1)</string>
+          <string>SHEL #016</string>
         </entry>
         <entry>
           <string>Testdata</string>
@@ -296,7 +296,7 @@
       <elementAttributes>
         <entry>
           <string>Label</string>
-          <string>SHEL #017 (G=1,L=0,E=0,C2=0,C1=0,C0=0)</string>
+          <string>SHEL #017</string>
         </entry>
         <entry>
           <string>Testdata</string>
@@ -314,7 +314,7 @@
       <elementAttributes>
         <entry>
           <string>Label</string>
-          <string>SHEL #018 (G=1,L=0,E=0,C2=0,C1=0,C0=1)</string>
+          <string>SHEL #018</string>
         </entry>
         <entry>
           <string>Testdata</string>
@@ -332,7 +332,7 @@
       <elementAttributes>
         <entry>
           <string>Label</string>
-          <string>SHEL #019 (G=1,L=0,E=0,C2=0,C1=1,C0=0)</string>
+          <string>SHEL #019</string>
         </entry>
         <entry>
           <string>Testdata</string>
@@ -350,7 +350,7 @@
       <elementAttributes>
         <entry>
           <string>Label</string>
-          <string>SHEL #020 (G=1,L=0,E=0,C2=0,C1=1,C0=1)</string>
+          <string>SHEL #020</string>
         </entry>
         <entry>
           <string>Testdata</string>
@@ -368,7 +368,7 @@
       <elementAttributes>
         <entry>
           <string>Label</string>
-          <string>SHEL #021 (G=1,L=0,E=0,C2=1,C1=0,C0=0)</string>
+          <string>SHEL #021</string>
         </entry>
         <entry>
           <string>Testdata</string>
@@ -386,7 +386,7 @@
       <elementAttributes>
         <entry>
           <string>Label</string>
-          <string>SHEL #022 (G=1,L=0,E=0,C2=1,C1=0,C0=1)</string>
+          <string>SHEL #022</string>
         </entry>
         <entry>
           <string>Testdata</string>
@@ -404,7 +404,7 @@
       <elementAttributes>
         <entry>
           <string>Label</string>
-          <string>SHEL #023 (G=1,L=0,E=0,C2=1,C1=1,C0=0)</string>
+          <string>SHEL #023</string>
         </entry>
         <entry>
           <string>Testdata</string>
@@ -422,7 +422,7 @@
       <elementAttributes>
         <entry>
           <string>Label</string>
-          <string>SHEL #024 (G=1,L=0,E=0,C2=1,C1=1,C0=1)</string>
+          <string>SHEL #024</string>
         </entry>
         <entry>
           <string>Testdata</string>

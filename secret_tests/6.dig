@@ -8,7 +8,7 @@
       <elementAttributes>
         <entry>
           <string>Label</string>
-          <string>AND3 #001 (A=0,B=0,C=0)</string>
+          <string>AND3 #001</string>
         </entry>
         <entry>
           <string>Testdata</string>
@@ -26,7 +26,7 @@
       <elementAttributes>
         <entry>
           <string>Label</string>
-          <string>AND3 #002 (A=0,B=0,C=1)</string>
+          <string>AND3 #002</string>
         </entry>
         <entry>
           <string>Testdata</string>
@@ -44,7 +44,7 @@
       <elementAttributes>
         <entry>
           <string>Label</string>
-          <string>AND3 #003 (A=0,B=1,C=0)</string>
+          <string>AND3 #003</string>
         </entry>
         <entry>
           <string>Testdata</string>
@@ -62,7 +62,7 @@
       <elementAttributes>
         <entry>
           <string>Label</string>
-          <string>AND3 #004 (A=0,B=1,C=1)</string>
+          <string>AND3 #004</string>
         </entry>
         <entry>
           <string>Testdata</string>
@@ -80,7 +80,7 @@
       <elementAttributes>
         <entry>
           <string>Label</string>
-          <string>AND3 #005 (A=1,B=0,C=0)</string>
+          <string>AND3 #005</string>
         </entry>
         <entry>
           <string>Testdata</string>
@@ -98,7 +98,7 @@
       <elementAttributes>
         <entry>
           <string>Label</string>
-          <string>AND3 #006 (A=1,B=0,C=1)</string>
+          <string>AND3 #006</string>
         </entry>
         <entry>
           <string>Testdata</string>
@@ -116,7 +116,7 @@
       <elementAttributes>
         <entry>
           <string>Label</string>
-          <string>AND3 #007 (A=1,B=1,C=0)</string>
+          <string>AND3 #007</string>
         </entry>
         <entry>
           <string>Testdata</string>
@@ -134,7 +134,7 @@
       <elementAttributes>
         <entry>
           <string>Label</string>
-          <string>AND3 #008 (A=1,B=1,C=1)</string>
+          <string>AND3 #008</string>
         </entry>
         <entry>
           <string>Testdata</string>

@@ -8,7 +8,7 @@
       <elementAttributes>
         <entry>
           <string>Label</string>
-          <string>CMP23 #001 (A1=0,A0=0,B2=0,B1=0,B0=0)</string>
+          <string>CMP23 #001</string>
         </entry>
         <entry>
           <string>Testdata</string>
@@ -26,7 +26,7 @@
       <elementAttributes>
         <entry>
           <string>Label</string>
-          <string>CMP23 #002 (A1=0,A0=0,B2=0,B1=0,B0=1)</string>
+          <string>CMP23 #002</string>
         </entry>
         <entry>
           <string>Testdata</string>
@@ -44,7 +44,7 @@
       <elementAttributes>
         <entry>
           <string>Label</string>
-          <string>CMP23 #003 (A1=0,A0=0,B2=0,B1=1,B0=0)</string>
+          <string>CMP23 #003</string>
         </entry>
         <entry>
           <string>Testdata</string>
@@ -62,7 +62,7 @@
       <elementAttributes>
         <entry>
           <string>Label</string>
-          <string>CMP23 #004 (A1=0,A0=0,B2=0,B1=1,B0=1)</string>
+          <string>CMP23 #004</string>
         </entry>
         <entry>
           <string>Testdata</string>
@@ -80,7 +80,7 @@
       <elementAttributes>
         <entry>
           <string>Label</string>
-          <string>CMP23 #005 (A1=0,A0=0,B2=1,B1=0,B0=0)</string>
+          <string>CMP23 #005</string>
         </entry>
         <entry>
           <string>Testdata</string>
@@ -98,7 +98,7 @@
       <elementAttributes>
         <entry>
           <string>Label</string>
-          <string>CMP23 #006 (A1=0,A0=0,B2=1,B1=0,B0=1)</string>
+          <string>CMP23 #006</string>
         </entry>
         <entry>
           <string>Testdata</string>
@@ -116,7 +116,7 @@
       <elementAttributes>
         <entry>
           <string>Label</string>
-          <string>CMP23 #007 (A1=0,A0=0,B2=1,B1=1,B0=0)</string>
+          <string>CMP23 #007</string>
         </entry>
         <entry>
           <string>Testdata</string>
@@ -134,7 +134,7 @@
       <elementAttributes>
         <entry>
           <string>Label</string>
-          <string>CMP23 #008 (A1=0,A0=0,B2=1,B1=1,B0=1)</string>
+          <string>CMP23 #008</string>
         </entry>
         <entry>
           <string>Testdata</string>
@@ -152,7 +152,7 @@
       <elementAttributes>
         <entry>
           <string>Label</string>
-          <string>CMP23 #009 (A1=0,A0=1,B2=0,B1=0,B0=0)</string>
+          <string>CMP23 #009</string>
         </entry>
         <entry>
           <string>Testdata</string>
@@ -170,7 +170,7 @@
       <elementAttributes>
         <entry>
           <string>Label</string>
-          <string>CMP23 #010 (A1=0,A0=1,B2=0,B1=0,B0=1)</string>
+          <string>CMP23 #010</string>
         </entry>
         <entry>
           <string>Testdata</string>
@@ -188,7 +188,7 @@
       <elementAttributes>
         <entry>
           <string>Label</string>
-          <string>CMP23 #011 (A1=0,A0=1,B2=0,B1=1,B0=0)</string>
+          <string>CMP23 #011</string>
         </entry>
         <entry>
           <string>Testdata</string>
@@ -206,7 +206,7 @@
       <elementAttributes>
         <entry>
           <string>Label</string>
-          <string>CMP23 #012 (A1=0,A0=1,B2=0,B1=1,B0=1)</string>
+          <string>CMP23 #012</string>
         </entry>
         <entry>
           <string>Testdata</string>
@@ -224,7 +224,7 @@
       <elementAttributes>
         <entry>
           <string>Label</string>
-          <string>CMP23 #013 (A1=0,A0=1,B2=1,B1=0,B0=0)</string>
+          <string>CMP23 #013</string>
         </entry>
         <entry>
           <string>Testdata</string>
@@ -242,7 +242,7 @@
       <elementAttributes>
         <entry>
           <string>Label</string>
-          <string>CMP23 #014 (A1=0,A0=1,B2=1,B1=0,B0=1)</string>
+          <string>CMP23 #014</string>
         </entry>
         <entry>
           <string>Testdata</string>
@@ -260,7 +260,7 @@
       <elementAttributes>
         <entry>
           <string>Label</string>
-          <string>CMP23 #015 (A1=0,A0=1,B2=1,B1=1,B0=0)</string>
+          <string>CMP23 #015</string>
         </entry>
         <entry>
           <string>Testdata</string>
@@ -278,7 +278,7 @@
       <elementAttributes>
         <entry>
           <string>Label</string>
-          <string>CMP23 #016 (A1=0,A0=1,B2=1,B1=1,B0=1)</string>
+          <string>CMP23 #016</string>
         </entry>
         <entry>
           <string>Testdata</string>
@@ -296,7 +296,7 @@
       <elementAttributes>
         <entry>
           <string>Label</string>
-          <string>CMP23 #017 (A1=1,A0=0,B2=0,B1=0,B0=0)</string>
+          <string>CMP23 #017</string>
         </entry>
         <entry>
           <string>Testdata</string>
@@ -314,7 +314,7 @@
       <elementAttributes>
         <entry>
           <string>Label</string>
-          <string>CMP23 #018 (A1=1,A0=0,B2=0,B1=0,B0=1)</string>
+          <string>CMP23 #018</string>
         </entry>
         <entry>
           <string>Testdata</string>
@@ -332,7 +332,7 @@
       <elementAttributes>
         <entry>
           <string>Label</string>
-          <string>CMP23 #019 (A1=1,A0=0,B2=0,B1=1,B0=0)</string>
+          <string>CMP23 #019</string>
         </entry>
         <entry>
           <string>Testdata</string>
@@ -350,7 +350,7 @@
       <elementAttributes>
         <entry>
           <string>Label</string>
-          <string>CMP23 #020 (A1=1,A0=0,B2=0,B1=1,B0=1)</string>
+          <string>CMP23 #020</string>
         </entry>
         <entry>
           <string>Testdata</string>
@@ -368,7 +368,7 @@
       <elementAttributes>
         <entry>
           <string>Label</string>
-          <string>CMP23 #021 (A1=1,A0=0,B2=1,B1=0,B0=0)</string>
+          <string>CMP23 #021</string>
         </entry>
         <entry>
           <string>Testdata</string>
@@ -386,7 +386,7 @@
       <elementAttributes>
         <entry>
           <string>Label</string>
-          <string>CMP23 #022 (A1=1,A0=0,B2=1,B1=0,B0=1)</string>
+          <string>CMP23 #022</string>
         </entry>
         <entry>
           <string>Testdata</string>
@@ -404,7 +404,7 @@
       <elementAttributes>
         <entry>
           <string>Label</string>
-          <string>CMP23 #023 (A1=1,A0=0,B2=1,B1=1,B0=0)</string>
+          <string>CMP23 #023</string>
         </entry>
         <entry>
           <string>Testdata</string>
@@ -422,7 +422,7 @@
       <elementAttributes>
         <entry>
           <string>Label</string>
-          <string>CMP23 #024 (A1=1,A0=0,B2=1,B1=1,B0=1)</string>
+          <string>CMP23 #024</string>
         </entry>
         <entry>
           <string>Testdata</string>
@@ -440,7 +440,7 @@
       <elementAttributes>
         <entry>
           <string>Label</string>
-          <string>CMP23 #025 (A1=1,A0=1,B2=0,B1=0,B0=0)</string>
+          <string>CMP23 #025</string>
         </entry>
         <entry>
           <string>Testdata</string>
@@ -458,7 +458,7 @@
       <elementAttributes>
         <entry>
           <string>Label</string>
-          <string>CMP23 #026 (A1=1,A0=1,B2=0,B1=0,B0=1)</string>
+          <string>CMP23 #026</string>
         </entry>
         <entry>
           <string>Testdata</string>
@@ -476,7 +476,7 @@
       <elementAttributes>
         <entry>
           <string>Label</string>
-          <string>CMP23 #027 (A1=1,A0=1,B2=0,B1=1,B0=0)</string>
+          <string>CMP23 #027</string>
         </entry>
         <entry>
           <string>Testdata</string>
@@ -494,7 +494,7 @@
       <elementAttributes>
         <entry>
           <string>Label</string>
-          <string>CMP23 #028 (A1=1,A0=1,B2=0,B1=1,B0=1)</string>
+          <string>CMP23 #028</string>
         </entry>
         <entry>
           <string>Testdata</string>
@@ -512,7 +512,7 @@
       <elementAttributes>
         <entry>
           <string>Label</string>
-          <string>CMP23 #029 (A1=1,A0=1,B2=1,B1=0,B0=0)</string>
+          <string>CMP23 #029</string>
         </entry>
         <entry>
           <string>Testdata</string>
@@ -530,7 +530,7 @@
       <elementAttributes>
         <entry>
           <string>Label</string>
-          <string>CMP23 #030 (A1=1,A0=1,B2=1,B1=0,B0=1)</string>
+          <string>CMP23 #030</string>
         </entry>
         <entry>
           <string>Testdata</string>
@@ -548,7 +548,7 @@
       <elementAttributes>
         <entry>
           <string>Label</string>
-          <string>CMP23 #031 (A1=1,A0=1,B2=1,B1=1,B0=0)</string>
+          <string>CMP23 #031</string>
         </entry>
         <entry>
           <string>Testdata</string>
@@ -566,7 +566,7 @@
       <elementAttributes>
         <entry>
           <string>Label</string>
-          <string>CMP23 #032 (A1=1,A0=1,B2=1,B1=1,B0=1)</string>
+          <string>CMP23 #032</string>
         </entry>
         <entry>
           <string>Testdata</string>

@@ -8,7 +8,7 @@
       <elementAttributes>
         <entry>
           <string>Label</string>
-          <string>HA #001 (P=0,Q=0)</string>
+          <string>HA #001</string>
         </entry>
         <entry>
           <string>Testdata</string>
@@ -26,7 +26,7 @@
       <elementAttributes>
         <entry>
           <string>Label</string>
-          <string>HA #002 (P=0,Q=1)</string>
+          <string>HA #002</string>
         </entry>
         <entry>
           <string>Testdata</string>
@@ -44,7 +44,7 @@
       <elementAttributes>
         <entry>
           <string>Label</string>
-          <string>HA #003 (P=1,Q=0)</string>
+          <string>HA #003</string>
         </entry>
         <entry>
           <string>Testdata</string>
@@ -62,7 +62,7 @@
       <elementAttributes>
         <entry>
           <string>Label</string>
-          <string>HA #004 (P=1,Q=1)</string>
+          <string>HA #004</string>
         </entry>
         <entry>
           <string>Testdata</string>

@@ -8,7 +8,7 @@
       <elementAttributes>
         <entry>
           <string>Label</string>
-          <string>MUX #001 (X0=0,X1=0,S=0)</string>
+          <string>MUX #001</string>
         </entry>
         <entry>
           <string>Testdata</string>
@@ -26,7 +26,7 @@
       <elementAttributes>
         <entry>
           <string>Label</string>
-          <string>MUX #002 (X0=0,X1=0,S=1)</string>
+          <string>MUX #002</string>
         </entry>
         <entry>
           <string>Testdata</string>
@@ -44,7 +44,7 @@
       <elementAttributes>
         <entry>
           <string>Label</string>
-          <string>MUX #003 (X0=0,X1=1,S=0)</string>
+          <string>MUX #003</string>
         </entry>
         <entry>
           <string>Testdata</string>
@@ -62,7 +62,7 @@
       <elementAttributes>
         <entry>
           <string>Label</string>
-          <string>MUX #004 (X0=0,X1=1,S=1)</string>
+          <string>MUX #004</string>
         </entry>
         <entry>
           <string>Testdata</string>
@@ -80,7 +80,7 @@
       <elementAttributes>
         <entry>
           <string>Label</string>
-          <string>MUX #005 (X0=1,X1=0,S=0)</string>
+          <string>MUX #005</string>
         </entry>
         <entry>
           <string>Testdata</string>
@@ -98,7 +98,7 @@
       <elementAttributes>
         <entry>
           <string>Label</string>
-          <string>MUX #006 (X0=1,X1=0,S=1)</string>
+          <string>MUX #006</string>
         </entry>
         <entry>
           <string>Testdata</string>
@@ -116,7 +116,7 @@
       <elementAttributes>
         <entry>
           <string>Label</string>
-          <string>MUX #007 (X0=1,X1=1,S=0)</string>
+          <string>MUX #007</string>
         </entry>
         <entry>
           <string>Testdata</string>
@@ -134,7 +134,7 @@
       <elementAttributes>
         <entry>
           <string>Label</string>
-          <string>MUX #008 (X0=1,X1=1,S=1)</string>
+          <string>MUX #008</string>
         </entry>
         <entry>
           <string>Testdata</string>

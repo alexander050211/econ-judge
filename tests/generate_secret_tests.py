@@ -38,8 +38,11 @@ def write_split_dig(path: Path, in_pins: list[str], out_pins: list[str],
         out_vals = list(out)
         assert len(out_vals) == len(out_pins), f"compute returned {len(out_vals)} outputs, expected {len(out_pins)}"
         row = " ".join(str(v) for v in in_vals + out_vals)
-        in_summary = ",".join(f"{p}={v}" for p, v in zip(in_pins, in_vals))
-        label = f"{prefix} #{i+1:03d} ({in_summary})"
+        # Label is intentionally vector-free: the per-test name is echoed to
+        # students in the grader's `detail`, so embedding the input combo
+        # (e.g. "(P=0,Q=1)") would leak the exact failing case and let a
+        # student pinpoint-patch instead of reasoning about the circuit.
+        label = f"{prefix} #{i+1:03d}"
         data = " ".join(cols) + "\n" + row + "\n"
         blocks.append(
             "    <visualElement>\n"

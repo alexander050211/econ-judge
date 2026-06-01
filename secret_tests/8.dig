@@ -8,7 +8,7 @@
       <elementAttributes>
         <entry>
           <string>Label</string>
-          <string>NOT #001 (A=0)</string>
+          <string>NOT #001</string>
         </entry>
         <entry>
           <string>Testdata</string>
@@ -26,7 +26,7 @@
       <elementAttributes>
         <entry>
           <string>Label</string>
-          <string>NOT #002 (A=1)</string>
+          <string>NOT #002</string>
         </entry>
         <entry>
           <string>Testdata</string>

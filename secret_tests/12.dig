@@ -8,7 +8,7 @@
       <elementAttributes>
         <entry>
           <string>Label</string>
-          <string>COMP #001 (S3=0,S2=0,S1=0,S0=0)</string>
+          <string>COMP #001</string>
         </entry>
         <entry>
           <string>Testdata</string>
@@ -26,7 +26,7 @@
       <elementAttributes>
         <entry>
           <string>Label</string>
-          <string>COMP #002 (S3=0,S2=0,S1=0,S0=1)</string>
+          <string>COMP #002</string>
         </entry>
         <entry>
           <string>Testdata</string>
@@ -44,7 +44,7 @@
       <elementAttributes>
         <entry>
           <string>Label</string>
-          <string>COMP #003 (S3=0,S2=0,S1=1,S0=0)</string>
+          <string>COMP #003</string>
         </entry>
         <entry>
           <string>Testdata</string>
@@ -62,7 +62,7 @@
       <elementAttributes>
         <entry>
           <string>Label</string>
-          <string>COMP #004 (S3=0,S2=0,S1=1,S0=1)</string>
+          <string>COMP #004</string>
         </entry>
         <entry>
           <string>Testdata</string>
@@ -80,7 +80,7 @@
       <elementAttributes>
         <entry>
           <string>Label</string>
-          <string>COMP #005 (S3=0,S2=1,S1=0,S0=0)</string>
+          <string>COMP #005</string>
         </entry>
         <entry>
           <string>Testdata</string>
@@ -98,7 +98,7 @@
       <elementAttributes>
         <entry>
           <string>Label</string>
-          <string>COMP #006 (S3=0,S2=1,S1=0,S0=1)</string>
+          <string>COMP #006</string>
         </entry>
         <entry>
           <string>Testdata</string>
@@ -116,7 +116,7 @@
       <elementAttributes>
         <entry>
           <string>Label</string>
-          <string>COMP #007 (S3=0,S2=1,S1=1,S0=0)</string>
+          <string>COMP #007</string>
         </entry>
         <entry>
           <string>Testdata</string>
@@ -134,7 +134,7 @@
       <elementAttributes>
         <entry>
           <string>Label</string>
-          <string>COMP #008 (S3=0,S2=1,S1=1,S0=1)</string>
+          <string>COMP #008</string>
         </entry>
         <entry>
           <string>Testdata</string>
@@ -152,7 +152,7 @@
       <elementAttributes>
         <entry>
           <string>Label</string>
-          <string>COMP #009 (S3=1,S2=0,S1=0,S0=0)</string>
+          <string>COMP #009</string>
         </entry>
         <entry>
           <string>Testdata</string>
@@ -170,7 +170,7 @@
       <elementAttributes>
         <entry>
           <string>Label</string>
-          <string>COMP #010 (S3=1,S2=0,S1=0,S0=1)</string>
+          <string>COMP #010</string>
         </entry>
         <entry>
           <string>Testdata</string>
@@ -188,7 +188,7 @@
       <elementAttributes>
         <entry>
           <string>Label</string>
-          <string>COMP #011 (S3=1,S2=0,S1=1,S0=0)</string>
+          <string>COMP #011</string>
         </entry>
         <entry>
           <string>Testdata</string>
@@ -206,7 +206,7 @@
       <elementAttributes>
         <entry>
           <string>Label</string>
-          <string>COMP #012 (S3=1,S2=0,S1=1,S0=1)</string>
+          <string>COMP #012</string>
         </entry>
         <entry>
           <string>Testdata</string>
@@ -224,7 +224,7 @@
       <elementAttributes>
         <entry>
           <string>Label</string>
-          <string>COMP #013 (S3=1,S2=1,S1=0,S0=0)</string>
+          <string>COMP #013</string>
         </entry>
         <entry>
           <string>Testdata</string>
@@ -242,7 +242,7 @@
       <elementAttributes>
         <entry>
           <string>Label</string>
-          <string>COMP #014 (S3=1,S2=1,S1=0,S0=1)</string>
+          <string>COMP #014</string>
         </entry>
         <entry>
           <string>Testdata</string>
@@ -260,7 +260,7 @@
       <elementAttributes>
         <entry>
           <string>Label</string>
-          <string>COMP #015 (S3=1,S2=1,S1=1,S0=0)</string>
+          <string>COMP #015</string>
         </entry>
         <entry>
           <string>Testdata</string>
@@ -278,7 +278,7 @@
       <elementAttributes>
         <entry>
           <string>Label</string>
-          <string>COMP #016 (S3=1,S2=1,S1=1,S0=1)</string>
+          <string>COMP #016</string>
         </entry>
         <entry>
           <string>Testdata</string>

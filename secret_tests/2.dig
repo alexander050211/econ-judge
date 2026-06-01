@@ -8,7 +8,7 @@
       <elementAttributes>
         <entry>
           <string>Label</string>
-          <string>FA #001 (P=0,Q=0,C_in=0)</string>
+          <string>FA #001</string>
         </entry>
         <entry>
           <string>Testdata</string>
@@ -26,7 +26,7 @@
       <elementAttributes>
         <entry>
           <string>Label</string>
-          <string>FA #002 (P=0,Q=0,C_in=1)</string>
+          <string>FA #002</string>
         </entry>
         <entry>
           <string>Testdata</string>
@@ -44,7 +44,7 @@
       <elementAttributes>
         <entry>
           <string>Label</string>
-          <string>FA #003 (P=0,Q=1,C_in=0)</string>
+          <string>FA #003</string>
         </entry>
         <entry>
           <string>Testdata</string>
@@ -62,7 +62,7 @@
       <elementAttributes>
         <entry>
           <string>Label</string>
-          <string>FA #004 (P=0,Q=1,C_in=1)</string>
+          <string>FA #004</string>
         </entry>
         <entry>
           <string>Testdata</string>
@@ -80,7 +80,7 @@
       <elementAttributes>
         <entry>
           <string>Label</string>
-          <string>FA #005 (P=1,Q=0,C_in=0)</string>
+          <string>FA #005</string>
         </entry>
         <entry>
           <string>Testdata</string>
@@ -98,7 +98,7 @@
       <elementAttributes>
         <entry>
           <string>Label</string>
-          <string>FA #006 (P=1,Q=0,C_in=1)</string>
+          <string>FA #006</string>
         </entry>
         <entry>
           <string>Testdata</string>
@@ -116,7 +116,7 @@
       <elementAttributes>
         <entry>
           <string>Label</string>
-          <string>FA #007 (P=1,Q=1,C_in=0)</string>
+          <string>FA #007</string>
         </entry>
         <entry>
           <string>Testdata</string>
@@ -134,7 +134,7 @@
       <elementAttributes>
         <entry>
           <string>Label</string>
-          <string>FA #008 (P=1,Q=1,C_in=1)</string>
+          <string>FA #008</string>
         </entry>
         <entry>
           <string>Testdata</string>
