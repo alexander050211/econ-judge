@@ -26,11 +26,12 @@ if (econHasChallengeRuntime) {
     return document.getElementById("econ-submit-root");
   }
 
-  function csrfHeaders() {
-    const nonce =
+  function csrfNonce() {
+    return (
       (window.init && window.init.csrfNonce) ||
-      (window.CTFd && CTFd.config && CTFd.config.csrfNonce);
-    return nonce ? { "CSRF-Token": nonce } : {};
+      (window.CTFd && CTFd.config && CTFd.config.csrfNonce) ||
+      ""
+    );
   }
 
   function setStandaloneSubmitDisabled(disabled) {
@@ -539,6 +540,8 @@ if (econHasChallengeRuntime) {
 
     const fd = new FormData();
     fd.append("file", input.files[0]);
+    const nonce = csrfNonce();
+    if (nonce) fd.append("nonce", nonce);
 
     let result;
     try {
@@ -548,7 +551,7 @@ if (econHasChallengeRuntime) {
           method: "POST",
           body: fd,
           credentials: "same-origin",
-          headers: csrfHeaders(),
+          headers: nonce ? { "CSRF-Token": nonce } : {},
         }
       );
       if (!r.ok) {

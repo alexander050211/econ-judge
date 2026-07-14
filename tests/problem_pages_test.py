@@ -190,15 +190,14 @@ class ProblemPageTests(unittest.TestCase):
             self.assertEqual(client.get("/problems/21").status_code, 404)
             self.assertEqual(client.get("/problems/999").status_code, 404)
 
-
     def test_submission_forwards_ctfd_csrf_nonce(self):
         source = (REPO_ROOT / "econ_judge" / "assets" / "view.js").read_text(
             encoding="utf-8"
         )
 
-        self.assertIn('"CSRF-Token": nonce', source)
         self.assertIn("window.init.csrfNonce", source)
-        self.assertIn("headers: csrfHeaders()", source)
+        self.assertIn('fd.append("nonce", nonce)', source)
+        self.assertIn('headers: nonce ? { "CSRF-Token": nonce } : {}', source)
 
 
 if __name__ == "__main__":
