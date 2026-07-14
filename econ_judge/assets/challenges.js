@@ -8,8 +8,9 @@
  *   template loaded preserves the modal flow unchanged; this script just
  *   adds the s2 markup and hides the stock category grid.
  *
- *   Row clicks fire the same `load-challenge` window CustomEvent that the
- *   Alpine wrapper listens for, so the modal opens with no glue code.
+ *   Rows navigate to econ-judge's stable /problems/<id> routes. The stock
+ *   Alpine modal remains in the DOM for CTFd compatibility but is not used by
+ *   the participant-facing flow.
  *
  * Gated by window.location.pathname === '/challenges' so it's safe to load
  * the script on every page via THEME_HEADER_CSS. */
@@ -202,6 +203,11 @@ main > .jumbotron:has(+ .container [x-data="ChallengeBoard"]),
 }
 .s2-row:last-child { border-bottom: none; }
 .s2-row:hover { background: var(--d-paper-soft); }
+.s2-row:focus-visible {
+  outline: 2px solid var(--d-brand-dark);
+  outline-offset: -2px;
+  background: var(--d-paper-soft);
+}
 .s2-row td {
   padding: 12px 14px;
   vertical-align: middle;
@@ -225,6 +231,11 @@ main > .jumbotron:has(+ .container [x-data="ChallengeBoard"]),
   letter-spacing: -0.005em;
   line-height: 1.4;
 }
+.s2-problem-link {
+  color: inherit;
+  text-decoration: none;
+}
+.s2-problem-link:hover { color: inherit; }
 .s2-td-pts {
   text-align: right;
   font-family: var(--d-f-sans);
@@ -384,15 +395,18 @@ main > .jumbotron:has(+ .container [x-data="ChallengeBoard"]),
   function renderRow(c) {
     const cls = c.solved_by_me ? "s2-row s2-row-pass" : "s2-row s2-row-locked";
     const actionLabel = c.solved_by_me ? "재제출" : "풀어보기";
+    const problemUrl = "/problems/" + encodeURIComponent(c.id);
     return ''
-      + '<tr class="' + cls + '" data-challenge-id="' + c.id + '">'
+      + '<tr class="' + cls + '" data-challenge-id="' + c.id + '"'
+      + ' data-problem-url="' + problemUrl + '" tabindex="0" role="link"'
+      + ' aria-label="' + esc(c.name + " 문제 페이지 열기") + '">'
       +   '<td class="s2-td-id"><span class="s2-id-badge">' + esc(String(c.id).padStart(2, "0")) + '</span></td>'
-      +   '<td class="s2-td-name"><div class="s2-name">' + esc(c.name) + '</div></td>'
+      +   '<td class="s2-td-name"><div class="s2-name"><a class="s2-problem-link" href="' + problemUrl + '">' + esc(c.name) + '</a></div></td>'
       +   '<td class="s2-td-pts">'
       +     '<span class="s2-pts">' + esc(c.value) + '</span><span class="s2-pts-u">pt</span>'
       +   '</td>'
       +   '<td class="s2-td-status">' + pillForStatus(c.solved_by_me ? "pass" : "locked") + '</td>'
-      +   '<td class="s2-td-action"><span class="s2-action">' + actionLabel + arrowSvg() + '</span></td>'
+      +   '<td class="s2-td-action"><a class="s2-action" href="' + problemUrl + '">' + actionLabel + arrowSvg() + '</a></td>'
       + '</tr>';
   }
 
@@ -471,10 +485,19 @@ main > .jumbotron:has(+ .container [x-data="ChallengeBoard"]),
     root.innerHTML = html;
 
     root.querySelectorAll(".s2-row").forEach(row => {
-      row.addEventListener("click", () => {
-        const id = parseInt(row.getAttribute("data-challenge-id"), 10);
-        if (!isNaN(id)) {
-          window.dispatchEvent(new CustomEvent("load-challenge", { detail: id }));
+      const navigate = () => {
+        const url = row.getAttribute("data-problem-url");
+        if (url) window.location.assign(url);
+      };
+      row.addEventListener("click", (event) => {
+        if (event.target.closest("a")) return;
+        navigate();
+      });
+      row.addEventListener("keydown", (event) => {
+        if (event.target.closest("a")) return;
+        if (event.key === "Enter" || event.key === " ") {
+          event.preventDefault();
+          navigate();
         }
       });
     });

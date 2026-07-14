@@ -1,9 +1,19 @@
-// Disable CTFd's default text-flag submission path.
-CTFd._internal.challenge.data = undefined;
-CTFd._internal.challenge.renderer = null;
-CTFd._internal.challenge.preRender = function () {};
-CTFd._internal.challenge.render = null;
-CTFd._internal.challenge.postRender = function () {};
+// Disable CTFd's default text-flag path when this script is loaded inside the
+// legacy challenge modal. The standalone problem page has no challenge runtime.
+var econHasChallengeRuntime =
+  window.CTFd &&
+  CTFd._internal &&
+  CTFd._internal.challenge &&
+  CTFd.pages &&
+  CTFd.pages.challenge;
+
+if (econHasChallengeRuntime) {
+  CTFd._internal.challenge.data = undefined;
+  CTFd._internal.challenge.renderer = null;
+  CTFd._internal.challenge.preRender = function () {};
+  CTFd._internal.challenge.render = null;
+  CTFd._internal.challenge.postRender = function () {};
+}
 
 (function () {
   "use strict";
@@ -14,6 +24,13 @@ CTFd._internal.challenge.postRender = function () {};
 
   function root() {
     return document.getElementById("econ-submit-root");
+  }
+
+  function setStandaloneSubmitDisabled(disabled) {
+    const r = root();
+    if (!r || r.dataset.mode !== "page") return;
+    const submit = document.getElementById("challenge-submit");
+    if (submit) submit.disabled = disabled;
   }
 
   function setState(name) {
@@ -246,6 +263,7 @@ CTFd._internal.challenge.postRender = function () {};
     $("#econ-file-name").textContent = name;
     $("#econ-file-size").textContent = humanSize(file.size);
     setState("ready");
+    setStandaloneSubmitDisabled(false);
   }
 
   function clearSelection() {
@@ -253,6 +271,7 @@ CTFd._internal.challenge.postRender = function () {};
     if (input) input.value = "";
     clearFileError();
     setState("empty");
+    setStandaloneSubmitDisabled(true);
   }
 
   // ---------- Result parsing ----------
@@ -386,6 +405,15 @@ CTFd._internal.challenge.postRender = function () {};
 
     setState("result");
 
+    if (status === "correct") {
+      const pageStatus = document.getElementById("econ-problem-status");
+      if (pageStatus) {
+        pageStatus.classList.add("is-solved");
+        pageStatus.innerHTML =
+          '<i class="fa-solid fa-check" aria-hidden="true"></i><span>완료</span>';
+      }
+    }
+
     if (showBar) {
       requestAnimationFrame(() => {
         const bar = card.querySelector(".bar > i");
@@ -434,6 +462,29 @@ CTFd._internal.challenge.postRender = function () {};
     if (clearBtn) clearBtn.addEventListener("click", clearSelection);
     if (resubmitBtn) resubmitBtn.addEventListener("click", clearSelection);
 
+    if (r.dataset.mode === "page") {
+      const submitBtn = document.getElementById("challenge-submit");
+      if (submitBtn && submitBtn.dataset.bound !== "1") {
+        submitBtn.addEventListener("click", async () => {
+          const challengeInput = document.getElementById("challenge-id");
+          const challengeId = Number(challengeInput && challengeInput.value);
+          const selected = input.files && input.files[0];
+          if (!selected) {
+            showFileError(".dig 파일을 먼저 선택해주세요.");
+            return;
+          }
+          if (!Number.isInteger(challengeId) || challengeId < 1) {
+            showFileError("문제 정보를 확인할 수 없습니다. 페이지를 새로고침해주세요.");
+            return;
+          }
+          setStandaloneSubmitDisabled(true);
+          await submitChallenge(challengeId);
+        });
+        submitBtn.dataset.bound = "1";
+      }
+      setStandaloneSubmitDisabled(!(input.files && input.files.length));
+    }
+
     const benchToggle = $("#econ-bench-toggle", r);
     if (benchToggle) {
       benchToggle.addEventListener("click", () => {
@@ -461,11 +512,12 @@ CTFd._internal.challenge.postRender = function () {};
     watch();
   }
 
-  // ---------- Submit (called by the modal's submit button) ----------
+  // ---------- Submit (called by the modal or standalone page button) ----------
 
-  CTFd.pages.challenge.submitChallenge = async function (challenge_id, _submission) {
+  async function submitChallenge(challenge_id, _submission) {
     const input = document.getElementById("challenge-file");
     if (!input || !input.files || !input.files.length) {
+      showFileError(".dig 파일을 먼저 선택해주세요.");
       return {
         data: {
           status: "incorrect",
@@ -487,6 +539,9 @@ CTFd._internal.challenge.postRender = function () {};
         "/api/v1/digital/challenges/" + challenge_id + "/attempt",
         { method: "POST", body: fd, credentials: "same-origin" }
       );
+      if (!r.ok) {
+        throw new Error("HTTP " + r.status);
+      }
       result = await r.json();
     } catch (e) {
       result = {
@@ -513,5 +568,9 @@ CTFd._internal.challenge.postRender = function () {};
     });
 
     return result;
-  };
+  }
+
+  if (econHasChallengeRuntime) {
+    CTFd.pages.challenge.submitChallenge = submitChallenge;
+  }
 })();

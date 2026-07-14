@@ -1,0 +1,188 @@
+{% extends "base.html" %}
+
+{% block stylesheets %}
+{{ super() }}
+<link rel="stylesheet" href="/plugins/econ_judge/assets/problem.css">
+{% endblock %}
+
+{% block content %}
+<div class="ep-page" data-challenge-id="{{ challenge.id }}">
+  <header class="ep-header">
+    <div class="ep-header-main">
+      <nav class="ep-breadcrumb" aria-label="문제 위치">
+        <a href="/challenges">
+          <i class="fa-solid fa-list" aria-hidden="true"></i>
+          도전 과제
+        </a>
+        <i class="fa-solid fa-chevron-right" aria-hidden="true"></i>
+        <span>{{ challenge.category }}</span>
+        <i class="fa-solid fa-chevron-right" aria-hidden="true"></i>
+        <span aria-current="page">#{{ "%02d" | format(challenge.id) }}</span>
+      </nav>
+
+      <div class="ep-title-row">
+        <div class="ep-title-copy">
+          <div class="ep-kicker">PROBLEM {{ "%02d" | format(challenge.id) }}</div>
+          <h1>{{ challenge.name }}</h1>
+        </div>
+        <div class="ep-points" aria-label="{{ challenge.value }}점">
+          <strong>{{ challenge.value }}</strong>
+          <span>POINTS</span>
+        </div>
+      </div>
+
+      <div class="ep-meta-row">
+        <span class="ep-category">{{ challenge.category }}</span>
+        <span
+          id="econ-problem-status"
+          class="ep-status{% if solved %} is-solved{% endif %}"
+        >
+          <i class="fa-solid {% if solved %}fa-check{% else %}fa-minus{% endif %}" aria-hidden="true"></i>
+          <span>{% if solved %}완료{% else %}미완료{% endif %}</span>
+        </span>
+        {% if record_count %}
+        <span class="ep-attempts">채점 기록 {{ record_count }}회</span>
+        {% endif %}
+      </div>
+    </div>
+
+    <div class="ep-header-nav" aria-label="이전 및 다음 문제">
+      {% if previous_id %}
+      <a class="ep-icon-button" href="/problems/{{ previous_id }}" aria-label="이전 문제" title="이전 문제">
+        <i class="fa-solid fa-arrow-left" aria-hidden="true"></i>
+      </a>
+      {% else %}
+      <span class="ep-icon-button is-disabled" aria-hidden="true">
+        <i class="fa-solid fa-arrow-left"></i>
+      </span>
+      {% endif %}
+
+      {% if next_id %}
+      <a class="ep-icon-button" href="/problems/{{ next_id }}" aria-label="다음 문제" title="다음 문제">
+        <i class="fa-solid fa-arrow-right" aria-hidden="true"></i>
+      </a>
+      {% else %}
+      <span class="ep-icon-button is-disabled" aria-hidden="true">
+        <i class="fa-solid fa-arrow-right"></i>
+      </span>
+      {% endif %}
+    </div>
+  </header>
+
+  <div class="ep-workspace">
+    <article class="ep-statement" aria-labelledby="ep-statement-title">
+      <div class="ep-section-heading">
+        <span>01</span>
+        <h2 id="ep-statement-title">문제</h2>
+      </div>
+      <div class="ep-description">
+        {{ description_html | safe }}
+      </div>
+    </article>
+
+    <aside class="ep-submit-panel" aria-labelledby="ep-submit-title">
+      <div class="ep-submit-heading">
+        <div>
+          <div class="ep-kicker">SUBMISSION</div>
+          <h2 id="ep-submit-title">회로 제출</h2>
+        </div>
+        <span class="ep-file-kind">.DIG</span>
+      </div>
+
+      <input id="challenge-id" type="hidden" value="{{ challenge.id }}">
+
+      <div id="econ-submit-root" data-mode="page">
+        <div data-state="empty">
+          <label class="dropzone" id="econ-dropzone">
+            <input type="file" id="challenge-file" accept=".dig">
+            <span class="dropzone-icon" aria-hidden="true">
+              <i class="fa-regular fa-file-code"></i>
+            </span>
+            <strong><span>.dig</span> 파일 선택</strong>
+            <small>클릭하거나 파일을 이 영역으로 끌어오세요</small>
+          </label>
+          <div class="file-error" id="econ-file-error" role="alert" hidden></div>
+        </div>
+
+        <div data-state="ready" hidden>
+          <div class="filecard">
+            <div class="filecard-kind">.dig</div>
+            <div class="filecard-meta">
+              <div class="filecard-name" id="econ-file-name"></div>
+              <div class="filecard-size" id="econ-file-size"></div>
+            </div>
+            <button id="econ-file-clear" class="ep-icon-button ep-file-clear" type="button" aria-label="파일 제거" title="파일 제거">
+              <i class="fa-solid fa-xmark" aria-hidden="true"></i>
+            </button>
+          </div>
+        </div>
+
+        <div data-state="grading" hidden>
+          <div class="grading-toolbar">
+            <button class="bench-toggle" id="econ-bench-toggle" type="button" aria-pressed="true"></button>
+          </div>
+          <div class="grading-simple" id="econ-grading-simple" hidden>
+            <span class="grading-spinner" aria-hidden="true"></span>
+            <span>
+              <strong>채점 중</strong>
+              <small>Digital 시뮬레이터가 회로를 검증하고 있습니다</small>
+            </span>
+          </div>
+          <div class="s3-bench" id="econ-grading-bench" hidden>
+            <div class="s3-bench-micro">testbench</div>
+            <div class="s3-bench-bar" aria-hidden="true">
+              <div class="s3-bench-bar-i" id="econ-bench-bar"></div>
+            </div>
+            <div class="s3-bench-term" id="econ-bench-term" aria-live="polite"></div>
+          </div>
+        </div>
+
+        <div data-state="result" hidden>
+          <div class="result" id="econ-result" aria-live="polite"></div>
+          <button class="resubmit" id="econ-resubmit" type="button">
+            <i class="fa-solid fa-rotate-right" aria-hidden="true"></i>
+            다시 제출하기
+          </button>
+        </div>
+      </div>
+
+      <div class="ep-submit-actions key-submit">
+        <button id="challenge-submit" class="ep-submit-button" type="button" disabled>
+          <i class="fa-solid fa-play" aria-hidden="true"></i>
+          채점 요청
+        </button>
+        <div class="ep-submit-limits">
+          <span>최대 256 KB</span>
+          <span>조합논리 회로</span>
+        </div>
+      </div>
+    </aside>
+  </div>
+
+  <footer class="ep-footer-nav" aria-label="문제 이동">
+    {% if previous_id %}
+    <a href="/problems/{{ previous_id }}">
+      <i class="fa-solid fa-arrow-left" aria-hidden="true"></i>
+      <span><small>PREVIOUS</small>이전 문제</span>
+    </a>
+    {% else %}<span></span>{% endif %}
+
+    <a class="ep-all-problems" href="/challenges">
+      <i class="fa-solid fa-list" aria-hidden="true"></i>
+      전체 문제
+    </a>
+
+    {% if next_id %}
+    <a href="/problems/{{ next_id }}">
+      <span><small>NEXT</small>다음 문제</span>
+      <i class="fa-solid fa-arrow-right" aria-hidden="true"></i>
+    </a>
+    {% else %}<span></span>{% endif %}
+  </footer>
+</div>
+{% endblock %}
+
+{% block scripts %}
+{{ super() }}
+<script defer src="/plugins/econ_judge/assets/view.js"></script>
+{% endblock %}

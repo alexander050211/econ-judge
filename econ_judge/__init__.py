@@ -60,5 +60,8 @@ def load(app):
     override_template("login.html",    _read_template("users", "login.html"))
     override_template("register.html", _read_template("users", "register.html"))
 
+    from .problems import register_problem_pages
+    register_problem_pages(app)
+
     from .endpoints import register_endpoints
     register_endpoints(app)
