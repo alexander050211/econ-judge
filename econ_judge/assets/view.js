@@ -26,6 +26,13 @@ if (econHasChallengeRuntime) {
     return document.getElementById("econ-submit-root");
   }
 
+  function csrfHeaders() {
+    const nonce =
+      (window.init && window.init.csrfNonce) ||
+      (window.CTFd && CTFd.config && CTFd.config.csrfNonce);
+    return nonce ? { "CSRF-Token": nonce } : {};
+  }
+
   function setStandaloneSubmitDisabled(disabled) {
     const r = root();
     if (!r || r.dataset.mode !== "page") return;
@@ -537,7 +544,12 @@ if (econHasChallengeRuntime) {
     try {
       const r = await fetch(
         "/api/v1/digital/challenges/" + challenge_id + "/attempt",
-        { method: "POST", body: fd, credentials: "same-origin" }
+        {
+          method: "POST",
+          body: fd,
+          credentials: "same-origin",
+          headers: csrfHeaders(),
+        }
       );
       if (!r.ok) {
         throw new Error("HTTP " + r.status);
