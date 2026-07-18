@@ -8,13 +8,13 @@
       <elementAttributes>
         <entry>
           <string>Label</string>
-          <string>CMP #001</string>
+          <string>MUX #001</string>
         </entry>
         <entry>
           <string>Testdata</string>
           <testData>
-            <dataString>A1 A0 B1 B0 G L E
-0 0 0 0 0 0 1
+            <dataString>X0 X1 S Y
+0 0 0 0
 </dataString>
           </testData>
         </entry>
@@ -26,13 +26,13 @@
       <elementAttributes>
         <entry>
           <string>Label</string>
-          <string>CMP #002</string>
+          <string>MUX #002</string>
         </entry>
         <entry>
           <string>Testdata</string>
           <testData>
-            <dataString>A1 A0 B1 B0 G L E
-0 0 0 1 0 1 0
+            <dataString>X0 X1 S Y
+0 0 1 0
 </dataString>
           </testData>
         </entry>
@@ -44,13 +44,13 @@
       <elementAttributes>
         <entry>
           <string>Label</string>
-          <string>CMP #003</string>
+          <string>MUX #003</string>
         </entry>
         <entry>
           <string>Testdata</string>
           <testData>
-            <dataString>A1 A0 B1 B0 G L E
-0 0 1 0 0 1 0
+            <dataString>X0 X1 S Y
+0 1 0 0
 </dataString>
           </testData>
         </entry>
@@ -62,13 +62,13 @@
       <elementAttributes>
         <entry>
           <string>Label</string>
-          <string>CMP #004</string>
+          <string>MUX #004</string>
         </entry>
         <entry>
           <string>Testdata</string>
           <testData>
-            <dataString>A1 A0 B1 B0 G L E
-0 0 1 1 0 1 0
+            <dataString>X0 X1 S Y
+0 1 1 1
 </dataString>
           </testData>
         </entry>
@@ -80,13 +80,13 @@
       <elementAttributes>
         <entry>
           <string>Label</string>
-          <string>CMP #005</string>
+          <string>MUX #005</string>
         </entry>
         <entry>
           <string>Testdata</string>
           <testData>
-            <dataString>A1 A0 B1 B0 G L E
-0 1 0 0 1 0 0
+            <dataString>X0 X1 S Y
+1 0 0 1
 </dataString>
           </testData>
         </entry>
@@ -98,13 +98,13 @@
       <elementAttributes>
         <entry>
           <string>Label</string>
-          <string>CMP #006</string>
+          <string>MUX #006</string>
         </entry>
         <entry>
           <string>Testdata</string>
           <testData>
-            <dataString>A1 A0 B1 B0 G L E
-0 1 0 1 0 0 1
+            <dataString>X0 X1 S Y
+1 0 1 0
 </dataString>
           </testData>
         </entry>
@@ -116,13 +116,13 @@
       <elementAttributes>
         <entry>
           <string>Label</string>
-          <string>CMP #007</string>
+          <string>MUX #007</string>
         </entry>
         <entry>
           <string>Testdata</string>
           <testData>
-            <dataString>A1 A0 B1 B0 G L E
-0 1 1 0 0 1 0
+            <dataString>X0 X1 S Y
+1 1 0 1
 </dataString>
           </testData>
         </entry>
@@ -134,162 +134,18 @@
       <elementAttributes>
         <entry>
           <string>Label</string>
-          <string>CMP #008</string>
+          <string>MUX #008</string>
         </entry>
         <entry>
           <string>Testdata</string>
           <testData>
-            <dataString>A1 A0 B1 B0 G L E
-0 1 1 1 0 1 0
+            <dataString>X0 X1 S Y
+1 1 1 1
 </dataString>
           </testData>
         </entry>
       </elementAttributes>
       <pos x="100" y="520"/>
-    </visualElement>
-    <visualElement>
-      <elementName>Testcase</elementName>
-      <elementAttributes>
-        <entry>
-          <string>Label</string>
-          <string>CMP #009</string>
-        </entry>
-        <entry>
-          <string>Testdata</string>
-          <testData>
-            <dataString>A1 A0 B1 B0 G L E
-1 0 0 0 1 0 0
-</dataString>
-          </testData>
-        </entry>
-      </elementAttributes>
-      <pos x="100" y="580"/>
-    </visualElement>
-    <visualElement>
-      <elementName>Testcase</elementName>
-      <elementAttributes>
-        <entry>
-          <string>Label</string>
-          <string>CMP #010</string>
-        </entry>
-        <entry>
-          <string>Testdata</string>
-          <testData>
-            <dataString>A1 A0 B1 B0 G L E
-1 0 0 1 1 0 0
-</dataString>
-          </testData>
-        </entry>
-      </elementAttributes>
-      <pos x="100" y="640"/>
-    </visualElement>
-    <visualElement>
-      <elementName>Testcase</elementName>
-      <elementAttributes>
-        <entry>
-          <string>Label</string>
-          <string>CMP #011</string>
-        </entry>
-        <entry>
-          <string>Testdata</string>
-          <testData>
-            <dataString>A1 A0 B1 B0 G L E
-1 0 1 0 0 0 1
-</dataString>
-          </testData>
-        </entry>
-      </elementAttributes>
-      <pos x="100" y="700"/>
-    </visualElement>
-    <visualElement>
-      <elementName>Testcase</elementName>
-      <elementAttributes>
-        <entry>
-          <string>Label</string>
-          <string>CMP #012</string>
-        </entry>
-        <entry>
-          <string>Testdata</string>
-          <testData>
-            <dataString>A1 A0 B1 B0 G L E
-1 0 1 1 0 1 0
-</dataString>
-          </testData>
-        </entry>
-      </elementAttributes>
-      <pos x="100" y="760"/>
-    </visualElement>
-    <visualElement>
-      <elementName>Testcase</elementName>
-      <elementAttributes>
-        <entry>
-          <string>Label</string>
-          <string>CMP #013</string>
-        </entry>
-        <entry>
-          <string>Testdata</string>
-          <testData>
-            <dataString>A1 A0 B1 B0 G L E
-1 1 0 0 1 0 0
-</dataString>
-          </testData>
-        </entry>
-      </elementAttributes>
-      <pos x="100" y="820"/>
-    </visualElement>
-    <visualElement>
-      <elementName>Testcase</elementName>
-      <elementAttributes>
-        <entry>
-          <string>Label</string>
-          <string>CMP #014</string>
-        </entry>
-        <entry>
-          <string>Testdata</string>
-          <testData>
-            <dataString>A1 A0 B1 B0 G L E
-1 1 0 1 1 0 0
-</dataString>
-          </testData>
-        </entry>
-      </elementAttributes>
-      <pos x="100" y="880"/>
-    </visualElement>
-    <visualElement>
-      <elementName>Testcase</elementName>
-      <elementAttributes>
-        <entry>
-          <string>Label</string>
-          <string>CMP #015</string>
-        </entry>
-        <entry>
-          <string>Testdata</string>
-          <testData>
-            <dataString>A1 A0 B1 B0 G L E
-1 1 1 0 1 0 0
-</dataString>
-          </testData>
-        </entry>
-      </elementAttributes>
-      <pos x="100" y="940"/>
-    </visualElement>
-    <visualElement>
-      <elementName>Testcase</elementName>
-      <elementAttributes>
-        <entry>
-          <string>Label</string>
-          <string>CMP #016</string>
-        </entry>
-        <entry>
-          <string>Testdata</string>
-          <testData>
-            <dataString>A1 A0 B1 B0 G L E
-1 1 1 1 0 0 1
-</dataString>
-          </testData>
-        </entry>
-      </elementAttributes>
-      <pos x="100" y="1000"/>
     </visualElement>
   </visualElements>
   <wires/>

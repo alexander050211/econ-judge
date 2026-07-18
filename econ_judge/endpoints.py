@@ -1,4 +1,5 @@
 import datetime
+import json
 import os
 import tempfile
 import time
@@ -14,6 +15,11 @@ from CTFd.utils.user import get_current_team, get_current_user, get_ip
 
 from .concepts import concept_info
 from .grader import grade_submission
+from .problemset import (
+    TRUTH_TABLE_CHALLENGE_ID,
+    TRUTH_TABLE_EXPECTED,
+    normalize_truth_table_answers,
+)
 
 MAX_UPLOAD_BYTES = 256 * 1024
 
@@ -44,15 +50,10 @@ _ERROR_MESSAGES = {
 # tests/register_challenges.py. Order = column order in the projector
 # matrix. Keep in sync with bootstrap.py CHALLENGES.
 _PROJECT_PHASE_COLS = [
-    {"id": 3,  "short": "P1·A3",   "name": "3-bit Adder"},
-    {"id": 12, "short": "P1·B",    "name": "보수 계산기"},
-    {"id": 13, "short": "P1·C",    "name": "÷3 Round"},
-    {"id": 16, "short": "P1·FULL", "name": "Full Wire"},
-    {"id": 4,  "short": "P2·A1",   "name": "2-bit Comp"},
-    {"id": 15, "short": "P2·A2",   "name": "2,3-bit Comp"},
-    {"id": 14, "short": "P2·B",    "name": "대피소 배정"},
-    {"id": 17, "short": "P2·C",    "name": "7-seg Drv"},
-    {"id": 18, "short": "P2·FULL", "name": "Full Wire"},
+    {"id": 12, "short": "A-1", "name": "1 이상 판정"},
+    {"id": 13, "short": "A-2", "name": "홍수 경보"},
+    {"id": 14, "short": "B",   "name": "위험 지역"},
+    {"id": 15, "short": "C",   "name": "7-segment"},
 ]
 
 
@@ -113,6 +114,65 @@ def _challenge_totals():
 
 def register_endpoints(app):
     @app.route(
+        "/api/v1/digital/challenges/<int:challenge_id>/truth-table-attempt",
+        methods=["POST"],
+    )
+    @authed_only
+    @bypass_csrf_protection
+    def truth_table_attempt(challenge_id):
+        if challenge_id != TRUTH_TABLE_CHALLENGE_ID:
+            abort(404)
+        challenge = Challenges.query.filter_by(
+            id=TRUTH_TABLE_CHALLENGE_ID
+        ).first_or_404()
+        if challenge.type != "digital":
+            abort(404)
+
+        user = get_current_user()
+        already_solved = Solves.query.filter_by(
+            user_id=user.id, challenge_id=TRUTH_TABLE_CHALLENGE_ID
+        ).first()
+        already_failed = Fails.query.filter_by(
+            user_id=user.id, challenge_id=TRUTH_TABLE_CHALLENGE_ID
+        ).first()
+        if already_solved or already_failed:
+            return jsonify(
+                {
+                    "success": True,
+                    "data": {
+                        "status": "locked",
+                        "message": "이 문제는 이미 제출하여 다시 제출할 수 없습니다.",
+                    },
+                }
+            )
+
+        payload = request.get_json(silent=True) or {}
+        answers = normalize_truth_table_answers(payload.get("answers"))
+        if answers is None:
+            return _reject("모든 행에 0 또는 1을 선택해주세요.")
+
+        team = get_current_team()
+        record_fields = {
+            "user_id": user.id,
+            "team_id": team.id if team else None,
+            "challenge_id": TRUTH_TABLE_CHALLENGE_ID,
+            "ip": get_ip(request),
+            "provided": json.dumps(answers, separators=(",", ":")),
+        }
+        if answers == TRUTH_TABLE_EXPECTED:
+            db.session.add(Solves(**record_fields))
+            status = "correct"
+            message = "정답입니다. 진리표의 모든 행이 일치합니다."
+        else:
+            db.session.add(Fails(**record_fields))
+            status = "incorrect"
+            message = "제출이 기록되었습니다. 이 문제는 다시 제출할 수 없습니다."
+        db.session.commit()
+        return jsonify(
+            {"success": True, "data": {"status": status, "message": message}}
+        )
+
+    @app.route(
         "/api/v1/digital/challenges/<int:challenge_id>/attempt",
         methods=["POST"],
     )
@@ -155,6 +215,32 @@ def register_endpoints(app):
         # System / config errors and rejected input are not wrong answers:
         # log the real detail for operators, do NOT record a Fail, and show a
         # generic retry message (never the raw grader output).
+        if result.get("status") == "invalid":
+            user = get_current_user()
+            team = get_current_team()
+            db.session.add(
+                Fails(
+                    user_id=user.id,
+                    team_id=team.id if team else None,
+                    challenge_id=challenge_id,
+                    ip=get_ip(request),
+                    provided=upload.filename,
+                )
+            )
+            db.session.commit()
+            manifest = concept_info(challenge_id)
+            return jsonify(
+                {
+                    "success": True,
+                    "data": {
+                        "status": "incorrect",
+                        "message": result.get("detail") or "회로 구성 조건을 확인해주세요.",
+                        "concepts": [item["label"] for item in manifest],
+                        "hints": [item["hint"] for item in manifest],
+                    },
+                }
+            )
+
         if result.get("status") != "graded":
             app.logger.warning(
                 "digital grade non-graded: chal=%s user=%s status=%s reason=%s detail=%s",

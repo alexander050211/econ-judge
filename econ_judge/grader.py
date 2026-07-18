@@ -3,6 +3,7 @@ import re
 import shutil
 import subprocess
 import threading
+import xml.etree.ElementTree as ET
 from pathlib import Path
 
 REPO_ROOT = Path(__file__).resolve().parent.parent
@@ -66,28 +67,14 @@ _grade_sem = threading.BoundedSemaphore(GRADE_CONCURRENCY)
 # Per-challenge canonical sub-circuit filenames seeded next to the submission
 # so Digital can resolve sub-circuit imports without the mentee needing to
 # upload sibling files. Filenames must match what mentees' .dig files reference.
+# Nested dependencies are included as well: 08_full_adder.dig itself imports
+# 07_half_adder.dig. Old winter mappings are intentionally not reused because
+# the challenge ids now refer to different circuits.
 CANONICAL_SUBCIRCUITS = {
-    2: ["A1_반가산기(HalfAdder)만들기.dig"],
-    3: ["A1_반가산기(HalfAdder)만들기.dig", "A2_전가산기(FullAdder)만들기.dig"],
-    15: ["A1_2비트비교기.dig"],
-    16: [
-        "A1_반가산기(HalfAdder)만들기.dig",
-        "A2_전가산기(FullAdder)만들기.dig",
-        "A3_3비트덧셈연산기만들기.dig",
-        "B_보수계산기만들기.dig",
-        "C_3의나눗셈기만들기.dig",
-    ],
-    # chal 18 (P2 full wiring) imports all 4 P2 sub-circuits. Canonical P2 C
-    # is intentionally listed even though the file isn't present yet — the
-    # grader's missing-canonical error path will surface a clear admin
-    # message until C_7segment출력기.dig (with Out pins a..g, per the camp
-    # skeleton design) is authored and dropped into canonical/.
-    18: [
-        "A1_2비트비교기.dig",
-        "A2_2,3비트비교기.dig",
-        "B_대피소배정하기.dig",
-        "C_7segment출력기.dig",
-    ],
+    8: ["07_half_adder.dig"],
+    9: ["07_half_adder.dig", "08_full_adder.dig"],
+    11: ["07_half_adder.dig", "08_full_adder.dig"],
+    13: ["12_at_least_one.dig"],
 }
 
 
@@ -131,6 +118,170 @@ def _scan_dangerous_xml(submission_path: str):
     return None
 
 
+_FAN_IN_GATES = {"And", "Or", "NAnd", "NOr", "XOr", "XNOr"}
+_STRICT_COMPONENTS = {
+    3: ({"In", "Out", "And", "Text"}, None),
+    5: ({"In", "Out", "NAnd", "Text"}, 1),
+    6: ({"In", "Out", "NAnd", "Text"}, 3),
+}
+_REQUIRED_SUBCIRCUITS = {
+    8: {"07_half_adder.dig": 2},
+    9: {"07_half_adder.dig": 1, "08_full_adder.dig": 2},
+    11: {"08_full_adder.dig": 1},
+    13: {"12_at_least_one.dig": 3},
+}
+_SEVEN_SEGMENT_LABELS = ("a", "b", "c", "d", "e", "f", "g", "dp")
+_SEVEN_SEGMENT_PIN_OFFSETS = {
+    "a": (0, 0),
+    "b": (20, 0),
+    "c": (40, 0),
+    "d": (60, 0),
+    "e": (0, 140),
+    "f": (20, 140),
+    "g": (40, 140),
+    "dp": (60, 140),
+}
+
+
+def _input_count(element) -> int:
+    for entry in element.findall("./elementAttributes/entry"):
+        key = entry.find("string")
+        if key is None or key.text != "Inputs":
+            continue
+        value = entry.find("int")
+        if value is not None and value.text:
+            try:
+                return int(value.text)
+            except ValueError:
+                return 2
+    return 2
+
+
+def _attribute(element, name: str):
+    for entry in element.findall("./elementAttributes/entry"):
+        values = list(entry)
+        if not values or values[0].tag != "string" or values[0].text != name:
+            continue
+        return values[1].text if len(values) > 1 else ""
+    return None
+
+
+def _position(node):
+    if node is None:
+        return None
+    try:
+        return int(node.get("x")), int(node.get("y"))
+    except (TypeError, ValueError):
+        return None
+
+
+def _wire_graph(root):
+    graph: dict[tuple[int, int], set[tuple[int, int]]] = {}
+    for wire in root.findall("./wires/wire"):
+        first = _position(wire.find("p1"))
+        second = _position(wire.find("p2"))
+        if first is None or second is None:
+            continue
+        graph.setdefault(first, set()).add(second)
+        graph.setdefault(second, set()).add(first)
+    return graph
+
+
+def _same_net(graph, first, second) -> bool:
+    if first == second:
+        return True
+    pending = [first]
+    visited = {first}
+    while pending:
+        point = pending.pop()
+        for neighbor in graph.get(point, ()):
+            if neighbor == second:
+                return True
+            if neighbor not in visited:
+                visited.add(neighbor)
+                pending.append(neighbor)
+    return False
+
+
+def _validate_seven_segment(root, elements):
+    displays = [
+        element for element in elements
+        if element.findtext("elementName", default="") == "Seven-Seg"
+    ]
+    if len(displays) != 1:
+        return "Seven-Seg 부품을 정확히 1개 사용해야 합니다."
+
+    display_position = _position(displays[0].find("pos"))
+    if display_position is None:
+        return "Seven-Seg 부품의 위치 정보를 읽을 수 없습니다."
+
+    outputs: dict[str, list[tuple[int, int]]] = {
+        label: [] for label in _SEVEN_SEGMENT_LABELS
+    }
+    for element in elements:
+        if element.findtext("elementName", default="") != "Out":
+            continue
+        label = _attribute(element, "Label")
+        if label not in outputs:
+            continue
+        position = _position(element.find("pos"))
+        if position is not None:
+            outputs[label].append(position)
+
+    invalid_labels = [label for label, positions in outputs.items() if len(positions) != 1]
+    if invalid_labels:
+        return "a, b, c, d, e, f, g, dp 출력 단자를 각각 정확히 1개 배치해야 합니다."
+
+    graph = _wire_graph(root)
+    display_x, display_y = display_position
+    for label in _SEVEN_SEGMENT_LABELS:
+        offset_x, offset_y = _SEVEN_SEGMENT_PIN_OFFSETS[label]
+        display_pin = (display_x + offset_x, display_y + offset_y)
+        if not _same_net(graph, display_pin, outputs[label][0]):
+            return f"출력 {label}을 Seven-Seg 부품의 {label} 입력에 연결해야 합니다."
+    return None
+
+
+def _validate_structure(challenge_id: int, submission_path: str):
+    """Return a participant-safe structural-rule error, or ``None``."""
+    try:
+        root = ET.parse(submission_path).getroot()
+    except (ET.ParseError, OSError):
+        # Digital will return the ordinary malformed-circuit error later.
+        return None
+
+    elements = root.findall(".//visualElement")
+    names = []
+    for element in elements:
+        name_node = element.find("elementName")
+        name = name_node.text if name_node is not None else ""
+        names.append(name)
+        if name in _FAN_IN_GATES and _input_count(element) > 2:
+            return "입력이 2개보다 많은 논리 게이트는 사용할 수 없습니다."
+
+    for subcircuit, expected_count in _REQUIRED_SUBCIRCUITS.get(challenge_id, {}).items():
+        if names.count(subcircuit) != expected_count:
+            return f"{subcircuit} 부품을 정확히 {expected_count}개 사용해야 합니다."
+
+    if challenge_id == 15:
+        return _validate_seven_segment(root, elements)
+
+    rule = _STRICT_COMPONENTS.get(challenge_id)
+    if rule is None:
+        return None
+
+    allowed, exact_nand_count = rule
+    disallowed = sorted({name for name in names if name and name not in allowed})
+    if disallowed:
+        if challenge_id in (5, 6):
+            return "이 문제에서는 NAND 게이트 외의 논리 부품을 사용할 수 없습니다."
+        return "이 문제에서는 2입력 AND 게이트만 사용할 수 있습니다."
+
+    if exact_nand_count is not None and names.count("NAnd") != exact_nand_count:
+        return f"NAND 게이트를 정확히 {exact_nand_count}개 사용해야 합니다."
+    return None
+
+
 def grade_submission(challenge_id: int, submission_path: str) -> dict:
     test_file = SECRET_TESTS_DIR / f"{challenge_id}.dig"
     if not test_file.exists():
@@ -164,6 +315,16 @@ def grade_submission(challenge_id: int, submission_path: str) -> dict:
             "passed": 0,
             "total": 0,
             "detail": danger,
+        }
+
+    structure_error = _validate_structure(challenge_id, submission_path)
+    if structure_error:
+        return {
+            "status": "invalid",
+            "reason": "structure",
+            "passed": 0,
+            "total": 0,
+            "detail": structure_error,
         }
 
     # Only the JVM execution is serialized — the cheap validation above runs

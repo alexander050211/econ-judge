@@ -825,6 +825,143 @@
   background: var(--d-paper-soft);
 }
 
+.ep-truth-table-wrap {
+  overflow-x: auto;
+  border-top: 1px solid var(--d-ink);
+  border-bottom: 1px solid var(--d-ink);
+}
+
+.ep-truth-table {
+  width: 100%;
+  border-collapse: collapse;
+  table-layout: fixed;
+  font-family: var(--d-f-mono);
+  font-variant-numeric: tabular-nums;
+}
+
+.ep-truth-table th,
+.ep-truth-table td {
+  height: 48px;
+  padding: 6px 8px;
+  border-bottom: 1px solid var(--d-hair);
+  color: var(--d-ink);
+  text-align: center;
+}
+
+.ep-truth-table th {
+  height: 38px;
+  color: var(--d-ink-light);
+  background: var(--d-paper-soft);
+  font-size: 10px;
+  font-weight: 600;
+}
+
+.ep-truth-table tr:last-child td {
+  border-bottom: 0;
+}
+
+.ep-bit-control {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  width: 94px;
+  min-width: 94px;
+  margin: 0 auto;
+  padding: 0;
+  overflow: hidden;
+  border: 1px solid var(--d-hair-strong);
+  border-radius: 4px;
+}
+
+.ep-bit-control input {
+  position: absolute;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.ep-bit-control label {
+  display: inline-flex;
+  min-height: 32px;
+  align-items: center;
+  justify-content: center;
+  color: var(--d-ink-mid);
+  background: var(--d-paper);
+  font-size: 12px;
+  cursor: pointer;
+}
+
+.ep-bit-control label + input + label {
+  border-left: 1px solid var(--d-hair-strong);
+}
+
+.ep-bit-control input:checked + label {
+  color: #fff;
+  background: var(--d-brand-dark);
+}
+
+.ep-bit-control input:focus-visible + label {
+  outline: 2px solid var(--d-ink);
+  outline-offset: -3px;
+}
+
+.ep-bit-control input:disabled + label {
+  cursor: default;
+  opacity: 0.72;
+}
+
+.ep-truth-locked,
+.ep-truth-result {
+  display: flex;
+  min-height: 132px;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 24px;
+  border: 1px solid var(--d-hair-strong);
+  border-radius: 6px;
+  color: var(--d-ink-mid);
+  background: var(--d-paper-soft);
+  text-align: center;
+}
+
+.ep-truth-locked i {
+  color: var(--d-ink-light);
+  font-size: 22px;
+}
+
+.ep-truth-locked strong {
+  color: var(--d-ink);
+  font-size: 15px;
+}
+
+.ep-truth-locked span {
+  font-size: 12px;
+}
+
+.ep-truth-locked.is-solved,
+.ep-truth-result.is-pass {
+  border-color: var(--d-pass-line);
+  color: var(--d-pass);
+  background: var(--d-pass-soft);
+}
+
+.ep-truth-locked.is-solved i {
+  color: var(--d-pass);
+}
+
+.ep-truth-result.is-fail {
+  border-color: var(--d-fail-line);
+  color: var(--d-fail);
+  background: var(--d-fail-soft);
+}
+
+.ep-truth-result {
+  min-height: 76px;
+  margin-top: 12px;
+  font-size: 13px;
+  font-weight: 600;
+}
+
 .ep-footer-nav {
   display: grid;
   grid-template-columns: 1fr auto 1fr;

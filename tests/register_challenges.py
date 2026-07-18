@@ -1,9 +1,8 @@
-"""Register the digital-typed challenges in a running CTFd instance.
+"""Register the 2026 summer digital-logic challenges in a running CTFd.
 
-Authenticates as admin via session cookie, scrapes the CSRF nonce from the
-post-login page, then POSTs each challenge to /api/v1/challenges. Skips any
-challenge whose id already exists. Reads CHALLENGES from this file (the source
-of truth for the mapping challenge_id ↔ secret_tests/<id>.dig).
+The ``CHALLENGES`` list is also imported by ``bin/bootstrap.py`` and is the
+source of truth for challenge ids, ordering, points, statements, and the
+mapping to ``secret_tests/<id>.dig``.
 
 Usage: python tests/register_challenges.py [--base-url http://127.0.0.1:4000]
 """
@@ -17,104 +16,181 @@ from typing import Optional
 
 import requests
 
+
 CHALLENGES = [
-    # id, name, category, value, description, secret-tests-row-count
-    #
-    # Pedagogical ramp: 연습 problems are the on-ramp AND the building blocks
-    # for Project problems. HA (id 1) and FA (id 2) used to live in P1 but
-    # are now in 연습 — they're literally the foundation circuits, and the
-    # P1 grader auto-seeds canonical copies into the harder problems' tempdirs
-    # so solving the project problems doesn't require these to be solved first.
-    # Description annotations make that link explicit.
-    (1, "연습 #1 Half Adder", "연습", 4,
-     "두 비트 입력 P, Q → 합 S와 받아올림 C_out. 4 testcases. "
-     "💡 이 회로는 P1 3비트 가산기 / P1 Full Wiring의 부품으로 자동 활용됩니다.",
+    # id, name, category, value, Markdown description, graded row count
+    (1, "연습 #1 논리 게이트를 통해 진리표 채우기", "연습", 2,
+     """아래 논리회로의 모든 입력 조합을 확인하고 출력 `Y`를 채우세요.
+
+![A, B, C 입력과 Y 출력으로 이루어진 논리회로](/plugins/econ_judge/assets/problems/practice-1-circuit.png)
+
+입력은 `A`, `B`, `C`이며 각 입력은 `0` 또는 `1`입니다. 이 문제는 **한 번만 제출할 수 있습니다.**""",
+     8),
+    (2, "연습 #2 진리표를 통해 회로 만들어보기", "연습", 2,
+     """다음 진리표와 같은 동작을 하는 회로를 설계하세요.
+
+| A | B | Y |
+|---|---|---|
+| 0 | 0 | 0 |
+| 0 | 1 | 1 |
+| 1 | 0 | 1 |
+| 1 | 1 | 0 |
+
+입력 단자는 `A`, `B`, 출력 단자는 `Y`입니다.""",
      4),
-    (2, "연습 #2 Full Adder", "연습", 7,
-     "세 비트 입력 P, Q, C_in → 합 S와 받아올림 C_out. 8 testcases. "
-     "💡 이 회로는 P1 3비트 가산기 / P1 Full Wiring의 부품으로 자동 활용됩니다.",
+    (3, "연습 #3 입력이 3개인 AND 게이트", "연습", 3,
+     """2입력 AND 게이트만 사용하여 3입력 AND 회로를 설계하세요.
+
+입력 단자는 `A`, `B`, `C`, 출력 단자는 `Y`입니다. 세 입력이 모두 `1`일 때만 `Y=1`이어야 합니다.""",
      8),
-    (3, "P1 A-3 3-bit Ripple Adder", "Project 1", 7,
-     "두 3비트 입력 X, Y → 4비트 합 S3..S0. 64 testcases. "
-     "💡 연습 #1 (HA) / 연습 #2 (FA) 회로가 표준 구현으로 자동 제공되므로, "
-     "두 연습 문제를 먼저 풀지 않아도 이 문제를 풀 수 있습니다.",
-     64),
-    (4, "P2 A-1 2-bit Comparator", "Project 2", 6,
-     "두 2비트 입력 A, B → G/L/E (greater/less/equal). 16 testcases.", 16),
-    (5, "연습 #3 Truth Table → Boolean", "연습", 3,
-     "진리표 {00→1, 01→0, 10→0, 11→1} (XNOR) 구현. 4 testcases.", 4),
-    (6, "연습 #4 3-input AND", "연습", 3,
-     "2-입력 AND 게이트만으로 3-입력 AND 구성. 8 testcases.", 8),
-    (7, "연습 #5 2:1 MUX", "연습", 4,
-     "Y = X0 if S=0 else X1. 8 testcases. "
-     "💡 멀티플렉서 구성은 P2 B 대피소 배정의 핵심 패턴입니다.",
+    (4, "연습 #4 2:1 멀티플렉서", "연습", 3,
+     """두 입력 중 선택 신호가 지정한 값을 출력하는 2:1 멀티플렉서를 설계하세요.
+
+- 입력: `X0`, `X1`, `S`
+- 출력: `Y`
+- `S=0`이면 `Y=X0`
+- `S=1`이면 `Y=X1`""",
      8),
-    (8, "미션 T1#1 NOR → NOT", "미션", 2,
-     "NOR 게이트만으로 NOT 구현 (게이트 수는 명예 제도). 2 testcases.", 2),
-    (9, "미션 T1#2 NOR → AND", "미션", 3,
-     "NOR 게이트만으로 AND 구현 (게이트 수는 명예 제도). 4 testcases.", 4),
-    (10, "미션 T1#3 NOR → XOR", "미션", 5,
-     "NOR 게이트만으로 XOR 구현 (게이트 수는 명예 제도). 4 testcases.", 4),
-    (11, "미션 T2#4 Leap Year Detector (2000-2099)", "미션", 6,
-     "BCD 입력 A3..A0 (10의 자리), B3..B0 (1의 자리) → L. "
-     "BCD 유효 자릿수 (둘 다 ≤ 9)만 채점. 100 testcases.", 100),
-    (12, "P1 B 보수 계산기", "Project 1", 7,
-     "S3..S0 → R2..R0, 여기서 R = max(7-S, 0)를 3비트로 클램프. 16 testcases. "
-     "💡 P1 A 시리즈의 표준 구현이 부품으로 자동 제공됩니다.",
-     16),
-    (13, "P1 C ÷3 Round-up", "Project 1", 7,
-     "R2..R0 → T1, T0, 여기서 T = ⌈R/3⌉. 8 testcases.", 8),
-    (14, "P2 B 대피소 배정", "Project 2", 6,
-     "G, L, E, C2..C0 → Y (0=A, 1=B). G/L/E one-hot 행만 채점. 24 testcases. "
-     "💡 연습 #5 (2:1 MUX) 패턴이 이 문제 풀이의 핵심 힌트입니다.",
-     24),
-    (15, "P2 A-2 2,3-bit Comparator", "Project 2", 3,
-     "A1, A0 (2비트) vs B2..B0 (3비트) → G, L, E. A는 3비트로 zero-pad. "
-     "P2 A-1 표준 구현이 부품으로 자동 제공되므로 P2 A-1 전에도 풀 수 있습니다. "
-     "32 testcases.", 32),
-    (16, "P1 Full Wiring (X, Y → T1, T0)", "Project 1", 10,
-     "X2..X0, Y2..Y0 → T1, T0 — 전체 파이프라인 ⌈max(7-(X+Y), 0)/3⌉. 64 testcases. "
-     "💡 P1의 모든 부품 회로 (연습 #1 HA, 연습 #2 FA, P1 A-3 3비트 가산기, "
-     "P1 B 보수, P1 C ÷3) 표준 구현이 자동 제공되므로 독립적으로 풀 수 있습니다.",
+
+    (5, "미션 #1 NAND 게이트로 NOT 게이트 만들기", "미션", 2,
+     """**NAND 게이트 정확히 1개만** 사용하여 NOT 게이트를 설계하세요.
+
+입력 단자는 `A`, 출력 단자는 `Y`입니다. NAND 외의 논리 게이트는 사용할 수 없습니다.""",
+     2),
+    (6, "미션 #2 NAND 게이트로 OR 게이트 만들기", "미션", 3,
+     """드모르간의 법칙을 이용하여 **NAND 게이트 정확히 3개만**으로 OR 게이트를 설계하세요.
+
+입력 단자는 `A`, `B`, 출력 단자는 `Y`입니다. NAND 외의 논리 게이트는 사용할 수 없습니다.""",
+     4),
+    (7, "미션 #3 반가산기 만들기", "미션", 6,
+     """두 1비트 값 `P`, `Q`를 더하는 반가산기를 설계하세요.
+
+- 입력: `P`, `Q`
+- 출력: 합 `S`, 받아올림 `C_out`
+
+`S`는 덧셈 결과의 낮은 자리이며, `C_out`은 받아올림입니다.""",
+     4),
+    (8, "미션 #4 전가산기 만들기", "미션", 6,
+     """두 1비트 값과 이전 자리의 받아올림을 더하는 전가산기를 설계하세요.
+
+- 입력: `P`, `Q`, `C_in`
+- 출력: 합 `S`, 받아올림 `C_out`
+
+세 입력의 합을 2비트 결과 `(C_out, S)`로 출력해야 합니다.
+
+미션 #3에서 만든 반가산기를 `07_half_adder.dig`라는 이름으로 저장한 뒤, **반가산기 부품 2개**를 사용해 구성하세요.""",
+     8),
+    (9, "미션 #5 3비트 덧셈 연산기 만들기", "미션", 8,
+     """두 3비트 이진수 `X`, `Y`를 더하여 4비트 합 `S`를 출력하세요.
+
+- 입력: `X2`, `X1`, `X0`, `Y2`, `Y1`, `Y0`
+- 출력: `S3`, `S2`, `S1`, `S0`
+
+`X0`, `Y0`, `S0`이 각 수의 가장 낮은 자리입니다.
+
+미션 #3의 `07_half_adder.dig`와 미션 #4의 `08_full_adder.dig`를 부품으로 사용해 구성하세요. 가장 낮은 자리에는 반가산기 1개, 나머지 자리에는 전가산기 2개를 사용합니다.""",
      64),
-    (17, "P2 C 7-segment Driver", "Project 2", 5,
-     "Y → a, b, c, d, e, f, g (캠프 7-seg 디스플레이 Out 핀). "
-     "Y=0이면 'a' 점등 (a b c d e g); Y=1이면 'b' 점등 (c d e f g). 2 testcases.", 2),
-    (18, "P2 Full Wiring (A, B, C → 7-seg)", "Project 2", 12,
-     "A1 A0 (2비트), B2..B0 (3비트), C2..C0 (3비트) → a..g. P2 A1, A2, B, C 전체 "
-     "파이프라인. 256 testcases. NOTE: 표준 C_7segment출력기.dig (Out 핀 포함) "
-     "필요 — 2026 skeleton 작성 시 추가 예정. 그 전까지는 grader-misconfigured "
-     "에러로 응답함.",
-     256),
+    (10, "미션 #6 21세기 윤년 판독기", "미션", 10,
+     """2000년부터 2099년까지의 연도가 윤년인지 판별하는 회로를 설계하세요.
+
+- `A3`~`A0`: 연도 끝 두 자리 중 십의 자리 BCD
+- `B3`~`B0`: 연도 끝 두 자리 중 일의 자리 BCD
+- 출력 `L`: 윤년이면 `1`, 평년이면 `0`
+
+`A0`과 `B0`이 가장 낮은 자리입니다. 각 BCD 자리가 9를 초과하는 입력은 채점하지 않습니다.
+
+예: 2000년은 `L=1`, 2026년은 `L=0`입니다.""",
+     100),
+    (11, "미션 #7 A+B+C 등식 회로", "미션", 10,
+     """두 입력에서는 다음 등식이 성립합니다.
+
+`A + B = (A AND B) + (A OR B)`
+
+이 관계를 세 입력으로 확장하여, 다음 등식을 만족하는 세 논리 출력 `Y1`, `Y2`, `Y3`를 찾아 회로로 구현하세요.
+
+`A + B + C = Y1 + Y2 + Y3`
+
+- 모든 입력 조합에서 `Y1 >= Y2 >= Y3`이어야 합니다.
+- 왼쪽과 오른쪽의 `+`는 논리 OR가 아니라 비트 값의 산술 합입니다.
+- 입력 단자: `A`, `B`, `C`
+- 출력 단자: `Y1`, `Y2`, `Y3`
+
+미션 #4에서 만든 전가산기를 `08_full_adder.dig`라는 이름으로 저장한 뒤, **전가산기 부품을 사용해** 구성하세요. 전가산기가 참조하는 `07_half_adder.dig`도 같은 폴더에 두어야 합니다.""",
+     8),
+
+    (12, "프로젝트 A-1 주어진 수가 1 이상인지 판단하기", "프로젝트", 4,
+     """2비트 이진수 `X`가 1 이상인지 판단하는 회로를 설계하세요.
+
+- 입력: `X1`, `X0` (`X0`이 가장 낮은 자리)
+- 출력: `S0`
+- `X>=1`이면 `S0=1`, `X=0`이면 `S0=0`""",
+     4),
+    (13, "프로젝트 A-2 홍수 경보 판단", "프로젝트", 8,
+     """세 조건 `X`, `Y`, `Z` 중 값이 1 이상인 조건이 두 개 이상인지 판단하세요. 각 조건은 0부터 3까지의 2비트 이진수입니다.
+
+- 입력: `X1`, `X0`, `Y1`, `Y0`, `Z1`, `Z0`
+- 출력: `S0`
+- 1 이상인 값이 두 개 이상이면 `S0=1`, 아니면 `S0=0`
+
+Part A-1에서 만든 판정 회로를 `12_at_least_one.dig`라는 이름으로 저장한 뒤, **판정 회로 부품 3개**를 사용해 구성합니다.""",
+     64),
+    (14, "프로젝트 B 홍수 위험 지역 판단", "프로젝트", 10,
+     """0부터 3까지의 2비트 값 `X`, `Y`, `Z`를 받아 다음 위험도 조건을 판별하세요.
+
+`X² + Y² + Z >= 14`
+
+- 입력: `X1`, `X0`, `Y1`, `Y0`, `Z1`, `Z0`
+- 출력: `S0`
+- 조건이 참이면 `S0=1`, 아니면 `S0=0`
+
+예: `(X,Y,Z)=(2,3,1)`이면 `1`, `(2,2,3)`이면 `0`입니다.""",
+     64),
+    (15, "프로젝트 C 7-segment 출력기", "프로젝트", 5,
+     """Part B의 1비트 결과를 받아 7-segment에 문자를 표시하세요.
+
+- 입력: `Y`
+- 출력: `a`, `b`, `c`, `d`, `e`, `f`, `g`, `dp`
+- `Y=1`이면 소문자 `y`
+- `Y=0`이면 소문자 `n`
+- 출력값 `1`은 해당 획이 켜짐을 뜻합니다.
+- Digital의 `Seven-Seg` 부품을 정확히 1개 배치하고, 각 출력 단자를 같은 이름의 부품 입력에 연결하세요.
+- 소수점 입력 `dp`는 항상 `0`이어야 합니다.
+
+![7-segment의 a부터 g까지 획 배치](/plugins/econ_judge/assets/problems/seven-segment-map.png)
+
+| `Y=1`: y | `Y=0`: n |
+|---|---|
+| ![y 모양](/plugins/econ_judge/assets/problems/seven-segment-y.png) | ![n 모양](/plugins/econ_judge/assets/problems/seven-segment-n.png) |""",
+     2),
 ]
 
 
 def login(base_url: str, name: str, password: str) -> tuple[requests.Session, str]:
-    s = requests.Session()
-    r = s.get(f"{base_url}/login")
-    r.raise_for_status()
-    nonce = re.search(r'name="nonce"[^>]+value="([^"]+)"', r.text).group(1)
-    r = s.post(
+    session = requests.Session()
+    response = session.get(f"{base_url}/login")
+    response.raise_for_status()
+    nonce = re.search(r'name="nonce"[^>]+value="([^"]+)"', response.text).group(1)
+    response = session.post(
         f"{base_url}/login",
         data={"name": name, "password": password, "nonce": nonce},
         allow_redirects=True,
     )
-    # Login success → redirect away from /login; CTFd renders the new page with
-    # a fresh csrfNonce inside window.init for subsequent API calls.
-    m = re.search(r"'csrfNonce':\s*\"([0-9a-f]+)\"", r.text)
-    if not m:
-        raise RuntimeError(f"login failed; no csrfNonce in response (status={r.status_code})")
-    return s, m.group(1)
+    match = re.search(r"'csrfNonce':\s*\"([0-9a-f]+)\"", response.text)
+    if not match:
+        raise RuntimeError(
+            f"login failed; no csrfNonce in response (status={response.status_code})"
+        )
+    return session, match.group(1)
 
 
-def list_challenge_ids(s: requests.Session, base_url: str) -> set[int]:
-    r = s.get(f"{base_url}/api/v1/challenges?view=admin")
-    r.raise_for_status()
-    return {c["id"] for c in r.json()["data"]}
+def list_challenge_ids(session: requests.Session, base_url: str) -> set[int]:
+    response = session.get(f"{base_url}/api/v1/challenges?view=admin")
+    response.raise_for_status()
+    return {challenge["id"] for challenge in response.json()["data"]}
 
 
 def create_challenge(
-    s: requests.Session,
+    session: requests.Session,
     base_url: str,
     csrf: str,
     cid: int,
@@ -131,34 +207,36 @@ def create_challenge(
         "state": "visible",
         "type": "digital",
     }
-    r = s.post(
+    response = session.post(
         f"{base_url}/api/v1/challenges",
         json=payload,
         headers={"CSRF-Token": csrf, "Content-Type": "application/json"},
     )
-    if r.status_code != 200:
-        print(f"  chal {cid}: HTTP {r.status_code} {r.text[:300]}", file=sys.stderr)
+    if response.status_code != 200:
+        print(
+            f"  chal {cid}: HTTP {response.status_code} {response.text[:300]}",
+            file=sys.stderr,
+        )
         return None
-    data = r.json().get("data") or {}
+    data = response.json().get("data") or {}
     created_id = data.get("id")
     if created_id != cid:
         print(
-            f"  chal {cid}: created with id={created_id} (DB auto-assigned, may "
-            f"not match secret_tests/{cid}.dig — fix DB or rename file)",
+            f"  chal {cid}: created with id={created_id} (expected {cid})",
             file=sys.stderr,
         )
     return data
 
 
 def main() -> int:
-    p = argparse.ArgumentParser()
-    p.add_argument("--base-url", default="http://127.0.0.1:4000")
-    p.add_argument("--admin", default="admin")
-    p.add_argument("--password", default="demo1234")
-    args = p.parse_args()
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--base-url", default="http://127.0.0.1:4000")
+    parser.add_argument("--admin", default="admin")
+    parser.add_argument("--password", default="demo1234")
+    args = parser.parse_args()
 
-    s, csrf = login(args.base_url, args.admin, args.password)
-    existing = list_challenge_ids(s, args.base_url)
+    session, csrf = login(args.base_url, args.admin, args.password)
+    existing = list_challenge_ids(session, args.base_url)
     print(f"existing challenge ids: {sorted(existing)}")
 
     created = []
@@ -167,16 +245,17 @@ def main() -> int:
         if cid in existing:
             skipped.append(cid)
             continue
-        data = create_challenge(s, args.base_url, csrf, cid, name, category, value, description)
+        data = create_challenge(
+            session, args.base_url, csrf, cid, name, category, value, description
+        )
         if data:
             created.append((cid, data.get("id"), name))
 
     print(f"\ncreated {len(created)}:")
     for cid, real_id, name in created:
-        marker = "" if real_id == cid else f"  ⚠ assigned id={real_id}, expected {cid}"
+        marker = "" if real_id == cid else f"  assigned id={real_id}, expected {cid}"
         print(f"  {real_id:>2}: {name}{marker}")
     print(f"skipped (already present): {sorted(skipped)}")
-
     return 0
 
 

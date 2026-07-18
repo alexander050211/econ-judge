@@ -1,5 +1,5 @@
 """Bootstrap CTFd on first container start: create admin, mark setup complete,
-seed the 18 econ-judge challenges and a minimal index page. Idempotent —
+seed the 15 econ-judge challenges and a minimal index page. Idempotent —
 running on every boot lets the deploy survive Render free tier's ephemeral
 disk."""
 
@@ -10,11 +10,14 @@ import importlib.util
 import json
 import os
 import sys
+from pathlib import Path
 
-sys.path.insert(0, "/opt/CTFd")
+REPO_ROOT = Path(__file__).resolve().parent.parent
+CTFD_ROOT = Path(os.environ.get("CTFD_ROOT", "/opt/CTFd"))
+sys.path.insert(0, str(CTFD_ROOT))
 
 from CTFd import create_app
-from CTFd.models import Challenges, Pages, Solves, Users, db
+from CTFd.models import Challenges, Fails, Pages, Solves, Users, db
 from CTFd.utils import get_config, set_config
 
 ADMIN_NAME = os.environ.get("CTFD_ADMIN_NAME", "admin")
@@ -24,6 +27,7 @@ CTF_NAME = os.environ.get("CTFD_NAME", "SNU SENS E-CON 논설")
 CTF_DESCRIPTION = os.environ.get(
     "CTFD_DESCRIPTION", "공헌 공드림 캠프 E-CON 논설 (논리설계) 자동채점 시스템"
 )
+PROBLEM_SET_VERSION = "2026-summer-v1"
 
 # Hidden user reserved for tests/deploy_smoke.py runs.
 SMOKE_NAME = "smoke-test-1"
@@ -56,52 +60,41 @@ except ValueError:
 # (challenge_id, minutes_ago_from_now) — spread realistically over a
 # 2-hour window to mimic mid-contest state, with easy challenges first,
 # harder composition challenges later, and progressive difficulty stacks
-# (1조 cleared 16/18, 2조 13/18, 3조 9/18, 4조 4/18).
+# (1조 cleared 14/15, 2조 10/15, 3조 7/15, 4조 3/15).
 DEMO_PASSWORD = "demo1234"
 DEMO_TEAMS = [
     {
         "name": "1조",
         "email": "team1@econ-judge.local",
         "solves": [
-            (5, 112), (6, 108), (7, 102),       # 연습 (10 pts)
-            (8, 95), (9, 90), (10, 85), (11, 78),  # 미션 (16 pts)
-            (1, 70), (2, 55), (3, 42),          # P1 adders (18 pts)
-            (12, 38), (13, 28),                  # P1 보수/÷3 (14 pts)
-            (4, 65), (15, 32),                   # P2 비교기 (9 pts)
-            (14, 25), (17, 18),                  # P2 대피소/7-seg (11 pts)
-        ],  # total: 78 pts
+            (1, 118), (2, 114), (3, 108), (4, 103),
+            (5, 96), (6, 91), (7, 84), (8, 76), (9, 66),
+            (10, 55), (11, 43),
+            (12, 34), (13, 25), (15, 16),
+        ],  # total: 72 pts
     },
     {
         "name": "2조",
         "email": "team2@econ-judge.local",
         "solves": [
-            (5, 115), (6, 110), (7, 105),
-            (8, 100), (9, 92), (10, 80),
-            (1, 75), (2, 60), (3, 48),
-            (12, 35),
-            (4, 70), (15, 40),
-            (14, 33),
-        ],  # total: 60 pts
+            (1, 116), (2, 111), (3, 105), (4, 99),
+            (5, 92), (6, 86), (7, 77), (8, 65), (9, 52), (10, 35),
+        ],  # total: 45 pts
     },
     {
         "name": "3조",
         "email": "team3@econ-judge.local",
         "solves": [
-            (5, 110), (6, 100), (7, 88),
-            (8, 95), (9, 80),
-            (11, 70),
-            (1, 65), (2, 50),
-            (4, 60),
-        ],  # total: 38 pts
+            (1, 112), (2, 106), (3, 99), (4, 91),
+            (5, 78), (6, 67), (7, 51),
+        ],  # total: 21 pts
     },
     {
         "name": "4조",
         "email": "team4@econ-judge.local",
         "solves": [
-            (5, 108), (6, 95),
-            (8, 75),
-            (1, 50),
-        ],  # total: 12 pts
+            (1, 108), (2, 97), (3, 82),
+        ],  # total: 7 pts
     },
 ]
 
@@ -885,12 +878,12 @@ INDEX_CONTENT = """\
     <section class="s1-stats">
       <div class="s1-stat">
         <div class="d-meta">도전 과제</div>
-        <div class="s1-stat-num">18</div>
-        <div class="s1-stat-en">across 4 categories</div>
+        <div class="s1-stat-num">15</div>
+        <div class="s1-stat-en">across 3 categories</div>
       </div>
       <div class="s1-stat">
         <div class="d-meta">총점</div>
-        <div class="s1-stat-num">100<span class="s1-stat-unit">pt</span></div>
+        <div class="s1-stat-num">82<span class="s1-stat-unit">pt</span></div>
         <div class="s1-stat-en">sum of all challenge values</div>
       </div>
       <div class="s1-stat">
@@ -924,8 +917,8 @@ INDEX_CONTENT = """\
         <li class="s1-step">
           <span class="s1-step-n">02</span>
           <div class="s1-step-body">
-            <div class="s1-step-h">Digital에서 회로를 설계하고 <code class="d-code">.dig</code> 파일로 저장합니다</div>
-            <div class="s1-step-sub">조합논리 (combinational) — 클럭/플립플롭은 사용할 수 없습니다.</div>
+            <div class="s1-step-h">문제에 맞는 답안 또는 <code class="d-code">.dig</code> 회로를 준비합니다</div>
+            <div class="s1-step-sub">회로 문제는 조합논리로 설계하며 클럭과 플립플롭은 사용할 수 없습니다.</div>
           </div>
         </li>
         <li class="s1-step">
@@ -938,8 +931,8 @@ INDEX_CONTENT = """\
         <li class="s1-step">
           <span class="s1-step-n">04</span>
           <div class="s1-step-body">
-            <div class="s1-step-h">결과를 확인하고 필요하면 재제출하세요</div>
-            <div class="s1-step-sub">횟수 제한 없음 — 가장 높은 점수만 최종 점수에 반영됩니다.</div>
+            <div class="s1-step-h">결과를 확인하고 회로를 보완하세요</div>
+            <div class="s1-step-sub">회로 문제는 재제출할 수 있으며, 연습 #1 진리표는 한 번만 제출할 수 있습니다.</div>
           </div>
         </li>
       </ol>
@@ -957,7 +950,7 @@ INDEX_CONTENT = """\
       </div>
       <div class="s1-foot-r">
         <span class="d-tiny">UPDATED</span>
-        <span class="s1-foot-v">2026-05-27</span>
+        <span class="s1-foot-v">2026-07-15</span>
       </div>
     </footer>
 
@@ -1306,7 +1299,7 @@ MY_SCORE_CONTENT = """\
       <div class="s4-score">
         <span class="s4-score-n" id="ms-score-own">—</span>
         <span class="s4-score-u">pt</span>
-        <span class="s4-score-f">/ <span id="ms-total-own">100</span></span>
+        <span class="s4-score-f">/ <span id="ms-total-own">82</span></span>
       </div>
       <div class="s4-progress">
         <div class="d-tiny" id="ms-progress-meta">달성률 · —%</div>
@@ -1328,7 +1321,7 @@ MY_SCORE_CONTENT = """\
       <div class="s4-score s4-score-leader">
         <span class="s4-score-n" id="ms-score-leader">—</span>
         <span class="s4-score-u">pt</span>
-        <span class="s4-score-f">/ <span id="ms-total-leader">100</span></span>
+        <span class="s4-score-f">/ <span id="ms-total-leader">82</span></span>
       </div>
       <div class="s4-leader-note">
         팀명은 캠프 종료 후 공개됩니다.
@@ -1437,8 +1430,8 @@ MY_SCORE_CONTENT = """\
     document.getElementById('ms-updated').textContent = hms();
     document.getElementById('ms-rev').textContent = '2026-A' + (frozen ? ' · FROZEN' : '');
 
-    var total = (d.total_points != null) ? d.total_points : 100;
-    var totalCh = (d.total_challenges != null) ? d.total_challenges : 18;
+    var total = (d.total_points != null) ? d.total_points : 82;
+    var totalCh = (d.total_challenges != null) ? d.total_challenges : 15;
     document.getElementById('ms-total-own').textContent    = total;
     document.getElementById('ms-total-leader').textContent = total;
 
@@ -1927,7 +1920,7 @@ PROJECTOR_CONTENT = """\
       <span class="s5p-score-n" id="pj-leader-score">—</span>
       <div class="s5p-score-right">
         <span class="s5p-score-u">pt</span>
-        <span class="s5p-score-f">/ <span id="pj-total-points">100</span></span>
+        <span class="s5p-score-f">/ <span id="pj-total-points">82</span></span>
       </div>
     </div>
 
@@ -2097,8 +2090,8 @@ PROJECTOR_CONTENT = """\
   }
 
   function renderPractice(d) {
-    var total = (d.total_points != null) ? d.total_points : 100;
-    var totalCh = (d.total_challenges != null) ? d.total_challenges : 18;
+    var total = (d.total_points != null) ? d.total_points : 82;
+    var totalCh = (d.total_challenges != null) ? d.total_challenges : 15;
     document.getElementById('pj-total-points').textContent = total;
 
     var leader = d.leader || null;
@@ -2202,8 +2195,14 @@ PROJECTOR_CONTENT = """\
 """
 
 def _load_challenges():
+    challenge_file = Path(
+        os.environ.get(
+            "ECON_JUDGE_CHALLENGES_FILE",
+            REPO_ROOT / "tests" / "register_challenges.py",
+        )
+    )
     spec = importlib.util.spec_from_file_location(
-        "register_challenges", "/opt/econ-judge/tests/register_challenges.py"
+        "register_challenges", challenge_file
     )
     mod = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(mod)
@@ -2217,6 +2216,19 @@ def main() -> None:
     app = create_app()
     with app.app_context():
         db.create_all()
+
+        # Challenge ids are reused between camps. Reset attempt history once
+        # on a problem-set change so an old Solve cannot score a new problem.
+        previous_problem_set = get_config("econ_problem_set_version")
+        if previous_problem_set != PROBLEM_SET_VERSION:
+            solve_count = Solves.query.delete(synchronize_session=False)
+            fail_count = Fails.query.delete(synchronize_session=False)
+            set_config("econ_problem_set_version", PROBLEM_SET_VERSION)
+            db.session.commit()
+            print(
+                f"[bootstrap] Problem set migrated to {PROBLEM_SET_VERSION}; "
+                f"cleared {solve_count} solves and {fail_count} fails"
+            )
 
         # All configs are always synced — bootstrap is "configuration as
         # code." Changing a value here + redeploying actually rotates the
@@ -2259,7 +2271,7 @@ def main() -> None:
         # /challenges page. CTFd 3.8.5 reads `themeSettings.challenge_category_order`
         # and `themeSettings.challenge_order` from this config; each value is a JS
         # comparator source string that gets eval'd via `new Function`. We pin
-        # the category order to P1 → P2 → 연습 → 미션 (camp's intended flow)
+        # the category order to 연습 → 미션 → 프로젝트 (camp's intended flow)
         # and sort challenges within each category by id ASC, which matches the
         # authoring order — easier sub-circuits first, composition challenges
         # (Full Wiring) at the bottom.
@@ -2269,8 +2281,7 @@ def main() -> None:
                 {
                     "challenge_category_order": (
                         "(a, b) => { const o = {"
-                        "'연습': 0, '미션': 1, "
-                        "'Project 1': 2, 'Project 2': 3"
+                        "'연습': 0, '미션': 1, '프로젝트': 2"
                         "}; return (o[a] ?? 99) - (o[b] ?? 99); }"
                     ),
                     "challenge_order": "(a, b) => a.id - b.id",
@@ -2409,13 +2420,18 @@ def main() -> None:
             db.session.commit()
             print("[bootstrap] /projector page synced")
 
-        # Challenges are upserted on every boot — source of truth is
-        # tests/register_challenges.py. The HA/FA category move (P1 → 연습)
-        # and description annotations need to apply to existing rows from
-        # previous deploys, not just newly-created ones.
+        # Challenges are upserted on every boot from register_challenges.py.
+        # Rows removed from the active set are hidden so winter challenges
+        # cannot survive when the database persists across a deploy.
         existing_chals = {c.id: c for c in Challenges.query.all()}
+        active_ids = {challenge[0] for challenge in CHALLENGES}
         created = 0
         updated = 0
+        retired = 0
+        for cid, chal in existing_chals.items():
+            if cid not in active_ids and chal.state != "hidden":
+                chal.state = "hidden"
+                retired += 1
         for cid, name, category, value, description, _rows in CHALLENGES:
             chal = existing_chals.get(cid)
             if chal is None:
@@ -2442,11 +2458,16 @@ def main() -> None:
                 chal.description = description; dirty = True
             if chal.state != "visible":
                 chal.state = "visible"; dirty = True
+            if chal.type != "digital":
+                chal.type = "digital"; dirty = True
             if dirty:
                 updated += 1
-        if created or updated:
+        if created or updated or retired:
             db.session.commit()
-            print(f"[bootstrap] Challenges: {created} created, {updated} updated")
+            print(
+                f"[bootstrap] Challenges: {created} created, {updated} updated, "
+                f"{retired} retired"
+            )
         else:
             print(f"[bootstrap] All {len(CHALLENGES)} challenges already in sync")
 
@@ -2484,7 +2505,7 @@ def _seed_roster() -> None:
     if not SEED_DEMO_DATA and not _team_password_is_set():
         print(
             "[bootstrap] WARNING: CTFD_DEMO_DATA=false (real camp) but no "
-            "CTFD_TEAM_PASSWORD / CTFD_TEAM<N>_PASSWORD is set — all teams are "
+            "CTFD_TEAM_PASSWORD / CTFD_TEAM<N>_PASSWORD is set; all teams are "
             "using the PUBLIC demo password. Set a team password in Render's "
             "Environment and redeploy."
         )

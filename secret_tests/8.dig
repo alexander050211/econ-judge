@@ -8,13 +8,13 @@
       <elementAttributes>
         <entry>
           <string>Label</string>
-          <string>NOT #001</string>
+          <string>FA #001</string>
         </entry>
         <entry>
           <string>Testdata</string>
           <testData>
-            <dataString>A Y
-0 1
+            <dataString>P Q C_in S C_out
+0 0 0 0 0
 </dataString>
           </testData>
         </entry>
@@ -26,18 +26,126 @@
       <elementAttributes>
         <entry>
           <string>Label</string>
-          <string>NOT #002</string>
+          <string>FA #002</string>
         </entry>
         <entry>
           <string>Testdata</string>
           <testData>
-            <dataString>A Y
-1 0
+            <dataString>P Q C_in S C_out
+0 0 1 1 0
 </dataString>
           </testData>
         </entry>
       </elementAttributes>
       <pos x="100" y="160"/>
+    </visualElement>
+    <visualElement>
+      <elementName>Testcase</elementName>
+      <elementAttributes>
+        <entry>
+          <string>Label</string>
+          <string>FA #003</string>
+        </entry>
+        <entry>
+          <string>Testdata</string>
+          <testData>
+            <dataString>P Q C_in S C_out
+0 1 0 1 0
+</dataString>
+          </testData>
+        </entry>
+      </elementAttributes>
+      <pos x="100" y="220"/>
+    </visualElement>
+    <visualElement>
+      <elementName>Testcase</elementName>
+      <elementAttributes>
+        <entry>
+          <string>Label</string>
+          <string>FA #004</string>
+        </entry>
+        <entry>
+          <string>Testdata</string>
+          <testData>
+            <dataString>P Q C_in S C_out
+0 1 1 0 1
+</dataString>
+          </testData>
+        </entry>
+      </elementAttributes>
+      <pos x="100" y="280"/>
+    </visualElement>
+    <visualElement>
+      <elementName>Testcase</elementName>
+      <elementAttributes>
+        <entry>
+          <string>Label</string>
+          <string>FA #005</string>
+        </entry>
+        <entry>
+          <string>Testdata</string>
+          <testData>
+            <dataString>P Q C_in S C_out
+1 0 0 1 0
+</dataString>
+          </testData>
+        </entry>
+      </elementAttributes>
+      <pos x="100" y="340"/>
+    </visualElement>
+    <visualElement>
+      <elementName>Testcase</elementName>
+      <elementAttributes>
+        <entry>
+          <string>Label</string>
+          <string>FA #006</string>
+        </entry>
+        <entry>
+          <string>Testdata</string>
+          <testData>
+            <dataString>P Q C_in S C_out
+1 0 1 0 1
+</dataString>
+          </testData>
+        </entry>
+      </elementAttributes>
+      <pos x="100" y="400"/>
+    </visualElement>
+    <visualElement>
+      <elementName>Testcase</elementName>
+      <elementAttributes>
+        <entry>
+          <string>Label</string>
+          <string>FA #007</string>
+        </entry>
+        <entry>
+          <string>Testdata</string>
+          <testData>
+            <dataString>P Q C_in S C_out
+1 1 0 0 1
+</dataString>
+          </testData>
+        </entry>
+      </elementAttributes>
+      <pos x="100" y="460"/>
+    </visualElement>
+    <visualElement>
+      <elementName>Testcase</elementName>
+      <elementAttributes>
+        <entry>
+          <string>Label</string>
+          <string>FA #008</string>
+        </entry>
+        <entry>
+          <string>Testdata</string>
+          <testData>
+            <dataString>P Q C_in S C_out
+1 1 1 1 1
+</dataString>
+          </testData>
+        </entry>
+      </elementAttributes>
+      <pos x="100" y="520"/>
     </visualElement>
   </visualElements>
   <wires/>

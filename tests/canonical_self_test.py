@@ -1,11 +1,4 @@
-"""Verify every canonical .dig in canonical/ still passes the secret test for
-the challenge it's the reference for. Runs the grader directly — no CTFd
-needed — so this is fast (~5 seconds) and catches drift in canonical files
-or secret tests before deploy.
-
-Insurance against: someone replacing a canonical .dig with a different
-version, regenerating secret tests with a buggy compute function, or
-pin-name conventions silently changing."""
+"""Verify active summer canonical subcircuits against their secret tests."""
 
 import importlib.util
 import shutil
@@ -22,23 +15,17 @@ grader = importlib.util.module_from_spec(_spec)
 _spec.loader.exec_module(grader)
 
 # (canonical filename, challenge_id, expected pass count)
-# Each canonical file is graded as if it were a submission to the challenge
-# whose secret test it implements. Composition canonicals (A2 imports A1, A3
-# imports A1+A2, P2 A2 imports P2 A1) work via the grader's CANONICAL_SUBCIRCUITS
-# seeding map — siblings are placed in the tempdir automatically.
 TESTS = [
-    ("A1_반가산기(HalfAdder)만들기.dig", 1, 4),
-    ("A2_전가산기(FullAdder)만들기.dig", 2, 8),
-    ("A3_3비트덧셈연산기만들기.dig", 3, 64),
-    ("B_보수계산기만들기.dig", 12, 16),
-    ("C_3의나눗셈기만들기.dig", 13, 8),
-    ("A1_2비트비교기.dig", 4, 16),
-    ("A2_2,3비트비교기.dig", 15, 32),
-    ("B_대피소배정하기.dig", 14, 24),
+    ("07_half_adder.dig", 7, 4),
+    ("08_full_adder.dig", 8, 8),
+    ("12_at_least_one.dig", 12, 4),
 ]
 
 
 def main() -> int:
+    if not TESTS:
+        print("SKIP: summer canonical files have not been added yet")
+        return 0
     fails = []
     for canonical_filename, cid, expected in TESTS:
         canonical_path = REPO_ROOT / "canonical" / canonical_filename

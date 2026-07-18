@@ -20,10 +20,9 @@
   if (window.location.pathname !== "/challenges") return;
 
   const CATEGORY_ORDER = {
-    "연습": { idx: 0, label: "연습 — Practice",       sub: "On-ramp + building blocks for projects", tagCls: "" },
-    "미션": { idx: 1, label: "미션 — Missions",       sub: "NOR-only construction · BCD detector",    tagCls: "d-tag-mission" },
-    "Project 1": { idx: 2, label: "Project 1 — Adders & ÷3",      sub: "3-bit pipeline · X+Y → 보수 → ⌈/3⌉",  tagCls: "d-tag-p1" },
-    "Project 2": { idx: 3, label: "Project 2 — Shelter assignment", sub: "Comparator · MUX · 7-segment",      tagCls: "d-tag-p2" },
+    "연습": { idx: 0, label: "연습 — Practice", sub: "진리표 · 기본 게이트 · 멀티플렉서", tagCls: "" },
+    "미션": { idx: 1, label: "미션 — Missions", sub: "NAND · 가산기 · 다중 비트 설계", tagCls: "d-tag-mission" },
+    "프로젝트": { idx: 2, label: "프로젝트 — Flood detection", sub: "홍수 경보 · 위험도 · 7-segment", tagCls: "d-tag-p1" },
   };
 
   /* Inject our CSS + markup container once. We hide the stock jumbotron
@@ -323,7 +322,7 @@ main > .jumbotron:has(+ .container [x-data="ChallengeBoard"]),
           <div class="d-meta">SECTION · 도전 과제</div>
           <h1 class="s2-h1">Challenges<span class="s2-h1-ko">&nbsp;도전 과제</span></h1>
           <p class="s2-head-sub">
-            총 <span id="s2-total-count">—</span>개의 디지털 논리회로 과제.
+            총 <span id="s2-total-count">—</span>개의 논리설계 과제.
             연습 → 미션 → 프로젝트 순서대로 풀어보세요.
           </p>
         </div>
@@ -394,7 +393,7 @@ main > .jumbotron:has(+ .container [x-data="ChallengeBoard"]),
 
   function renderRow(c) {
     const cls = c.solved_by_me ? "s2-row s2-row-pass" : "s2-row s2-row-locked";
-    const actionLabel = c.solved_by_me ? "재제출" : "풀어보기";
+    const actionLabel = c.solved_by_me ? "다시 보기" : "풀어보기";
     const problemUrl = "/problems/" + encodeURIComponent(c.id);
     return ''
       + '<tr class="' + cls + '" data-challenge-id="' + c.id + '"'

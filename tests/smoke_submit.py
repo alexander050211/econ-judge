@@ -1,6 +1,4 @@
-"""Smoke-test submissions against a running CTFd. Submits sample .dig files
-to challenges that historically failed without canonical seeding (chal 2 FA,
-chal 3 3-bit adder)."""
+"""Submit pin-compatible reference circuits to a local summer-set server."""
 
 import http.cookiejar
 import os
@@ -9,9 +7,10 @@ import sys
 import requests
 
 SAMPLES = {
-    2: "tests/samples/5jo-26winter/5조_프로젝트1/A2_전가산기(FullAdder)만들기.dig",
-    3: "tests/samples/5jo-26winter/5조_프로젝트1/A3_3비트덧셈연산기만들기.dig",
-    15: "tests/samples/5jo-26winter/5조_프로젝트2/A2_2,3비트비교기.dig",
+    3: "tests/samples/5jo-26winter/5조_연습문제/2번_입력이3개인AND게이트.dig",
+    4: "tests/samples/5jo-26winter/5조_연습문제/3번_2대1멀티플렉서(MUX).dig",
+    7: "tests/samples/5jo-26winter/5조_프로젝트1/A1_반가산기(HalfAdder)만들기.dig",
+    10: "tests/samples/5jo-26winter/5조_미션문제/4번_21세기윤년판독기만들기.dig",
 }
 
 cookie_file = os.path.join(os.environ.get("TEMP", "/tmp"), "ctfd.cookies")

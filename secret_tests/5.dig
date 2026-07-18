@@ -8,13 +8,13 @@
       <elementAttributes>
         <entry>
           <string>Label</string>
-          <string>XNOR #001</string>
+          <string>NAND_NOT #001</string>
         </entry>
         <entry>
           <string>Testdata</string>
           <testData>
-            <dataString>A B Y
-0 0 1
+            <dataString>A Y
+0 1
 </dataString>
           </testData>
         </entry>
@@ -26,54 +26,18 @@
       <elementAttributes>
         <entry>
           <string>Label</string>
-          <string>XNOR #002</string>
+          <string>NAND_NOT #002</string>
         </entry>
         <entry>
           <string>Testdata</string>
           <testData>
-            <dataString>A B Y
-0 1 0
+            <dataString>A Y
+1 0
 </dataString>
           </testData>
         </entry>
       </elementAttributes>
       <pos x="100" y="160"/>
-    </visualElement>
-    <visualElement>
-      <elementName>Testcase</elementName>
-      <elementAttributes>
-        <entry>
-          <string>Label</string>
-          <string>XNOR #003</string>
-        </entry>
-        <entry>
-          <string>Testdata</string>
-          <testData>
-            <dataString>A B Y
-1 0 0
-</dataString>
-          </testData>
-        </entry>
-      </elementAttributes>
-      <pos x="100" y="220"/>
-    </visualElement>
-    <visualElement>
-      <elementName>Testcase</elementName>
-      <elementAttributes>
-        <entry>
-          <string>Label</string>
-          <string>XNOR #004</string>
-        </entry>
-        <entry>
-          <string>Testdata</string>
-          <testData>
-            <dataString>A B Y
-1 1 1
-</dataString>
-          </testData>
-        </entry>
-      </elementAttributes>
-      <pos x="100" y="280"/>
     </visualElement>
   </visualElements>
   <wires/>

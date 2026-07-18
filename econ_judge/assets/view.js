@@ -19,6 +19,9 @@ if (econHasChallengeRuntime) {
   "use strict";
 
   const MAX_BYTES = 256 * 1024;
+  // Keep the concept replay and post-grade checklist available, but dormant
+  // until the camp workflow is ready to use detailed submission feedback.
+  const DETAILED_GRADING_FEEDBACK = false;
 
   const $ = (sel, root) => (root || document).querySelector(sel);
 
@@ -82,6 +85,7 @@ if (econHasChallengeRuntime) {
     window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
   function benchDetailOn() {
+    if (!DETAILED_GRADING_FEEDBACK) return false;
     try {
       return localStorage.getItem(BENCH_PREF_KEY) !== "0"; // default 자세히
     } catch (e) {
@@ -110,6 +114,9 @@ if (econHasChallengeRuntime) {
     if (simple) simple.hidden = on;
     if (detail) detail.hidden = !on;
     if (toggle) {
+      toggle.hidden = !DETAILED_GRADING_FEEDBACK;
+      const toolbar = toggle.closest(".grading-toolbar");
+      if (toolbar) toolbar.hidden = !DETAILED_GRADING_FEEDBACK;
       toggle.textContent = on ? "간단히 보기" : "자세히 보기";
       toggle.setAttribute("aria-pressed", on ? "true" : "false");
     }
@@ -327,12 +334,13 @@ if (econHasChallengeRuntime) {
     // non-passing graded result; one hint per concept, never a case index or
     // input vector. Accepts the new `hints` array, falling back to a legacy
     // single `hint` string for forward/backward compatibility.
-    const hints =
-      data && Array.isArray(data.hints)
+    const hints = DETAILED_GRADING_FEEDBACK
+      ? data && Array.isArray(data.hints)
         ? data.hints.filter((h) => typeof h === "string" && h)
         : data && typeof data.hint === "string" && data.hint
         ? [data.hint]
-        : [];
+        : []
+      : [];
 
     let klass, icon, titleHtml, subtitleText, showBar = false, pct = 0;
 

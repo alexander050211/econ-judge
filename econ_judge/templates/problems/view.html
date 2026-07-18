@@ -84,13 +84,47 @@
       <div class="ep-submit-heading">
         <div>
           <div class="ep-kicker">SUBMISSION</div>
-          <h2 id="ep-submit-title">회로 제출</h2>
+          <h2 id="ep-submit-title">{% if truth_table_mode %}진리표 제출{% else %}회로 제출{% endif %}</h2>
         </div>
-        <span class="ep-file-kind">.DIG</span>
+        <span class="ep-file-kind">{% if truth_table_mode %}0 / 1{% else %}.DIG{% endif %}</span>
       </div>
 
       <input id="challenge-id" type="hidden" value="{{ challenge.id }}">
 
+      {% if truth_table_mode %}
+      <div id="econ-truth-root" data-locked="{{ 'true' if attempt_locked else 'false' }}">
+        {% if attempt_locked %}
+        <div class="ep-truth-locked{% if solved %} is-solved{% endif %}">
+          <i class="fa-solid {% if solved %}fa-check{% else %}fa-lock{% endif %}" aria-hidden="true"></i>
+          <strong>{% if solved %}정답으로 제출되었습니다{% else %}제출이 완료되었습니다{% endif %}</strong>
+          <span>이 문제의 답안은 한 번만 제출할 수 있습니다.</span>
+        </div>
+        {% else %}
+        <div class="ep-truth-table-wrap">
+          <table class="ep-truth-table">
+            <thead><tr><th>A</th><th>B</th><th>C</th><th>Y</th></tr></thead>
+            <tbody>
+              {% for a, b, c in truth_table_rows %}
+              {% set row = loop.index0 %}
+              <tr>
+                <td>{{ a }}</td><td>{{ b }}</td><td>{{ c }}</td>
+                <td>
+                  <fieldset class="ep-bit-control" aria-label="A={{ a }}, B={{ b }}, C={{ c }}일 때 Y">
+                    <input id="truth-{{ row }}-0" type="radio" name="truth-{{ row }}" value="0">
+                    <label for="truth-{{ row }}-0">0</label>
+                    <input id="truth-{{ row }}-1" type="radio" name="truth-{{ row }}" value="1">
+                    <label for="truth-{{ row }}-1">1</label>
+                  </fieldset>
+                </td>
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+        <div id="econ-truth-result" class="ep-truth-result" role="status" hidden></div>
+        {% endif %}
+      </div>
+      {% else %}
       <div id="econ-submit-root" data-mode="page">
         <div data-state="empty">
           <label class="dropzone" id="econ-dropzone">
@@ -145,16 +179,24 @@
           </button>
         </div>
       </div>
+      {% endif %}
 
       <div class="ep-submit-actions key-submit">
-        <button id="challenge-submit" class="ep-submit-button" type="button" disabled>
+        <button id="challenge-submit" class="ep-submit-button" type="button" disabled{% if attempt_locked %} hidden{% endif %}>
           <i class="fa-solid fa-play" aria-hidden="true"></i>
           채점 요청
         </button>
+        {% if truth_table_mode %}
+        <div class="ep-submit-limits">
+          <span>제출 기회 1회</span>
+          <span>전체 정답 시 통과</span>
+        </div>
+        {% else %}
         <div class="ep-submit-limits">
           <span>최대 256 KB</span>
           <span>조합논리 회로</span>
         </div>
+        {% endif %}
       </div>
     </aside>
   </div>
@@ -184,5 +226,9 @@
 
 {% block scripts %}
 {{ super() }}
+{% if truth_table_mode %}
+<script defer src="/plugins/econ_judge/assets/truth-table.js"></script>
+{% else %}
 <script defer src="/plugins/econ_judge/assets/view.js"></script>
+{% endif %}
 {% endblock %}

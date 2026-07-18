@@ -1,15 +1,15 @@
 # econ-judge
 
-Auto-grader + live scoreboard for the **SNU SENS 공헌 E-CON** 논설 (logic-design) task. Built as a CTFd custom challenge type plugin: mentees upload `.dig` files (Digital simulator format) via a web UI, the server runs the file against secret testcases using Digital's CLI, partial credit is computed from pass-N-of-M, and a live scoreboard projects on the BK Hall screen.
+Auto-grader + live scoreboard for the **SNU SENS 공헌 E-CON** 논설 (logic-design) task. Built as a CTFd custom challenge type plugin: mentees submit a truth table or upload `.dig` files through the web UI, the server checks secret testcases using Digital's CLI, and a live scoreboard projects on the BK Hall screen. Challenge scores are all-or-nothing; failed circuit submissions still receive an aggregate pass count as feedback.
 
-> Status — **working slice, 18 challenges / 100 pts** as of 2026-05-21. Hierarchical submissions resolved via canonical seeding; 7-seg display sink resolved via skeleton-stamped Out pins (truth table locked).
+> Status — **2026 summer set, 15 challenges / 82 judge points** as of 2026-07-15. The separate 18-point breadboard build is graded manually and is not represented on the website.
 
 ## Why it exists
 
 Two retrospective items from the 26 동계 공드림 E-CON cycle this directly addresses:
 
 1. **논설 심사 had no audience or feedback.** Mentees presented their breadboards only to judges in isolation. Live scoreboard + per-testcase pass/fail visibility reframes 심사 as a public competition with built-in feedback.
-2. **E-CON team committed to 회로 부분점수** for the next cycle (previously all-or-nothing 12 points). Pass-N-of-M testcase scoring is the cleanest possible form of partial credit.
+2. **Circuit feedback needs to be immediate without exposing secret vectors.** The judge reports only the aggregate number of passing rows and awards points only when every row passes.
 
 Full motivation, architecture, scope, and timeline live in the spec inside the project wiki:
 
@@ -21,7 +21,8 @@ CTFd is the host platform. We ship a custom challenge type plugin (id `digital`)
 
 - `BaseChallenge` subclass with stub `attempt()`/`solve()`/`fail()` (the default text-flag flow is not used)
 - Custom Flask blueprint exposes `/api/v1/digital/challenges/<id>/attempt` accepting `multipart/form-data` with the `.dig` file via `request.files['file']`
-- Endpoint subprocesses `java -cp Digital.jar CLI test -circ <upload.dig> -tests <secret-tests.dig>`, parses `<label>: passed|failed` stdout, computes partial credit, and writes a Solve / Fail record
+- Practice #1 uses a dedicated one-attempt truth-table endpoint; the other 14 challenges accept `.dig` circuits
+- Endpoint subprocesses `java -cp Digital.jar CLI test -circ <upload.dig> -tests <secret-tests.dig>`, parses `<label>: passed|failed` stdout, and writes a Solve only when every testcase passes
 - Hints (point-deducting, mapped to the existing 26공드림 1점 할인권 mechanic) and the scoreboard work via CTFd's built-in Hints + Solves models with no extra wiring
 
 Synchronous grading (no RabbitMQ); single worker is enough at 40-mentee scale.
@@ -55,7 +56,7 @@ econ-judge/
 
 A `Dockerfile` + `render.yaml` ship a one-click deploy via Render. Free-tier specifics:
 
-- Disk is ephemeral; `bin/bootstrap.py` re-seeds the admin user + 18 challenges on every container start, so the deploy is self-healing. Solves/Fails history is lost between restarts. For persistent history, add a Render Postgres service and set `DATABASE_URL`.
+- Disk is ephemeral; `bin/bootstrap.py` re-seeds the admin user + 15 challenges on every container start, so the deploy is self-healing. Solves/Fails history is lost between restarts. For persistent history, add a Render Postgres service and set `DATABASE_URL`.
 - The service spins down after 15 min idle; cold start is ~30 s (Java warmup on first grading).
 
 Setup:

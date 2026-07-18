@@ -63,6 +63,8 @@ CURRENT_USER = SimpleNamespace(id=7, type="user")
 
 def load_problem_module():
     ctfd = types.ModuleType("CTFd")
+    econ_judge = types.ModuleType("econ_judge")
+    econ_judge.__path__ = [str(REPO_ROOT / "econ_judge")]
     models = types.ModuleType("CTFd.models")
     models.Challenges = Challenges
     models.Solves = Solves
@@ -78,6 +80,7 @@ def load_problem_module():
     user.get_current_user = lambda: CURRENT_USER
 
     modules = {
+        "econ_judge": econ_judge,
         "CTFd": ctfd,
         "CTFd.models": models,
         "CTFd.utils": utils,
@@ -90,7 +93,7 @@ def load_problem_module():
     sys.modules.update(modules)
     try:
         spec = importlib.util.spec_from_file_location(
-            "problem_pages_under_test",
+            "econ_judge.problems",
             REPO_ROOT / "econ_judge" / "problems.py",
         )
         module = importlib.util.module_from_spec(spec)
@@ -128,8 +131,8 @@ class ProblemPageTests(unittest.TestCase):
             challenge(1, "연습"),
             challenge(5, "연습"),
             challenge(2, "미션"),
-            challenge(3, "Project 1"),
-            challenge(4, "Project 2"),
+            challenge(3, "프로젝트"),
+            challenge(4, "프로젝트"),
         ]
         Challenges.query = FakeQuery(self.rows)
         Solves.query = FakeQuery([])
@@ -174,7 +177,27 @@ class ProblemPageTests(unittest.TestCase):
         self.assertEqual(captured["context"]["record_count"], 3)
         self.assertEqual(captured["context"]["previous_id"], 1)
         self.assertEqual(captured["context"]["next_id"], 2)
+        self.assertFalse(captured["context"]["truth_table_mode"])
+        self.assertFalse(captured["context"]["attempt_locked"])
         self.assertIn("problems/view.html", app.jinja_env.list_templates())
+
+    def test_truth_table_problem_is_locked_after_first_record(self):
+        Fails.query = FakeQuery([SimpleNamespace(user_id=7, challenge_id=1)])
+        captured = {}
+
+        def fake_render(template_name, **context):
+            captured.update(context)
+            return "rendered"
+
+        self.module.render_template = fake_render
+        app = self.make_app()
+
+        with app.test_client() as client:
+            response = client.get("/problems/1")
+
+        self.assertEqual(response.status_code, 200)
+        self.assertTrue(captured["truth_table_mode"])
+        self.assertTrue(captured["attempt_locked"])
 
     def test_hidden_and_non_digital_challenges_are_not_participant_pages(self):
         Challenges.query = FakeQuery(
@@ -198,6 +221,15 @@ class ProblemPageTests(unittest.TestCase):
         self.assertIn("window.init.csrfNonce", source)
         self.assertIn('fd.append("nonce", nonce)', source)
         self.assertIn('headers: nonce ? { "CSRF-Token": nonce } : {}', source)
+
+    def test_detailed_grading_feedback_is_dormant(self):
+        source = (REPO_ROOT / "econ_judge" / "assets" / "view.js").read_text(
+            encoding="utf-8"
+        )
+
+        self.assertIn("const DETAILED_GRADING_FEEDBACK = false;", source)
+        self.assertIn("if (!DETAILED_GRADING_FEEDBACK) return false;", source)
+        self.assertIn("const hints = DETAILED_GRADING_FEEDBACK", source)
 
 
 if __name__ == "__main__":

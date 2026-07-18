@@ -1,17 +1,8 @@
-"""End-to-end smoke test against the live Render deploy: register a throwaway
-user, log in, submit every challenge that has a 5조 reference submission, and
-verify each grades as expected.
+"""End-to-end smoke test against the live Render deployment.
 
-Coverage:
-  chal 1, 2, 3      P1 A-1, A-2, A-3   (HA, FA composed, 3-bit composed)
-  chal 4, 15        P2 A-1, A-2        (2-bit compare, 2-3-bit composed)
-  chal 5, 6, 7      연습 1-3
-  chal 8, 9, 10     미션 T1#1-3
-  chal 11           미션 T2#4 (leap year, 100 rows)
-  chal 12, 13, 14   P1 B, P1 C, P2 B
-
-Not covered: chal 16 (P1 full wiring, no 5조 file), chal 17/18 (await 2026
-skeleton)."""
+Only summer challenges with pin-compatible winter reference circuits are
+included. Extend ``SAMPLES`` when the new starter/reference files arrive.
+"""
 
 import os
 import re
@@ -45,21 +36,10 @@ PASSWORD = os.environ.get("SMOKE_PASSWORD", "smoketest-pw-1")
 
 SAMPLES_ROOT = "tests/samples/5jo-26winter"
 SAMPLES = {
-    1: f"{SAMPLES_ROOT}/5조_프로젝트1/A1_반가산기(HalfAdder)만들기.dig",
-    2: f"{SAMPLES_ROOT}/5조_프로젝트1/A2_전가산기(FullAdder)만들기.dig",
-    3: f"{SAMPLES_ROOT}/5조_프로젝트1/A3_3비트덧셈연산기만들기.dig",
-    4: f"{SAMPLES_ROOT}/5조_프로젝트2/A1_2비트비교기.dig",
-    5: f"{SAMPLES_ROOT}/5조_연습문제/1번_진리표와bool대수.dig",
-    6: f"{SAMPLES_ROOT}/5조_연습문제/2번_입력이3개인AND게이트.dig",
-    7: f"{SAMPLES_ROOT}/5조_연습문제/3번_2대1멀티플렉서(MUX).dig",
-    8: f"{SAMPLES_ROOT}/5조_미션문제/1번_NOR게이트로NOT게이트만들기.dig",
-    9: f"{SAMPLES_ROOT}/5조_미션문제/2번_NOR게이트로AND게이트만들기.dig",
-    10: f"{SAMPLES_ROOT}/5조_미션문제/3번_NOR게이트로XOR게이트만들기.dig",
-    11: f"{SAMPLES_ROOT}/5조_미션문제/4번_21세기윤년판독기만들기.dig",
-    12: f"{SAMPLES_ROOT}/5조_프로젝트1/B_보수계산기만들기.dig",
-    13: f"{SAMPLES_ROOT}/5조_프로젝트1/C_3의나눗셈기만들기.dig",
-    14: f"{SAMPLES_ROOT}/5조_프로젝트2/B_대피소배정하기.dig",
-    15: f"{SAMPLES_ROOT}/5조_프로젝트2/A2_2,3비트비교기.dig",
+    3: f"{SAMPLES_ROOT}/5조_연습문제/2번_입력이3개인AND게이트.dig",
+    4: f"{SAMPLES_ROOT}/5조_연습문제/3번_2대1멀티플렉서(MUX).dig",
+    7: f"{SAMPLES_ROOT}/5조_프로젝트1/A1_반가산기(HalfAdder)만들기.dig",
+    10: f"{SAMPLES_ROOT}/5조_미션문제/4번_21세기윤년판독기만들기.dig",
 }
 
 

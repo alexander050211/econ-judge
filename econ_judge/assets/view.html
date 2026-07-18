@@ -3,6 +3,28 @@
 {% block input %}
 <input id="challenge-id" class="challenge-id" type="hidden" value="{{ challenge.id }}">
 
+{% if challenge.id == 1 %}
+<style>
+#challenge-window .submit-row { display: none !important; }
+.econ-truth-modal-link {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  padding: 20px;
+  border: 1px solid var(--d-hair-strong);
+  border-radius: 6px;
+  background: var(--d-paper-soft);
+  color: var(--d-ink);
+}
+.econ-truth-modal-link p { margin: 0; color: var(--d-ink-mid); }
+.econ-truth-modal-link a { width: fit-content; }
+</style>
+<div class="econ-truth-modal-link">
+  <strong>진리표 답안 제출</strong>
+  <p>이 문제는 전용 문제 페이지에서 답안을 제출합니다.</p>
+  <a class="d-btn d-btn-primary" href="/problems/1">문제 페이지 열기</a>
+</div>
+{% else %}
 <style>
 /* ─── s3 challenge submission modal — Direction D ─── */
 #econ-submit-root {
@@ -524,4 +546,5 @@
     <button class="resubmit" id="econ-resubmit" type="button">다시 제출하기</button>
   </div>
 </div>
+{% endif %}
 {% endblock %}

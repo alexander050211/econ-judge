@@ -12,14 +12,13 @@ from CTFd.utils.config.pages import build_markdown
 from CTFd.utils.decorators import authed_only
 from CTFd.utils.user import get_current_user
 
+from .problemset import TRUTH_TABLE_CHALLENGE_ID, TRUTH_TABLE_ROWS
+
 
 _CATEGORY_ORDER = {
     "연습": 0,
     "미션": 1,
     "프로젝트": 2,
-    # Keep the current problem set ordered correctly until it is replaced.
-    "Project 1": 2,
-    "Project 2": 3,
 }
 
 problem_pages = Blueprint(
@@ -85,6 +84,11 @@ def digital_problem_page(challenge_id):
         ),
         solved=solved,
         record_count=record_count,
+        truth_table_mode=challenge_id == TRUTH_TABLE_CHALLENGE_ID,
+        attempt_locked=(
+            challenge_id == TRUTH_TABLE_CHALLENGE_ID and record_count > 0
+        ),
+        truth_table_rows=TRUTH_TABLE_ROWS,
         previous_id=previous_id,
         next_id=next_id,
     )
