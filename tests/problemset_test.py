@@ -44,11 +44,13 @@ class ProblemSetTests(unittest.TestCase):
         files = {int(path.stem) for path in (ROOT / "secret_tests").glob("*.dig")}
         self.assertEqual(files, set(range(2, 16)))
 
-    def test_previous_circuit_reuse_is_optional(self):
+    def test_statements_do_not_hint_at_previous_circuit_reuse(self):
         descriptions = {row[0]: row[4] for row in register.CHALLENGES}
         for challenge_id in (8, 9, 11, 13):
             with self.subTest(challenge_id=challenge_id):
-                self.assertIn("이전 회로의 사용은 선택입니다.", descriptions[challenge_id])
+                description = descriptions[challenge_id]
+                for hint in (".dig", "부품", "미션 #3", "미션 #4", "Part A-1"):
+                    self.assertNotIn(hint, description)
 
     def test_key_truth_functions(self):
         self.assertEqual(problemset.TRUTH_TABLE_EXPECTED, (0, 0, 0, 1, 0, 1, 0, 1))
