@@ -12,7 +12,7 @@ from CTFd.utils.config.pages import build_markdown
 from CTFd.utils.decorators import authed_only
 from CTFd.utils.user import get_current_user
 
-from .problemset import TRUTH_TABLE_CHALLENGE_ID, TRUTH_TABLE_ROWS
+from .problemset import STARTER_FILES, TRUTH_TABLE_CHALLENGE_ID, TRUTH_TABLE_ROWS
 
 
 _CATEGORY_ORDER = {
@@ -89,6 +89,7 @@ def digital_problem_page(challenge_id):
             challenge_id == TRUTH_TABLE_CHALLENGE_ID and record_count > 0
         ),
         truth_table_rows=TRUTH_TABLE_ROWS,
+        starter_filename=STARTER_FILES.get(challenge_id),
         previous_id=previous_id,
         next_id=next_id,
     )

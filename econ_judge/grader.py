@@ -64,12 +64,11 @@ GRADE_CONCURRENCY = max(1, _int_env("ECON_JUDGE_CONCURRENCY", 1))
 QUEUE_WAIT_SEC = _int_env("ECON_JUDGE_QUEUE_WAIT", 8)
 _grade_sem = threading.BoundedSemaphore(GRADE_CONCURRENCY)
 
-# Per-challenge canonical sub-circuit filenames seeded next to the submission
-# so Digital can resolve sub-circuit imports without the mentee needing to
-# upload sibling files. Filenames must match what mentees' .dig files reference.
-# Nested dependencies are included as well: 08_full_adder.dig itself imports
-# 07_half_adder.dig. Old winter mappings are intentionally not reused because
-# the challenge ids now refer to different circuits.
+# Optional canonical sub-circuits seeded next to the submission so Digital can
+# resolve imports when a participant chooses to reuse an earlier circuit.
+# Gate-only submissions are equally valid; no structure rule requires these
+# components. Nested dependencies are included because 08_full_adder.dig itself
+# imports 07_half_adder.dig.
 CANONICAL_SUBCIRCUITS = {
     8: ["07_half_adder.dig"],
     9: ["07_half_adder.dig", "08_full_adder.dig"],
@@ -123,12 +122,6 @@ _STRICT_COMPONENTS = {
     3: ({"In", "Out", "And", "Text"}, None),
     5: ({"In", "Out", "NAnd", "Text"}, 1),
     6: ({"In", "Out", "NAnd", "Text"}, 3),
-}
-_REQUIRED_SUBCIRCUITS = {
-    8: {"07_half_adder.dig": 2},
-    9: {"07_half_adder.dig": 1, "08_full_adder.dig": 2},
-    11: {"08_full_adder.dig": 1},
-    13: {"12_at_least_one.dig": 3},
 }
 _SEVEN_SEGMENT_LABELS = ("a", "b", "c", "d", "e", "f", "g", "dp")
 _SEVEN_SEGMENT_PIN_OFFSETS = {
@@ -258,10 +251,6 @@ def _validate_structure(challenge_id: int, submission_path: str):
         names.append(name)
         if name in _FAN_IN_GATES and _input_count(element) > 2:
             return "입력이 2개보다 많은 논리 게이트는 사용할 수 없습니다."
-
-    for subcircuit, expected_count in _REQUIRED_SUBCIRCUITS.get(challenge_id, {}).items():
-        if names.count(subcircuit) != expected_count:
-            return f"{subcircuit} 부품을 정확히 {expected_count}개 사용해야 합니다."
 
     if challenge_id == 15:
         return _validate_seven_segment(root, elements)

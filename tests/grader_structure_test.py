@@ -124,26 +124,27 @@ class StructureTests(unittest.TestCase):
             self.validate(3, circuit(("In", None), ("Out", None), ("Or", 2))),
         )
 
-    def test_reuse_challenges_require_the_selected_subcircuits(self):
-        valid_full_adder = circuit(
-            ("In", None), ("Out", None),
-            ("07_half_adder.dig", None), ("07_half_adder.dig", None),
-        )
-        self.assertIsNone(self.validate(8, valid_full_adder))
-        self.assertIn("정확히 2개", self.validate(8, circuit(("07_half_adder.dig", None))))
-
-        valid_three_bit = circuit(
-            ("07_half_adder.dig", None),
-            ("08_full_adder.dig", None), ("08_full_adder.dig", None),
-        )
-        self.assertIsNone(self.validate(9, valid_three_bit))
-
-        self.assertIsNone(self.validate(11, circuit(("08_full_adder.dig", None))))
-        self.assertIsNone(self.validate(13, circuit(
-            ("12_at_least_one.dig", None),
-            ("12_at_least_one.dig", None),
-            ("12_at_least_one.dig", None),
-        )))
+    def test_reuse_challenges_allow_components_or_plain_gates(self):
+        cases = {
+            8: "07_half_adder.dig",
+            9: "08_full_adder.dig",
+            11: "08_full_adder.dig",
+            13: "12_at_least_one.dig",
+        }
+        for challenge_id, component in cases.items():
+            with self.subTest(challenge_id=challenge_id, implementation="component"):
+                self.assertIsNone(self.validate(
+                    challenge_id,
+                    circuit(("In", None), ("Out", None), (component, None)),
+                ))
+            with self.subTest(challenge_id=challenge_id, implementation="gates"):
+                self.assertIsNone(self.validate(
+                    challenge_id,
+                    circuit(
+                        ("In", None), ("Out", None),
+                        ("And", 2), ("Or", 2), ("XOr", 2),
+                    ),
+                ))
 
     def test_seven_segment_requires_matching_output_nets(self):
         self.assertIsNone(self.validate(15, seven_segment_circuit()))

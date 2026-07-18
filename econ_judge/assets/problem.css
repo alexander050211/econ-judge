@@ -339,6 +339,63 @@
   display: none;
 }
 
+.ep-starter-file {
+  display: flex;
+  min-height: 62px;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 14px;
+  padding: 10px 12px;
+  border: 1px solid var(--d-hair-strong);
+  border-radius: 4px;
+  color: var(--d-ink);
+  background: var(--d-paper);
+}
+
+.ep-starter-file:hover {
+  border-color: var(--d-brand-dark);
+  color: var(--d-brand-dark);
+  background: var(--d-brand-soft);
+}
+
+.ep-starter-icon {
+  display: inline-flex;
+  width: 38px;
+  height: 38px;
+  flex: 0 0 38px;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid var(--d-brand-line);
+  border-radius: 4px;
+  color: var(--d-brand-dark);
+  background: var(--d-brand-soft);
+}
+
+.ep-starter-copy {
+  min-width: 0;
+  display: block;
+}
+
+.ep-starter-copy strong,
+.ep-starter-copy small {
+  display: block;
+}
+
+.ep-starter-copy strong {
+  font-size: 13px;
+  font-weight: 650;
+}
+
+.ep-starter-copy small {
+  margin-top: 3px;
+  overflow: hidden;
+  color: var(--d-ink-light);
+  font-family: var(--d-f-mono);
+  font-size: 10px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
 .dropzone {
   display: flex;
   min-height: 238px;
