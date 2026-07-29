@@ -195,7 +195,7 @@
       {% endif %}
 
       <div class="ep-submit-actions key-submit">
-        <button id="challenge-submit" class="ep-submit-button" type="button" disabled{% if attempt_locked %} hidden{% endif %}>
+        <button id="challenge-submit" class="ep-submit-button" type="button" disabled{% if attempt_locked or not submissions_open %} hidden{% endif %}>
           <i class="fa-solid fa-play" aria-hidden="true"></i>
           채점 요청
         </button>
@@ -209,6 +209,9 @@
           <span>최대 256 KB</span>
           <span>조합논리 회로</span>
         </div>
+        {% endif %}
+        {% if not submissions_open %}
+        <div class="ep-submit-limits" role="status">{{ competition_message }}</div>
         {% endif %}
       </div>
     </aside>

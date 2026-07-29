@@ -14,6 +14,7 @@ from CTFd.utils.decorators import admins_only, authed_only
 from CTFd.utils.user import get_current_team, get_current_user, get_ip
 
 from .concepts import concept_info
+from .competition import current_phase
 from .grader import grade_submission
 from .problemset import (
     TRUTH_TABLE_CHALLENGE_ID,
@@ -27,6 +28,20 @@ MAX_UPLOAD_BYTES = 256 * 1024
 def _reject(message: str):
     return jsonify(
         {"success": True, "data": {"status": "incorrect", "message": message}}
+    )
+
+
+def _submission_window_reject(challenge_id: int):
+    """Do not grade or record a Fail outside the active competition window."""
+    phase = current_phase()
+    if phase.submissions_open and challenge_id in phase.visible_challenge_ids:
+        return None
+    message = phase.message or "This challenge is not available in the current round."
+    return jsonify(
+        {
+            "success": True,
+            "data": {"status": "unavailable", "message": message},
+        }
     )
 
 
@@ -128,6 +143,10 @@ def register_endpoints(app):
         if challenge.type != "digital":
             abort(404)
 
+        unavailable = _submission_window_reject(challenge_id)
+        if unavailable is not None:
+            return unavailable
+
         user = get_current_user()
         already_solved = Solves.query.filter_by(
             user_id=user.id, challenge_id=TRUTH_TABLE_CHALLENGE_ID
@@ -182,6 +201,10 @@ def register_endpoints(app):
         challenge = Challenges.query.filter_by(id=challenge_id).first_or_404()
         if challenge.type != "digital":
             abort(404)
+
+        unavailable = _submission_window_reject(challenge_id)
+        if unavailable is not None:
+            return unavailable
 
         if "file" not in request.files:
             return _reject("No file uploaded.")

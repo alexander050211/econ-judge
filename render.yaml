@@ -49,6 +49,11 @@ services:
         value: "1"
       - key: ECON_JUDGE_QUEUE_WAIT
         value: "8"
+      # Set in the Render dashboard before camp, using an explicit timezone:
+      # 2026-08-01T09:00:00+09:00. The app itself then handles the 70 / 10 /
+      # 80-minute round transitions, including after a restart.
+      - key: ECON_JUDGE_COMPETITION_START
+        sync: false
       # Camp team-account passwords. The roster (1조–4조) is re-seeded on every
       # boot from bin/bootstrap.py so a cold-start can't lock teams out; these
       # set the login passwords (out of git, like the admin password). Set a

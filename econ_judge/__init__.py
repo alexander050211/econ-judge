@@ -65,3 +65,11 @@ def load(app):
 
     from .endpoints import register_endpoints
     register_endpoints(app)
+
+    # Keep CTFd's native challenge API and direct URLs aligned with the timed
+    # competition schedule. The synchroniser writes only at a phase boundary.
+    from .competition import sync_challenge_states
+
+    @app.before_request
+    def sync_econ_judge_competition_phase():
+        sync_challenge_states()

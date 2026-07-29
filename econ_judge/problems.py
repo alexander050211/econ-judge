@@ -12,6 +12,7 @@ from CTFd.utils.config.pages import build_markdown
 from CTFd.utils.decorators import authed_only
 from CTFd.utils.user import get_current_user
 
+from .competition import current_phase
 from .problemset import STARTER_FILES, TRUTH_TABLE_CHALLENGE_ID, TRUTH_TABLE_ROWS
 
 
@@ -73,6 +74,7 @@ def digital_problem_page(challenge_id):
     ).count()
     record_count = failed_attempts + (1 if solved else 0)
     previous_id, next_id = _problem_neighbors(challenge_id)
+    phase = current_phase()
 
     return render_template(
         "problems/view.html",
@@ -92,6 +94,8 @@ def digital_problem_page(challenge_id):
         starter_filename=STARTER_FILES.get(challenge_id),
         previous_id=previous_id,
         next_id=next_id,
+        submissions_open=phase.submissions_open,
+        competition_message=phase.message,
     )
 
 
