@@ -124,6 +124,14 @@ def _team_password(name: str) -> str:
     return TEAM_PASSWORD
 
 
+def _team_password_source(name: str) -> str:
+    """Return the selected password source without ever logging its value."""
+    digits = "".join(c for c in name if c.isdigit())
+    if digits and os.environ.get(f"CTFD_TEAM{digits}_PASSWORD"):
+        return "per-team override"
+    return "shared default"
+
+
 def _team_password_is_set() -> bool:
     """True if ANY team password env var is set (shared or per-team). Used to
     warn when a real camp deploy would silently fall back to the demo password."""
@@ -2543,8 +2551,10 @@ def _seed_roster() -> None:
             "Environment and redeploy."
         )
     created = synced = failed = 0
+    password_sources = []
     for team in DEMO_TEAMS:
         pw = _team_password(team["name"])
+        password_sources.append(f"{team['name']}={_team_password_source(team['name'])}")
         try:
             user = Users.query.filter_by(name=team["name"]).first()
             if user is None:
@@ -2570,7 +2580,10 @@ def _seed_roster() -> None:
             failed += 1
             print(f"[bootstrap] Roster: FAILED to seed {team['name']}: {exc}")
     tail = f", {failed} FAILED" if failed else ""
-    print(f"[bootstrap] Roster: {created} created, {synced} synced{tail} ({len(DEMO_TEAMS)} total)")
+    print(
+        f"[bootstrap] Roster: {created} created, {synced} synced{tail} "
+        f"({len(DEMO_TEAMS)} total; password sources: {', '.join(password_sources)})"
+    )
 
 
 def _seed_demo_data() -> None:
