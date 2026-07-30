@@ -26,10 +26,10 @@ problemset = load("summer_problemset", ROOT / "econ_judge" / "problemset.py")
 class ProblemSetTests(unittest.TestCase):
     def test_ids_points_categories_and_rows(self):
         self.assertEqual([row[0] for row in register.CHALLENGES], list(range(1, 16)))
-        self.assertEqual(sum(row[3] for row in register.CHALLENGES), 82)
+        self.assertEqual(sum(row[3] for row in register.CHALLENGES), 80)
         self.assertEqual(
             {category for _, _, category, *_ in register.CHALLENGES},
-            {"연습", "미션", "프로젝트"},
+            {"1라운드", "2라운드"},
         )
 
         expected_rows = {row[0]: row[5] for row in register.CHALLENGES}

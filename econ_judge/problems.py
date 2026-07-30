@@ -17,9 +17,8 @@ from .problemset import STARTER_FILES, TRUTH_TABLE_CHALLENGE_ID, TRUTH_TABLE_ROW
 
 
 _CATEGORY_ORDER = {
-    "연습": 0,
-    "미션": 1,
-    "프로젝트": 2,
+    "1라운드": 0,
+    "2라운드": 1,
 }
 
 problem_pages = Blueprint(

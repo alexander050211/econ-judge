@@ -20,6 +20,62 @@ ROUND_1_DURATION = timedelta(minutes=70)
 BREAK_DURATION = timedelta(minutes=10)
 ROUND_2_DURATION = timedelta(minutes=80)
 
+ROUND_INFO = {
+    "round1": {
+        "label": "1라운드",
+        "challenge_ids": ROUND_1_CHALLENGE_IDS,
+        "points": 35,
+        "duration_minutes": 70,
+    },
+    "round2": {
+        "label": "2라운드",
+        "challenge_ids": ROUND_2_CHALLENGE_IDS,
+        "points": 45,
+        "duration_minutes": 80,
+    },
+}
+
+
+def competition_status(now: datetime | None = None) -> dict:
+    """Return safe, participant-facing round metadata for the UI."""
+    phase = current_phase(now)
+    try:
+        start = _competition_start()
+    except ValueError:
+        start = None
+    timestamps: dict[str, str | None] = {
+        "round1_starts_at": None,
+        "round1_ends_at": None,
+        "round2_starts_at": None,
+        "round2_ends_at": None,
+    }
+    if start is not None:
+        round_1_end = start + ROUND_1_DURATION
+        round_2_start = round_1_end + BREAK_DURATION
+        round_2_end = round_2_start + ROUND_2_DURATION
+        timestamps = {
+            "round1_starts_at": start.isoformat(),
+            "round1_ends_at": round_1_end.isoformat(),
+            "round2_starts_at": round_2_start.isoformat(),
+            "round2_ends_at": round_2_end.isoformat(),
+        }
+    return {
+        "phase": phase.name,
+        "submissions_open": phase.submissions_open,
+        "message": phase.message,
+        "visible_challenge_ids": sorted(phase.visible_challenge_ids),
+        "rounds": [
+            {
+                "key": key,
+                "label": data["label"],
+                "challenge_ids": sorted(data["challenge_ids"]),
+                "points": data["points"],
+                "duration_minutes": data["duration_minutes"],
+            }
+            for key, data in ROUND_INFO.items()
+        ],
+        **timestamps,
+    }
 
 @dataclass(frozen=True)
 class CompetitionPhase:

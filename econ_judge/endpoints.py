@@ -14,7 +14,7 @@ from CTFd.utils.decorators import admins_only, authed_only
 from CTFd.utils.user import get_current_team, get_current_user, get_ip
 
 from .concepts import concept_info
-from .competition import current_phase
+from .competition import ALL_CHALLENGE_IDS, ROUND_INFO, competition_status, current_phase
 from .grader import grade_submission
 from .problemset import (
     TRUTH_TABLE_CHALLENGE_ID,
@@ -90,9 +90,12 @@ def _freeze_state():
     return frozen, freeze_ts, date_filter
 
 
-def _user_score_and_solved(user_id, date_filter):
-    """Return (total_score, solved_count) for the given user, scoped to
-    visible challenges, honoring the freeze date_filter."""
+def _round_score(user_id, challenge_ids, date_filter):
+    """Return a user's score and solved count for a fixed contest round.
+
+    Challenge visibility is deliberately not a filter: Round 1 remains part of
+    a team's total after the Round 2 transition hides its problems.
+    """
     row = (
         db.session.query(
             func.coalesce(func.sum(Challenges.value), 0).label("score"),
@@ -101,33 +104,63 @@ def _user_score_and_solved(user_id, date_filter):
         .join(Solves, Solves.challenge_id == Challenges.id)
         .filter(
             Solves.user_id == user_id,
-            Challenges.state == "visible",
+            Challenges.id.in_(challenge_ids),
             *date_filter,
         )
         .one()
     )
-    return int(row.score or 0), int(row.solved or 0)
+    return {"score": int(row.score or 0), "solved": int(row.solved or 0)}
+
+
+def _user_round_scores(user_id, date_filter):
+    return {
+        key: _round_score(user_id, info["challenge_ids"], date_filter)
+        for key, info in ROUND_INFO.items()
+    }
+
+
+def _score_total(round_scores):
+    return sum(score["score"] for score in round_scores.values())
+
+
+def _solved_total(round_scores):
+    return sum(score["solved"] for score in round_scores.values())
 
 
 def _challenge_totals():
-    """Return (total_points, total_challenges) across all visible
-    challenges. Both numbers shown on /my-score and /projector."""
+    """Return the full online-contest totals, not only the visible round."""
     total_points = int(
         db.session.query(func.coalesce(func.sum(Challenges.value), 0))
-        .filter(Challenges.state == "visible")
+        .filter(Challenges.id.in_(ALL_CHALLENGE_IDS))
         .scalar()
         or 0
     )
     total_challenges = int(
         db.session.query(func.count(Challenges.id))
-        .filter(Challenges.state == "visible")
+        .filter(Challenges.id.in_(ALL_CHALLENGE_IDS))
         .scalar()
         or 0
     )
     return total_points, total_challenges
 
 
+def _round_payload(round_scores):
+    return {
+        key: {
+            "label": info["label"],
+            "points": info["points"],
+            "challenge_count": len(info["challenge_ids"]),
+            **round_scores.get(key, {"score": 0, "solved": 0}),
+        }
+        for key, info in ROUND_INFO.items()
+    }
+
+
 def register_endpoints(app):
+    @app.route("/api/v1/digital/competition", methods=["GET"])
+    def digital_competition():
+        return jsonify({"success": True, "data": competition_status()})
+
     @app.route(
         "/api/v1/digital/challenges/<int:challenge_id>/truth-table-attempt",
         methods=["POST"],
@@ -367,7 +400,9 @@ def register_endpoints(app):
 
         frozen, freeze_ts, date_filter = _freeze_state()
 
-        team_score, team_solved = _user_score_and_solved(user.id, date_filter)
+        team_round_scores = _user_round_scores(user.id, date_filter)
+        team_score = _score_total(team_round_scores)
+        team_solved = _solved_total(team_round_scores)
 
         # Leader: top non-hidden, non-banned, non-admin user by total
         # visible-challenge value. Response anonymizes — score + solved only,
@@ -383,7 +418,7 @@ def register_endpoints(app):
                 Users.hidden.is_(False),
                 Users.banned.is_(False),
                 Users.type == "user",
-                Challenges.state == "visible",
+                Challenges.id.in_(ALL_CHALLENGE_IDS),
                 *date_filter,
             )
             .group_by(Users.id)
@@ -393,8 +428,11 @@ def register_endpoints(app):
 
         leader = None
         if leader_row and int(leader_row.score) > 0:
-            _, leader_solved = _user_score_and_solved(leader_row.id, date_filter)
-            leader = {"score": int(leader_row.score), "solved": leader_solved}
+            leader_round_scores = _user_round_scores(leader_row.id, date_filter)
+            leader = {
+                "score": _score_total(leader_round_scores),
+                "solved": _solved_total(leader_round_scores),
+            }
 
         total_points, total_challenges = _challenge_totals()
 
@@ -406,12 +444,15 @@ def register_endpoints(app):
                         "name": user.name,
                         "score": team_score,
                         "solved": team_solved,
+                        "rounds": _round_payload(team_round_scores),
                     },
                     "leader": leader,
                     "frozen": frozen,
                     "frozen_at": freeze_ts,
                     "total_points": total_points,
                     "total_challenges": total_challenges,
+                    "rounds": _round_payload({}),
+                    "competition": competition_status(),
                 },
             }
         )
@@ -460,7 +501,7 @@ def register_endpoints(app):
                     Users.hidden.is_(False),
                     Users.banned.is_(False),
                     Users.type == "user",
-                    Challenges.state == "visible",
+                    Challenges.id.in_(ALL_CHALLENGE_IDS),
                     *date_filter,
                 )
                 .group_by(Users.id)

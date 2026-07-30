@@ -128,11 +128,11 @@ class ProblemPageTests(unittest.TestCase):
         global CURRENT_USER
         CURRENT_USER = SimpleNamespace(id=7, type="user")
         self.rows = [
-            challenge(1, "연습"),
-            challenge(5, "연습"),
-            challenge(2, "미션"),
-            challenge(3, "프로젝트"),
-            challenge(4, "프로젝트"),
+            challenge(1, "1라운드"),
+            challenge(5, "1라운드"),
+            challenge(2, "2라운드"),
+            challenge(3, "2라운드"),
+            challenge(4, "2라운드"),
         ]
         Challenges.query = FakeQuery(self.rows)
         Solves.query = FakeQuery([])
@@ -207,8 +207,8 @@ class ProblemPageTests(unittest.TestCase):
     def test_hidden_and_non_digital_challenges_are_not_participant_pages(self):
         Challenges.query = FakeQuery(
             [
-                challenge(20, "연습", state="hidden"),
-                challenge(21, "연습", challenge_type="standard"),
+                challenge(20, "1라운드", state="hidden"),
+                challenge(21, "1라운드", challenge_type="standard"),
             ]
         )
         app = self.make_app()

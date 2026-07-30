@@ -56,6 +56,12 @@ class CompetitionPhaseTests(unittest.TestCase):
             self.assertFalse(finished.submissions_open)
             self.assertEqual(finished.visible_challenge_ids, competition.ALL_CHALLENGE_IDS)
 
+    def test_status_exposes_final_round_totals(self):
+        with patch.dict(os.environ, {}, clear=True):
+            status = competition.competition_status()
+        self.assertEqual(status["phase"], "open")
+        self.assertEqual([(r["label"], r["points"]) for r in status["rounds"]], [("1라운드", 35), ("2라운드", 45)])
+        self.assertEqual(sum(r["points"] for r in status["rounds"]), 80)
     def test_bare_start_time_is_rejected(self):
         with patch.dict(
             os.environ,

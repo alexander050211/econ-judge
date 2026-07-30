@@ -2,7 +2,7 @@
 
 Auto-grader + live scoreboard for the **SNU SENS 공헌 E-CON** 논설 (logic-design) task. Built as a CTFd custom challenge type plugin: mentees submit a truth table or upload `.dig` files through the web UI, the server checks secret testcases using Digital's CLI, and a live scoreboard projects on the BK Hall screen. Challenge scores are all-or-nothing; failed circuit submissions still receive an aggregate pass count as feedback.
 
-> Status — **2026 summer set, 15 challenges / 82 judge points** as of 2026-07-15. The separate 18-point breadboard build is graded manually and is not represented on the website.
+> Status — **2026 summer final set: Round 1 (35 points) + Round 2 (45 points) = 80 online judge points**. Round 3 is a 20-point physical build and is graded manually outside the website.
 
 ## Why it exists
 

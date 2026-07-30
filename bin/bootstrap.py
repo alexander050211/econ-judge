@@ -587,6 +587,7 @@ button[type="submit"]:hover {
 </style>
 <script defer src="/plugins/econ_judge/assets/scoreboard.js"></script>
 <script defer src="/plugins/econ_judge/assets/challenges.js"></script>
+<script defer src="/plugins/econ_judge/assets/round-ui.js"></script>
 <script>
 /* Inject a "내 점수" navbar link before the Challenges link. The full
    Scoreboard link gets hidden by CTFd itself once score_visibility=admins
@@ -879,12 +880,12 @@ INDEX_CONTENT = """\
       <div class="s1-stat">
         <div class="d-meta">도전 과제</div>
         <div class="s1-stat-num">15</div>
-        <div class="s1-stat-en">across 3 categories</div>
+        <div class="s1-stat-en">8문제 + 7문제 · 2 rounds</div>
       </div>
       <div class="s1-stat">
         <div class="d-meta">총점</div>
-        <div class="s1-stat-num">82<span class="s1-stat-unit">pt</span></div>
-        <div class="s1-stat-en">sum of all challenge values</div>
+        <div class="s1-stat-num">80<span class="s1-stat-unit">pt</span></div>
+        <div class="s1-stat-en">1라운드 35 pt + 2라운드 45 pt</div>
       </div>
       <div class="s1-stat">
         <div class="d-meta">참가 팀</div>
@@ -911,7 +912,7 @@ INDEX_CONTENT = """\
           <span class="s1-step-n">01</span>
           <div class="s1-step-body">
             <div class="s1-step-h">도전 과제 목록에서 문제를 선택합니다</div>
-            <div class="s1-step-sub">연습 → 미션 → 프로젝트 순서로 진행. 어느 카테고리부터 시작해도 좋습니다.</div>
+            <div class="s1-step-sub">1라운드가 끝난 뒤 2라운드가 열립니다. 각 라운드의 제한 시간을 확인하세요.</div>
           </div>
         </li>
         <li class="s1-step">
@@ -932,7 +933,7 @@ INDEX_CONTENT = """\
           <span class="s1-step-n">04</span>
           <div class="s1-step-body">
             <div class="s1-step-h">결과를 확인하고 회로를 보완하세요</div>
-            <div class="s1-step-sub">회로 문제는 재제출할 수 있으며, 연습 #1 진리표는 한 번만 제출할 수 있습니다.</div>
+            <div class="s1-step-sub">회로 문제는 재제출할 수 있으며, 진리표 문제는 한 번만 제출할 수 있습니다.</div>
           </div>
         </li>
       </ol>
@@ -1299,7 +1300,7 @@ MY_SCORE_CONTENT = """\
       <div class="s4-score">
         <span class="s4-score-n" id="ms-score-own">—</span>
         <span class="s4-score-u">pt</span>
-        <span class="s4-score-f">/ <span id="ms-total-own">82</span></span>
+        <span class="s4-score-f">/ <span id="ms-total-own">80</span></span>
       </div>
       <div class="s4-progress">
         <div class="d-tiny" id="ms-progress-meta">달성률 · —%</div>
@@ -1321,7 +1322,7 @@ MY_SCORE_CONTENT = """\
       <div class="s4-score s4-score-leader">
         <span class="s4-score-n" id="ms-score-leader">—</span>
         <span class="s4-score-u">pt</span>
-        <span class="s4-score-f">/ <span id="ms-total-leader">82</span></span>
+        <span class="s4-score-f">/ <span id="ms-total-leader">80</span></span>
       </div>
       <div class="s4-leader-note">
         팀명은 캠프 종료 후 공개됩니다.
@@ -1343,7 +1344,7 @@ MY_SCORE_CONTENT = """\
           <rect x="3" y="11" width="18" height="11" rx="2"/>
           <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
         </svg>
-        <div class="s4-frozen-h">프로젝트 단계 진행 중</div>
+        <div class="s4-frozen-h">온라인 라운드 진행 중</div>
         <div class="s4-frozen-sub">캠프 종료 후 공개됩니다.</div>
       </div>
     </article>
@@ -1430,7 +1431,7 @@ MY_SCORE_CONTENT = """\
     document.getElementById('ms-updated').textContent = hms();
     document.getElementById('ms-rev').textContent = '2026-A' + (frozen ? ' · FROZEN' : '');
 
-    var total = (d.total_points != null) ? d.total_points : 82;
+    var total = (d.total_points != null) ? d.total_points : 80;
     var totalCh = (d.total_challenges != null) ? d.total_challenges : 15;
     document.getElementById('ms-total-own').textContent    = total;
     document.getElementById('ms-total-leader').textContent = total;
@@ -1920,7 +1921,7 @@ PROJECTOR_CONTENT = """\
       <span class="s5p-score-n" id="pj-leader-score">—</span>
       <div class="s5p-score-right">
         <span class="s5p-score-u">pt</span>
-        <span class="s5p-score-f">/ <span id="pj-total-points">82</span></span>
+        <span class="s5p-score-f">/ <span id="pj-total-points">80</span></span>
       </div>
     </div>
 
@@ -2064,10 +2065,10 @@ PROJECTOR_CONTENT = """\
     var phaseLabel = document.getElementById('pj-phase-label');
     if (phase === 'project') {
       phasePill.classList.add('s5-phase-project');
-      phaseLabel.textContent = '프로젝트 단계 · PROJECT PHASE';
+      phaseLabel.textContent = '2라운드 · ROUND 2';
     } else {
       phasePill.classList.remove('s5-phase-project');
-      phaseLabel.textContent = '연습 단계 · PRACTICE PHASE';
+      phaseLabel.textContent = '온라인 라운드 · ONLINE';
     }
 
     var practiceStage   = document.getElementById('pj-practice');
@@ -2090,7 +2091,7 @@ PROJECTOR_CONTENT = """\
   }
 
   function renderPractice(d) {
-    var total = (d.total_points != null) ? d.total_points : 82;
+    var total = (d.total_points != null) ? d.total_points : 80;
     var totalCh = (d.total_challenges != null) ? d.total_challenges : 15;
     document.getElementById('pj-total-points').textContent = total;
 
@@ -2271,7 +2272,7 @@ def main() -> None:
         # /challenges page. CTFd 3.8.5 reads `themeSettings.challenge_category_order`
         # and `themeSettings.challenge_order` from this config; each value is a JS
         # comparator source string that gets eval'd via `new Function`. We pin
-        # the category order to 연습 → 미션 → 프로젝트 (camp's intended flow)
+        # the category order to 1라운드 → 2라운드 (final contest flow)
         # and sort challenges within each category by id ASC, which matches the
         # authoring order — easier sub-circuits first, composition challenges
         # (Full Wiring) at the bottom.
@@ -2281,7 +2282,7 @@ def main() -> None:
                 {
                     "challenge_category_order": (
                         "(a, b) => { const o = {"
-                        "'연습': 0, '미션': 1, '프로젝트': 2"
+                        "'1라운드': 0, '2라운드': 1"
                         "}; return (o[a] ?? 99) - (o[b] ?? 99); }"
                     ),
                     "challenge_order": "(a, b) => a.id - b.id",

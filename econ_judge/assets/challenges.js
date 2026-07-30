@@ -20,10 +20,21 @@
   if (window.location.pathname !== "/challenges") return;
 
   const CATEGORY_ORDER = {
-    "연습": { idx: 0, label: "연습 — Practice", sub: "진리표 · 기본 게이트 · 멀티플렉서", tagCls: "" },
-    "미션": { idx: 1, label: "미션 — Missions", sub: "NAND · 가산기 · 다중 비트 설계", tagCls: "d-tag-mission" },
-    "프로젝트": { idx: 2, label: "프로젝트 — Flood detection", sub: "홍수 경보 · 위험도 · 7-segment", tagCls: "d-tag-p1" },
+    "1라운드": { idx: 0, label: "1라운드", sub: "70분 · 35점 · 8문제", tagCls: "" },
+    "2라운드": { idx: 1, label: "2라운드", sub: "80분 · 45점 · 7문제", tagCls: "d-tag-mission" },
   };
+
+  function phaseText(phase) {
+    return {
+      before: "시작 전 · 문제는 시작 시간에 열립니다.",
+      round1: "1라운드 진행 중 · 70분",
+      break: "휴식 시간 · 2라운드를 준비하세요.",
+      round2: "2라운드 진행 중 · 80분",
+      finished: "온라인 라운드가 종료되었습니다.",
+      open: "준비 모드 · 운영 검토를 위해 두 라운드가 모두 열려 있습니다.",
+      misconfigured: "일정 설정이 필요합니다.",
+    }[phase] || "현재 라운드 상태를 확인하는 중입니다.";
+  }
 
   /* Inject our CSS + markup container once. We hide the stock jumbotron
      (the "챌린지" h1 strip) and the stock category grid+spinner, but keep
@@ -139,6 +150,7 @@ main > .jumbotron:has(+ .container [x-data="ChallengeBoard"]),
   align-self: flex-end;
 }
 .s2-sections { display: flex; flex-direction: column; gap: 28px; }
+.s2-round-status { padding: 12px 15px; border: 1px solid var(--d-brand-line); background: var(--d-brand-soft); color: var(--d-brand-ink); font-family: var(--d-f-ko); font-size: 14px; }
 .s2-cat { display: flex; flex-direction: column; gap: 10px; }
 .s2-cat-head {
   display: flex;
@@ -322,8 +334,8 @@ main > .jumbotron:has(+ .container [x-data="ChallengeBoard"]),
           <div class="d-meta">SECTION · 도전 과제</div>
           <h1 class="s2-h1">Challenges<span class="s2-h1-ko">&nbsp;도전 과제</span></h1>
           <p class="s2-head-sub">
-            총 <span id="s2-total-count">—</span>개의 논리설계 과제.
-            연습 → 미션 → 프로젝트 순서대로 풀어보세요.
+            총 <span id="s2-total-count">—</span>개의 온라인 논리설계 과제.
+            <span id="s2-round-status-text">현재 라운드를 확인하는 중입니다.</span>
           </p>
         </div>
         <div class="s2-head-r">
@@ -357,6 +369,7 @@ main > .jumbotron:has(+ .container [x-data="ChallengeBoard"]),
         </div>
       </section>
 
+      <div class="s2-round-status" id="s2-round-status">현재 라운드를 확인하는 중입니다.</div>
       <div class="s2-sections" id="s2-sections">
         <div class="s2-loading">도전 과제를 불러오는 중…</div>
       </div>
@@ -444,7 +457,7 @@ main > .jumbotron:has(+ .container [x-data="ChallengeBoard"]),
       + '</section>';
   }
 
-  function render(challenges, user) {
+  function render(challenges, user, competition) {
     const groups = {};
     challenges.forEach(c => {
       const k = c.category || "기타";
@@ -464,6 +477,9 @@ main > .jumbotron:has(+ .container [x-data="ChallengeBoard"]),
     const pct = totalPts > 0 ? Math.round(gotPts / totalPts * 100) : 0;
 
     setText("s2-total-count", totalCount);
+    const currentPhaseText = phaseText(competition && competition.phase);
+    setText("s2-round-status", currentPhaseText);
+    setText("s2-round-status-text", currentPhaseText);
     setText("s2-team-name", user && user.name ? user.name : "—");
     setText("s2-solved", solvedCount);
     setText("s2-total", totalCount);
@@ -510,9 +526,10 @@ main > .jumbotron:has(+ .container [x-data="ChallengeBoard"]),
   async function load() {
     injectShell();
     try {
-      const [chRes, userRes] = await Promise.all([
+      const [chRes, userRes, competitionRes] = await Promise.all([
         fetch("/api/v1/challenges?view=user", { credentials: "same-origin" }),
         fetch("/api/v1/users/me", { credentials: "same-origin" }),
+        fetch("/api/v1/digital/competition", { credentials: "same-origin" }),
       ]);
       if (chRes.redirected || chRes.status === 401) {
         showError("로그인이 필요합니다. 페이지를 새로고침하여 다시 로그인하세요.");
@@ -524,7 +541,8 @@ main > .jumbotron:has(+ .container [x-data="ChallengeBoard"]),
       }
       const chJson = await chRes.json();
       const userJson = userRes.ok ? await userRes.json() : {};
-      render(chJson.data || [], (userJson && userJson.data) || {});
+      const competitionJson = competitionRes.ok ? await competitionRes.json() : {};
+      render(chJson.data || [], (userJson && userJson.data) || {}, (competitionJson && competitionJson.data) || {});
     } catch (e) {
       showError("도전 과제를 불러오지 못했습니다: " + (e && e.message ? e.message : "unknown"));
     }
