@@ -30,6 +30,11 @@ class StarterFileTests(unittest.TestCase):
         self.assertEqual(set(problemset.HWP_STARTER_FILES), set(range(2, 16)))
         self.assertTrue(all(name.endswith(".dig") for name in problemset.HWP_STARTER_FILES.values()))
 
+    def test_problem_template_uses_round_folder_submission_without_mojibake(self):
+        source = (REPO_ROOT / "econ_judge" / "templates" / "problems" / "view.html").read_text(encoding="utf-8")
+        self.assertNotIn("???", source)
+        self.assertIn("webkitdirectory", source)
+        self.assertIn("data-answer-filename", source)
     def test_problem_template_does_not_publish_hwp_working_files(self):
         source = (REPO_ROOT / "econ_judge" / "templates" / "problems" / "view.html").read_text(encoding="utf-8")
         self.assertIn("hwp_starter_filename", source)

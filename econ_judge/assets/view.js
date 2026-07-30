@@ -247,36 +247,54 @@ if (econHasChallengeRuntime) {
     return div.innerHTML;
   }
 
-  function selectFile(file) {
-    if (!file) return;
-    const name = file.name || "";
-    if (!name.toLowerCase().endsWith(".dig")) {
-      showFileError(".dig 파일만 업로드할 수 있습니다.");
+  function selectFiles(fileList) {
+    const files = Array.from(fileList || []);
+    if (!files.length) return;
+    if (files.length > 32) {
+      showFileError("starters 폴더의 .dig 파일은 최대 32개까지 제출할 수 있습니다.");
       return;
     }
-    if (file.size === 0) {
-      showFileError("빈 파일입니다.");
+
+    let totalSize = 0;
+    for (const file of files) {
+      if (!file.name.toLowerCase().endsWith(".dig")) {
+        showFileError("starters 폴더에는 .dig 파일만 포함해야 합니다.");
+        return;
+      }
+      if (file.size === 0) {
+        showFileError(file.name + " 파일이 비어 있습니다.");
+        return;
+      }
+      if (file.size > MAX_BYTES) {
+        showFileError(file.name + " 파일이 너무 큽니다.");
+        return;
+      }
+      totalSize += file.size;
+    }
+    if (totalSize > 1024 * 1024) {
+      showFileError("제출 폴더의 전체 파일 용량은 1 MB 이하여야 합니다.");
       return;
     }
-    if (file.size > MAX_BYTES) {
-      showFileError(
-        "파일이 너무 큽니다 (" +
-          humanSize(file.size) +
-          " > 256 KB 한도)."
-      );
+
+    const expected = (root() && root().dataset.answerFilename) || "";
+    const answer = expected
+      ? files.find((file) => file.name === expected)
+      : files[0];
+    if (!answer) {
+      showFileError("선택한 폴더에 이 문제의 답안 파일(" + expected + ")이 없습니다.");
       return;
     }
-    // Sync the chosen file into the hidden <input type="file"> so
-    // submitChallenge can read it from the standard place.
+
     const input = $("#challenge-file");
     if (input) {
       const dt = new DataTransfer();
-      dt.items.add(file);
+      files.forEach((file) => dt.items.add(file));
       input.files = dt.files;
     }
     clearFileError();
-    $("#econ-file-name").textContent = name;
-    $("#econ-file-size").textContent = humanSize(file.size);
+    $("#econ-file-name").textContent = answer.name;
+    $("#econ-file-size").textContent =
+      humanSize(totalSize) + " · " + files.length + "개 .dig 파일";
     setState("ready");
     setStandaloneSubmitDisabled(false);
   }
@@ -452,8 +470,7 @@ if (econHasChallengeRuntime) {
     if (!dz || !input) return;
 
     input.addEventListener("change", (e) => {
-      const f = e.target.files && e.target.files[0];
-      if (f) selectFile(f);
+      selectFiles(e.target.files);
     });
 
     ["dragenter", "dragover"].forEach((ev) => {
@@ -471,8 +488,8 @@ if (econHasChallengeRuntime) {
       });
     });
     dz.addEventListener("drop", (e) => {
-      const f = e.dataTransfer && e.dataTransfer.files && e.dataTransfer.files[0];
-      if (f) selectFile(f);
+      const files = e.dataTransfer && e.dataTransfer.files;
+      selectFiles(files);
     });
 
     if (clearBtn) clearBtn.addEventListener("click", clearSelection);
@@ -547,7 +564,10 @@ if (econHasChallengeRuntime) {
     const t0 = (window.performance && performance.now) ? performance.now() : Date.now();
 
     const fd = new FormData();
-    fd.append("file", input.files[0]);
+    Array.from(input.files).forEach((file) => {
+      const relativeName = file.webkitRelativePath || file.name;
+      fd.append("files", file, relativeName);
+    });
     const nonce = csrfNonce();
     if (nonce) fd.append("nonce", nonce);
 

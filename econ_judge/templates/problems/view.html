@@ -128,23 +128,23 @@
       {% if hwp_starter_filename %}
       <div class="ep-starter-file" role="note">
         <span class="ep-starter-icon" aria-hidden="true">
-          <i class="fa-solid fa-laptop-file"></i>
+          <i class="fa-solid fa-folder-open"></i>
         </span>
         <span class="ep-starter-copy">
-          <strong>?? ??? ?? ???? ????</strong>
-          <small><code>{{ hwp_starter_filename }}</code> ??? ?? ?????. ? Digital ??? ??? ???.</small>
+          <strong>라운드 starters 폴더 안에서만 작업하세요</strong>
+          <small><code>{{ hwp_starter_filename }}</code>에 저장한 뒤, 제출할 때는 해당 라운드 폴더 전체를 선택하세요. 필요한 사용자 부품 .dig 파일도 같은 폴더에 둡니다.</small>
         </span>
       </div>
       {% endif %}
-      <div id="econ-submit-root" data-mode="page">
+      <div id="econ-submit-root" data-mode="page" data-answer-filename="{{ hwp_starter_filename.split('/')[-1] if hwp_starter_filename else '' }}">
         <div data-state="empty">
           <label class="dropzone" id="econ-dropzone">
-            <input type="file" id="challenge-file" accept=".dig">
+            <input type="file" id="challenge-file" accept=".dig" webkitdirectory directory multiple>
             <span class="dropzone-icon" aria-hidden="true">
               <i class="fa-regular fa-file-code"></i>
             </span>
-            <strong><span>.dig</span> 파일 선택</strong>
-            <small>클릭하거나 파일을 이 영역으로 끌어오세요</small>
+            <strong><span>starters</span> 폴더 선택</strong>
+            <small>이 문제의 .dig 파일과 사용자 부품을 같은 폴더에서 함께 제출합니다</small>
           </label>
           <div class="file-error" id="econ-file-error" role="alert" hidden></div>
         </div>

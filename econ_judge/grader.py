@@ -85,10 +85,15 @@ def _seed_canonical(challenge_id: int, working_dir: Path) -> list[str]:
     missing: list[str] = []
     for filename in CANONICAL_SUBCIRCUITS.get(challenge_id, []):
         src = CANONICAL_DIR / filename
+        destination = working_dir / filename
+        # A submitted folder may intentionally contain a team-built component
+        # with the same filename. It must win over our legacy fallback copy.
+        if destination.exists():
+            continue
         if not src.exists():
             missing.append(filename)
             continue
-        shutil.copy(src, working_dir / filename)
+        shutil.copy(src, destination)
     return missing
 
 
@@ -223,7 +228,7 @@ def _validate_seven_segment(root, elements):
 
     invalid_labels = [label for label, positions in outputs.items() if len(positions) != 1]
     if invalid_labels:
-        return "a, b, c, d, e, f, g, dp 출력 단자를 각각 정확히 1개 배치해야 합니다."
+        return "a, b, c, d, e, f, g 출력 단자를 각각 정확히 1개 배치해야 합니다."
 
     graph = _wire_graph(root)
     display_x, display_y = display_position
@@ -235,7 +240,11 @@ def _validate_seven_segment(root, elements):
     return None
 
 
-def _validate_structure(challenge_id: int, submission_path: str):
+def _validate_structure(
+    challenge_id: int,
+    submission_path: str,
+    dependency_paths: tuple[str, ...] = (),
+):
     """Return a participant-safe structural-rule error, or ``None``."""
     try:
         root = ET.parse(submission_path).getroot()
@@ -245,12 +254,20 @@ def _validate_structure(challenge_id: int, submission_path: str):
 
     elements = root.findall(".//visualElement")
     names = []
-    for element in elements:
-        name_node = element.find("elementName")
-        name = name_node.text if name_node is not None else ""
-        names.append(name)
-        if name in _FAN_IN_GATES and _input_count(element) > 2:
-            return "입력이 2개보다 많은 논리 게이트는 사용할 수 없습니다."
+    for circuit_path in (submission_path, *dependency_paths):
+        try:
+            circuit_root = ET.parse(circuit_path).getroot()
+        except (ET.ParseError, OSError):
+            if circuit_path == submission_path:
+                return None
+            return "함께 제출한 부품 파일을 Digital에서 읽을 수 없습니다."
+        for element in circuit_root.findall(".//visualElement"):
+            name_node = element.find("elementName")
+            name = name_node.text if name_node is not None else ""
+            if circuit_path == submission_path:
+                names.append(name)
+            if name in _FAN_IN_GATES and _input_count(element) > 2:
+                return "입력이 2개보다 많은 논리 게이트는 사용할 수 없습니다."
 
     if challenge_id == 15:
         return _validate_seven_segment(root, elements)
@@ -271,7 +288,11 @@ def _validate_structure(challenge_id: int, submission_path: str):
     return None
 
 
-def grade_submission(challenge_id: int, submission_path: str) -> dict:
+def grade_submission(
+    challenge_id: int,
+    submission_path: str,
+    dependency_paths: tuple[str, ...] = (),
+) -> dict:
     test_file = SECRET_TESTS_DIR / f"{challenge_id}.dig"
     if not test_file.exists():
         return {
@@ -296,17 +317,20 @@ def grade_submission(challenge_id: int, submission_path: str) -> dict:
             ),
         }
 
-    danger = _scan_dangerous_xml(submission_path)
-    if danger:
-        return {
-            "status": "rejected",
-            "reason": "unsafe_xml",
-            "passed": 0,
-            "total": 0,
-            "detail": danger,
-        }
+    for circuit_path in (submission_path, *dependency_paths):
+        danger = _scan_dangerous_xml(circuit_path)
+        if danger:
+            return {
+                "status": "rejected",
+                "reason": "unsafe_xml",
+                "passed": 0,
+                "total": 0,
+                "detail": danger,
+            }
 
-    structure_error = _validate_structure(challenge_id, submission_path)
+    structure_error = _validate_structure(
+        challenge_id, submission_path, dependency_paths
+    )
     if structure_error:
         return {
             "status": "invalid",

@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import importlib.util
+import shutil
 import tempfile
 import unittest
 from pathlib import Path
@@ -154,6 +155,31 @@ class StructureTests(unittest.TestCase):
             15, seven_segment_circuit(include_display=False)
         ))
 
+
+
+    def test_custom_component_bundle_is_accepted_and_validated(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            work = Path(tmp)
+            submission = work / "team_full_adder.dig"
+            dependency = work / "team_half_adder.dig"
+            full_adder = (ROOT / "solutions" / "2026-summer" / "08_full_adder.dig").read_text(
+                encoding="utf-8"
+            )
+            submission.write_text(
+                full_adder.replace("07_half_adder.dig", dependency.name),
+                encoding="utf-8",
+            )
+            shutil.copy2(ROOT / "solutions" / "2026-summer" / "07_half_adder.dig", dependency)
+
+            result = grader.grade_submission(10, str(submission), (str(dependency),))
+            self.assertEqual(result["status"], "graded")
+            self.assertEqual((result["passed"], result["total"]), (8, 8))
+
+            dependency.write_text(circuit(("And", 3)), encoding="utf-8")
+            self.assertIn(
+                "2개보다 많은",
+                grader._validate_structure(10, str(submission), (str(dependency),)),
+            )
 
 if __name__ == "__main__":
     unittest.main()

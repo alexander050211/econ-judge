@@ -3,6 +3,7 @@ import json
 import os
 import tempfile
 import time
+from pathlib import Path
 
 from flask import abort, jsonify, request
 from sqlalchemy import func
@@ -17,12 +18,74 @@ from .concepts import concept_info
 from .competition import ALL_CHALLENGE_IDS, ROUND_INFO, competition_status, current_phase
 from .grader import grade_submission
 from .problemset import (
+    HWP_STARTER_FILES,
     TRUTH_TABLE_CHALLENGE_ID,
     TRUTH_TABLE_EXPECTED,
     normalize_truth_table_answers,
 )
 
 MAX_UPLOAD_BYTES = 256 * 1024
+MAX_BUNDLE_FILES = 32
+MAX_BUNDLE_BYTES = 1024 * 1024
+
+
+def _uploaded_circuit_files():
+    """Return the submitted starter-folder files, with legacy single-file fallback."""
+    uploaded = [item for item in request.files.getlist("files") if item.filename]
+    if uploaded:
+        return uploaded
+    legacy = request.files.get("file")
+    return [legacy] if legacy is not None and legacy.filename else []
+
+
+def _stage_digital_bundle(challenge_id: int, working_dir: str):
+    """Stage one round-starter folder and return its answer plus dependencies.
+
+    Digital resolves custom components by filename beside the main circuit. The
+    browser therefore sends every `.dig` in the selected starter folder; this
+    helper flattens that one folder into the isolated grading directory.
+    """
+    uploads = _uploaded_circuit_files()
+    if not uploads:
+        return None, (), "", "제출할 라운드 starters 폴더를 선택해주세요."
+    if len(uploads) > MAX_BUNDLE_FILES:
+        return None, (), "", "제출 폴더의 .dig 파일이 너무 많습니다."
+
+    expected = Path(HWP_STARTER_FILES.get(challenge_id, "")).name
+    if not expected:
+        return None, (), "", "이 문제의 제출 파일 구성을 찾을 수 없습니다."
+
+    staged: dict[str, str] = {}
+    total_size = 0
+    for upload in uploads:
+        filename = Path((upload.filename or "").replace("\\", "/")).name
+        if not filename.lower().endswith(".dig"):
+            return None, (), "", "starters 폴더의 .dig 파일만 제출할 수 있습니다."
+        if not filename or filename in staged:
+            return None, (), "", "같은 이름의 .dig 파일은 함께 제출할 수 없습니다."
+
+        upload.seek(0, os.SEEK_END)
+        size = upload.tell()
+        upload.seek(0)
+        if size == 0:
+            return None, (), "", f"{filename} 파일이 비어 있습니다."
+        if size > MAX_UPLOAD_BYTES:
+            return None, (), "", f"{filename} 파일이 너무 큽니다."
+        total_size += size
+        if total_size > MAX_BUNDLE_BYTES:
+            return None, (), "", "제출 폴더의 파일 용량이 너무 큽니다."
+
+        destination = os.path.join(working_dir, filename)
+        upload.save(destination)
+        staged[filename] = destination
+
+    submission_path = staged.get(expected)
+    if submission_path is None:
+        return None, (), "", f"선택한 폴더에 이 문제의 답안 파일({expected})이 없습니다."
+    dependencies = tuple(
+        path for filename, path in staged.items() if filename != expected
+    )
+    return submission_path, dependencies, expected, None
 
 
 def _reject(message: str):
@@ -239,30 +302,13 @@ def register_endpoints(app):
         if unavailable is not None:
             return unavailable
 
-        if "file" not in request.files:
-            return _reject("No file uploaded.")
-
-        upload = request.files["file"]
-        if not upload.filename:
-            return _reject("No file selected.")
-        if not upload.filename.lower().endswith(".dig"):
-            return _reject("Please upload a .dig file (Digital circuit format).")
-
-        upload.seek(0, os.SEEK_END)
-        size = upload.tell()
-        upload.seek(0)
-        if size == 0:
-            return _reject("Uploaded file is empty.")
-        if size > MAX_UPLOAD_BYTES:
-            return _reject(
-                f"File too large ({size:,} bytes). Limit is "
-                f"{MAX_UPLOAD_BYTES:,} bytes."
-            )
-
         with tempfile.TemporaryDirectory() as tmp:
-            upload_path = os.path.join(tmp, "submission.dig")
-            upload.save(upload_path)
-            result = grade_submission(challenge_id, upload_path)
+            upload_path, dependencies, provided_filename, error = _stage_digital_bundle(
+                challenge_id, tmp
+            )
+            if error:
+                return _reject(error)
+            result = grade_submission(challenge_id, upload_path, dependencies)
 
         user = get_current_user()
         team = get_current_team()
@@ -280,7 +326,7 @@ def register_endpoints(app):
                     team_id=team.id if team else None,
                     challenge_id=challenge_id,
                     ip=get_ip(request),
-                    provided=upload.filename,
+                    provided=provided_filename,
                 )
             )
             db.session.commit()
@@ -334,7 +380,7 @@ def register_endpoints(app):
                     team_id=team.id if team else None,
                     challenge_id=challenge_id,
                     ip=ip,
-                    provided=upload.filename,
+                    provided=provided_filename,
                 )
                 db.session.add(solve)
                 db.session.commit()
@@ -356,7 +402,7 @@ def register_endpoints(app):
             team_id=team.id if team else None,
             challenge_id=challenge_id,
             ip=ip,
-            provided=upload.filename,
+            provided=provided_filename,
         )
         db.session.add(wrong)
         db.session.commit()
