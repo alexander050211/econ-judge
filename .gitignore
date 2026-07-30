@@ -58,3 +58,5 @@ reference/
 # Design hand-off bundles + scratch probes (not source)
 *.zip
 _fs_probe.txt
+
+CONTEST_CREDENTIALS.txt

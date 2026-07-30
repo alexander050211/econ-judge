@@ -890,7 +890,7 @@ INDEX_CONTENT = """\
       <div class="s1-stat">
         <div class="d-meta">참가 팀</div>
         <div class="s1-stat-num">4</div>
-        <div class="s1-stat-en">조별 약 8명 / 총 32명</div>
+        <div class="s1-stat-en">조별 약 3명 / 총 12명</div>
       </div>
       <div class="s1-stat">
         <div class="d-meta">파일 한도</div>
