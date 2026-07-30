@@ -28,6 +28,11 @@ CTF_DESCRIPTION = os.environ.get(
     "CTFD_DESCRIPTION", "공헌 공드림 캠프 E-CON 논설 (논리설계) 자동채점 시스템"
 )
 PROBLEM_SET_VERSION = "2026-summer-v1"
+# Final HWP flat-number migration. The five entries are a permutation, so
+# existing participant history can follow its semantic challenge rather than
+# being deleted when the CTFd primary-key numbers are repurposed.
+CHALLENGE_NUMBERING_VERSION = "2026-summer-hwp-flat-v1"
+CHALLENGE_ID_RENUMBER = {7: 9, 8: 10, 9: 11, 10: 7, 11: 8}
 
 # Hidden user reserved for tests/deploy_smoke.py runs.
 SMOKE_NAME = "smoke-test-1"
@@ -68,8 +73,8 @@ DEMO_TEAMS = [
         "email": "team1@econ-judge.local",
         "solves": [
             (1, 118), (2, 114), (3, 108), (4, 103),
-            (5, 96), (6, 91), (7, 84), (8, 76), (9, 66),
-            (10, 55), (11, 43),
+            (5, 96), (6, 91), (9, 84), (10, 76), (11, 66),
+            (7, 55), (8, 43),
             (12, 34), (13, 25), (15, 16),
         ],  # total: 72 pts
     },
@@ -78,7 +83,7 @@ DEMO_TEAMS = [
         "email": "team2@econ-judge.local",
         "solves": [
             (1, 116), (2, 111), (3, 105), (4, 99),
-            (5, 92), (6, 86), (7, 77), (8, 65), (9, 52), (10, 35),
+            (5, 92), (6, 86), (9, 77), (10, 65), (11, 52), (7, 35),
         ],  # total: 45 pts
     },
     {
@@ -86,7 +91,7 @@ DEMO_TEAMS = [
         "email": "team3@econ-judge.local",
         "solves": [
             (1, 112), (2, 106), (3, 99), (4, 91),
-            (5, 78), (6, 67), (7, 51),
+            (5, 78), (6, 67), (9, 51),
         ],  # total: 21 pts
     },
     {
@@ -2213,10 +2218,37 @@ def _load_challenges():
 CHALLENGES = _load_challenges()
 
 
+def _migrate_challenge_numbering() -> None:
+    """Move Solve/Fail rows to the final HWP's flat challenge numbers once.
+
+    Existing CTFd challenge primary keys are repurposed by the bootstrap
+    upsert. This two-pass offset avoids transient unique-key collisions while
+    preserving any review submissions that already exist on the service.
+    """
+    if get_config("econ_challenge_numbering_version") == CHALLENGE_NUMBERING_VERSION:
+        return
+
+    moved = 0
+    for model in (Solves, Fails):
+        records = model.query.filter(
+            model.challenge_id.in_(CHALLENGE_ID_RENUMBER)
+        ).all()
+        for record in records:
+            record.challenge_id += 100
+        db.session.flush()
+        for record in records:
+            record.challenge_id = CHALLENGE_ID_RENUMBER[record.challenge_id - 100]
+        moved += len(records)
+    set_config("econ_challenge_numbering_version", CHALLENGE_NUMBERING_VERSION)
+    db.session.commit()
+    print(f"[bootstrap] HWP flat challenge numbering migrated ({moved} records)")
+
+
 def main() -> None:
     app = create_app()
     with app.app_context():
         db.create_all()
+        _migrate_challenge_numbering()
 
         # Challenge ids are reused between camps. Reset attempt history once
         # on a problem-set change so an old Solve cannot score a new problem.

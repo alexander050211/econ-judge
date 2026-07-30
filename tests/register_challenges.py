@@ -62,7 +62,7 @@ CHALLENGES = [
 
 입력 단자는 `A`, `B`, 출력 단자는 `Y`입니다. NAND 외의 논리 게이트는 사용할 수 없습니다.""",
      4),
-    (7, "반가산기", "2라운드", 6,
+    (9, "반가산기", "2라운드", 6,
      """두 1비트 값 `P`, `Q`를 더하는 반가산기를 설계하세요.
 
 - 입력: `P`, `Q`
@@ -70,7 +70,7 @@ CHALLENGES = [
 
 `S`는 덧셈 결과의 낮은 자리이며, `C_out`은 받아올림입니다.""",
      4),
-    (8, "전가산기", "2라운드", 6,
+    (10, "전가산기", "2라운드", 6,
      """두 1비트 값과 이전 자리의 받아올림을 더하는 전가산기를 설계하세요.
 
 - 입력: `P`, `Q`, `C_in`
@@ -78,7 +78,7 @@ CHALLENGES = [
 
 세 입력의 합을 2비트 결과 `(C_out, S)`로 출력해야 합니다.""",
      8),
-    (9, "3비트 덧셈 연산기", "2라운드", 8,
+    (11, "3비트 덧셈 연산기", "2라운드", 8,
      """두 3비트 이진수 `X`, `Y`를 더하여 4비트 합 `S`를 출력하세요.
 
 - 입력: `X2`, `X1`, `X0`, `Y2`, `Y1`, `Y0`
@@ -86,7 +86,7 @@ CHALLENGES = [
 
 `X0`, `Y0`, `S0`이 각 수의 가장 낮은 자리입니다.""",
      64),
-    (10, "21세기 윤년 판독기", "1라운드", 10,
+    (7, "21세기 윤년 판독기", "1라운드", 10,
      """2000년부터 2099년까지의 연도가 윤년인지 판별하는 회로를 설계하세요.
 
 - `A3`~`A0`: 연도 끝 두 자리 중 십의 자리 BCD
@@ -97,7 +97,7 @@ CHALLENGES = [
 
 예: 2000년은 `L=1`, 2026년은 `L=0`입니다.""",
      100),
-    (11, "A+B+C 등식 회로", "1라운드", 10,
+    (8, "A+B+C 등식 회로", "1라운드", 10,
      """두 입력에서는 다음 등식이 성립합니다.
 
 `A + B = (A AND B) + (A OR B)`
@@ -141,12 +141,12 @@ CHALLENGES = [
      """Part B의 1비트 결과를 받아 7-segment에 문자를 표시하세요.
 
 - 입력: `Y`
-- 출력: `a`, `b`, `c`, `d`, `e`, `f`, `g`, `dp`
+- 출력: `a`, `b`, `c`, `d`, `e`, `f`, `g`
 - `Y=1`이면 소문자 `y`
 - `Y=0`이면 소문자 `n`
 - 출력값 `1`은 해당 획이 켜짐을 뜻합니다.
-- Digital의 `Seven-Seg` 부품을 정확히 1개 배치하고, 각 출력 단자를 같은 이름의 부품 입력에 연결하세요.
-- 소수점 입력 `dp`는 항상 `0`이어야 합니다.
+- Use exactly one `Seven-Seg` component.
+- Leave the provided `Vcc` and `dp` unchanged; `dp` must stay off (`0`).
 
 ![7-segment의 a부터 g까지 획 배치](/plugins/econ_judge/assets/problems/seven-segment-map.png)
 
@@ -155,6 +155,9 @@ CHALLENGES = [
 | ![y 모양](/plugins/econ_judge/assets/problems/seven-segment-y.png) | ![n 모양](/plugins/econ_judge/assets/problems/seven-segment-n.png) |""",
      2),
 ]
+
+# Flat problem numbers follow the final HWP order, regardless of subproblem labels.
+CHALLENGES.sort(key=lambda challenge: challenge[0])
 
 
 def login(base_url: str, name: str, password: str) -> tuple[requests.Session, str]:

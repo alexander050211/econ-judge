@@ -38,8 +38,8 @@ SAMPLES_ROOT = "tests/samples/5jo-26winter"
 SAMPLES = {
     3: f"{SAMPLES_ROOT}/5조_연습문제/2번_입력이3개인AND게이트.dig",
     4: f"{SAMPLES_ROOT}/5조_연습문제/3번_2대1멀티플렉서(MUX).dig",
-    7: f"{SAMPLES_ROOT}/5조_프로젝트1/A1_반가산기(HalfAdder)만들기.dig",
-    10: f"{SAMPLES_ROOT}/5조_미션문제/4번_21세기윤년판독기만들기.dig",
+    9: f"{SAMPLES_ROOT}/5조_프로젝트1/A1_반가산기(HalfAdder)만들기.dig",
+    7: f"{SAMPLES_ROOT}/5조_미션문제/4번_21세기윤년판독기만들기.dig",
 }
 
 

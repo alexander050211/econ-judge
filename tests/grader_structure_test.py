@@ -126,8 +126,7 @@ class StructureTests(unittest.TestCase):
 
     def test_reuse_challenges_allow_components_or_plain_gates(self):
         cases = {
-            8: "07_half_adder.dig",
-            9: "08_full_adder.dig",
+            10: "07_half_adder.dig",
             11: "08_full_adder.dig",
             13: "12_at_least_one.dig",
         }

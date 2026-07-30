@@ -16,8 +16,8 @@ _spec.loader.exec_module(grader)
 
 # (canonical filename, challenge_id, expected pass count)
 TESTS = [
-    ("07_half_adder.dig", 7, 4),
-    ("08_full_adder.dig", 8, 8),
+    ("07_half_adder.dig", 9, 4),
+    ("08_full_adder.dig", 10, 8),
     ("12_at_least_one.dig", 12, 4),
 ]
 

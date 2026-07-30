@@ -12,8 +12,8 @@ from dataclasses import dataclass
 from datetime import datetime, timedelta, timezone
 
 
-ROUND_1_CHALLENGE_IDS = frozenset({1, 2, 3, 4, 5, 6, 10, 11})
-ROUND_2_CHALLENGE_IDS = frozenset({7, 8, 9, 12, 13, 14, 15})
+ROUND_1_CHALLENGE_IDS = frozenset(range(1, 9))
+ROUND_2_CHALLENGE_IDS = frozenset(range(9, 16))
 ALL_CHALLENGE_IDS = ROUND_1_CHALLENGE_IDS | ROUND_2_CHALLENGE_IDS
 
 ROUND_1_DURATION = timedelta(minutes=70)

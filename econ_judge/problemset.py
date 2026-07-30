@@ -1,23 +1,28 @@
-"""Small problem-set constants shared by routes and graders."""
+"""Problem-set constants derived from the final contest HWP."""
 
 
 TRUTH_TABLE_CHALLENGE_ID = 1
-STARTER_FILES = {
-    2: "02_truth_table_xor.dig",
-    3: "03_three_input_and.dig",
-    4: "04_two_to_one_mux.dig",
-    5: "05_nand_not.dig",
-    6: "06_nand_or.dig",
-    7: "07_half_adder.dig",
-    8: "08_full_adder.dig",
-    9: "09_three_bit_adder.dig",
-    10: "10_leap_year.dig",
-    11: "11_abc_identity.dig",
-    12: "12_at_least_one.dig",
-    13: "13_flood_warning.dig",
-    14: "14_flood_risk.dig",
-    15: "15_seven_segment_yn.dig",
+
+# These are the filenames that the final HWP says are already present on each
+# team's contest notebook. They are reference names only: the final source
+# files stay off the web server because several contain completed circuits.
+HWP_STARTER_FILES = {
+    2: 'N조_1라운드/2번_진리표를통해회로만들어보기.dig',
+    3: 'N조_1라운드/3번_입력이3개인AND게이트.dig',
+    4: 'N조_1라운드/4번_2대1멀티플렉서(MUX).dig',
+    5: 'N조_1라운드/5-1번_NAND게이트로NOT게이트만들기.dig',
+    6: 'N조_1라운드/5-2번_NAND게이트로OR게이트만들기.dig',
+    7: 'N조_1라운드/6-1번_21세기윤년판독기만들기.dig',
+    8: 'N조_1라운드/6-2번_A+B+C를집합의연산으로나타내기.dig',
+    9: 'N조_2라운드/1-1번_반가산기(Half Adder)만들기.dig',
+    10: 'N조_2라운드/1-2번_전가산기(Full Adder)만들기.dig',
+    11: 'N조_2라운드/1-3번_3비트덧셈연산기만들기.dig',
+    12: 'N조_2라운드/2-1번_주어진이진수가1이상인지판단하기.dig',
+    13: 'N조_2라운드/2-2번_1이상인이진수가2개이상인지판단하기.dig',
+    14: 'N조_2라운드/3-1번_X^2+Y^2+Z가14이상인지판단하기.dig',
+    15: 'N조_2라운드/3-2번_7-segment출력기.dig',
 }
+
 TRUTH_TABLE_ROWS = (
     (0, 0, 0),
     (0, 0, 1),

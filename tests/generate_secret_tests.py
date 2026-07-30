@@ -175,7 +175,7 @@ _GLYPH_N = [1, 1, 1, 0, 1, 1, 0]
 
 def seven_segment_yn(inp):
     (y,) = inp
-    return [*(_GLYPH_Y if y else _GLYPH_N), 0]
+    return list(_GLYPH_Y if y else _GLYPH_N)
 
 
 SPECS = {
@@ -187,17 +187,17 @@ SPECS = {
             compute=mux_2_to_1),
     5: dict(prefix="NAND_NOT", in_pins=["A"], out_pins=["Y"], compute=not_gate),
     6: dict(prefix="NAND_OR", in_pins=["A", "B"], out_pins=["Y"], compute=or_gate),
-    7: dict(prefix="HA", in_pins=["P", "Q"], out_pins=["S", "C_out"],
-            compute=half_adder),
-    8: dict(prefix="FA", in_pins=["P", "Q", "C_in"], out_pins=["S", "C_out"],
-            compute=full_adder),
-    9: dict(prefix="ADD3", in_pins=["X2", "X1", "X0", "Y2", "Y1", "Y0"],
-            out_pins=["S3", "S2", "S1", "S0"], compute=three_bit_adder),
-    10: dict(prefix="LEAP",
+    7: dict(prefix="LEAP",
              in_pins=["A3", "A2", "A1", "A0", "B3", "B2", "B1", "B0"],
              out_pins=["L"], compute=leap_year),
-    11: dict(prefix="ABC", in_pins=["A", "B", "C"],
+    8: dict(prefix="ABC", in_pins=["A", "B", "C"],
              out_pins=["Y1", "Y2", "Y3"], compute=abc_identity),
+    9: dict(prefix="HA", in_pins=["P", "Q"], out_pins=["S", "C_out"],
+            compute=half_adder),
+    10: dict(prefix="FA", in_pins=["P", "Q", "C_in"], out_pins=["S", "C_out"],
+             compute=full_adder),
+    11: dict(prefix="ADD3", in_pins=["X2", "X1", "X0", "Y2", "Y1", "Y0"],
+             out_pins=["S3", "S2", "S1", "S0"], compute=three_bit_adder),
     12: dict(prefix="A1", in_pins=["X1", "X0"], out_pins=["S0"],
              compute=at_least_one),
     13: dict(prefix="A2",
@@ -207,7 +207,7 @@ SPECS = {
              in_pins=["X1", "X0", "Y1", "Y0", "Z1", "Z0"],
              out_pins=["S0"], compute=flood_risk),
     15: dict(prefix="SEG", in_pins=["Y"],
-             out_pins=["a", "b", "c", "d", "e", "f", "g", "dp"],
+             out_pins=["a", "b", "c", "d", "e", "f", "g"],
              compute=seven_segment_yn),
 }
 

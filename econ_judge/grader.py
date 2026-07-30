@@ -70,8 +70,9 @@ _grade_sem = threading.BoundedSemaphore(GRADE_CONCURRENCY)
 # components. Nested dependencies are included because 08_full_adder.dig itself
 # imports 07_half_adder.dig.
 CANONICAL_SUBCIRCUITS = {
-    8: ["07_half_adder.dig"],
-    9: ["07_half_adder.dig", "08_full_adder.dig"],
+    # HWP Round 2: 10 is Full Adder, 11 is the 3-bit adder, and 13 may reuse
+    # the preceding "at least one" circuit. Challenge 8 has no prerequisite.
+    10: ["07_half_adder.dig"],
     11: ["07_half_adder.dig", "08_full_adder.dig"],
     13: ["12_at_least_one.dig"],
 }
@@ -123,7 +124,7 @@ _STRICT_COMPONENTS = {
     5: ({"In", "Out", "NAnd", "Text"}, 1),
     6: ({"In", "Out", "NAnd", "Text"}, 3),
 }
-_SEVEN_SEGMENT_LABELS = ("a", "b", "c", "d", "e", "f", "g", "dp")
+_SEVEN_SEGMENT_LABELS = ("a", "b", "c", "d", "e", "f", "g")
 _SEVEN_SEGMENT_PIN_OFFSETS = {
     "a": (0, 0),
     "b": (20, 0),
@@ -132,7 +133,6 @@ _SEVEN_SEGMENT_PIN_OFFSETS = {
     "e": (0, 140),
     "f": (20, 140),
     "g": (40, 140),
-    "dp": (60, 140),
 }
 
 

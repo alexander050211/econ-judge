@@ -125,19 +125,17 @@
         {% endif %}
       </div>
       {% else %}
-      <a
-        class="ep-starter-file"
-        href="/plugins/econ_judge/assets/starters/{{ starter_filename }}"
-        download="{{ starter_filename }}"
-      >
+      {% if hwp_starter_filename %}
+      <div class="ep-starter-file" role="note">
         <span class="ep-starter-icon" aria-hidden="true">
-          <i class="fa-solid fa-download"></i>
+          <i class="fa-solid fa-laptop-file"></i>
         </span>
         <span class="ep-starter-copy">
-          <strong>시작 파일 다운로드</strong>
-          <small>{{ starter_filename }}</small>
+          <strong>?? ??? ?? ???? ????</strong>
+          <small><code>{{ hwp_starter_filename }}</code> ??? ?? ?????. ? Digital ??? ??? ???.</small>
         </span>
-      </a>
+      </div>
+      {% endif %}
       <div id="econ-submit-root" data-mode="page">
         <div data-state="empty">
           <label class="dropzone" id="econ-dropzone">

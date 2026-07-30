@@ -40,6 +40,16 @@ class ProblemSetTests(unittest.TestCase):
             count = len(ET.parse(test_file).findall(".//visualElement"))
             self.assertEqual(count, expected_rows[challenge_id])
 
+    def test_final_hwp_flat_numbering_keeps_problem_semantics(self):
+        self.assertEqual(
+            [row[3] for row in register.CHALLENGES],
+            [2, 2, 3, 3, 2, 3, 10, 10, 6, 6, 8, 2, 8, 10, 5],
+        )
+        self.assertEqual(
+            [generator.SPECS[challenge_id]["prefix"] for challenge_id in range(2, 16)],
+            ["XOR", "AND3", "MUX", "NAND_NOT", "NAND_OR", "LEAP", "ABC", "HA", "FA", "ADD3", "A1", "A2", "RISK", "SEG"],
+        )
+
     def test_only_circuit_challenges_have_digital_test_files(self):
         files = {int(path.stem) for path in (ROOT / "secret_tests").glob("*.dig")}
         self.assertEqual(files, set(range(2, 16)))
@@ -65,8 +75,8 @@ class ProblemSetTests(unittest.TestCase):
         self.assertEqual(generator.flood_risk([1, 1, 1, 1, 0, 0]), [1])
         self.assertEqual(generator.flood_risk([1, 0, 1, 1, 0, 1]), [1])
         self.assertEqual(generator.flood_risk([1, 0, 1, 0, 1, 1]), [0])
-        self.assertEqual(generator.seven_segment_yn([1]), [0, 1, 1, 1, 0, 1, 1, 0])
-        self.assertEqual(generator.seven_segment_yn([0]), [1, 1, 1, 0, 1, 1, 0, 0])
+        self.assertEqual(generator.seven_segment_yn([1]), [0, 1, 1, 1, 0, 1, 1])
+        self.assertEqual(generator.seven_segment_yn([0]), [1, 1, 1, 0, 1, 1, 0])
 
 
 if __name__ == "__main__":

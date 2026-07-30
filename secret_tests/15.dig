@@ -13,8 +13,8 @@
         <entry>
           <string>Testdata</string>
           <testData>
-            <dataString>Y a b c d e f g dp
-0 1 1 1 0 1 1 0 0
+            <dataString>Y a b c d e f g
+0 1 1 1 0 1 1 0
 </dataString>
           </testData>
         </entry>
@@ -31,8 +31,8 @@
         <entry>
           <string>Testdata</string>
           <testData>
-            <dataString>Y a b c d e f g dp
-1 0 1 1 1 0 1 1 0
+            <dataString>Y a b c d e f g
+1 0 1 1 1 0 1 1
 </dataString>
           </testData>
         </entry>

@@ -179,10 +179,8 @@ class ProblemPageTests(unittest.TestCase):
         self.assertEqual(captured["context"]["next_id"], 2)
         self.assertFalse(captured["context"]["truth_table_mode"])
         self.assertFalse(captured["context"]["attempt_locked"])
-        self.assertEqual(
-            captured["context"]["starter_filename"],
-            "05_nand_not.dig",
-        )
+        self.assertIsNotNone(captured["context"]["hwp_starter_filename"])
+        self.assertTrue(captured["context"]["hwp_starter_filename"].endswith(".dig"))
         self.assertIn("problems/view.html", app.jinja_env.list_templates())
 
     def test_truth_table_problem_is_locked_after_first_record(self):
@@ -202,7 +200,7 @@ class ProblemPageTests(unittest.TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertTrue(captured["truth_table_mode"])
         self.assertTrue(captured["attempt_locked"])
-        self.assertIsNone(captured["starter_filename"])
+        self.assertIsNone(captured["hwp_starter_filename"])
 
     def test_hidden_and_non_digital_challenges_are_not_participant_pages(self):
         Challenges.query = FakeQuery(
