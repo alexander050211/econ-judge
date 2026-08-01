@@ -523,11 +523,16 @@ main > .jumbotron:has(+ .container [x-data="ChallengeBoard"]),
     if (root) root.innerHTML = '<div class="s2-error">' + esc(msg) + '</div>';
   }
 
+  let loading = false;
+  let pendingRefresh = false;
+
   async function load() {
+    if (loading) return;
+    loading = true;
     injectShell();
     try {
       const [chRes, userRes, competitionRes] = await Promise.all([
-        fetch("/api/v1/challenges?view=user", { credentials: "same-origin" }),
+        fetch("/api/v1/challenges?view=user", { credentials: "same-origin", cache: "no-store" }),
         fetch("/api/v1/users/me", { credentials: "same-origin" }),
         fetch("/api/v1/digital/competition", { credentials: "same-origin" }),
       ]);
@@ -546,7 +551,19 @@ main > .jumbotron:has(+ .container [x-data="ChallengeBoard"]),
     } catch (e) {
       showError("도전 과제를 불러오지 못했습니다: " + (e && e.message ? e.message : "unknown"));
     }
+    finally {
+      loading = false;
+      if (pendingRefresh) {
+        pendingRefresh = false;
+        load();
+      }
+    }
   }
+
+  window.addEventListener("econ:competition-change", () => {
+    if (loading) { pendingRefresh = true; return; }
+    load();
+  });
 
   if (document.readyState === "loading") {
     document.addEventListener("DOMContentLoaded", load);

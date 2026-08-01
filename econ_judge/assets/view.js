@@ -250,15 +250,19 @@ if (econHasChallengeRuntime) {
   function selectFiles(fileList) {
     const files = Array.from(fileList || []);
     if (!files.length) return;
+    const submitRoot = root();
+    const expected = (submitRoot && submitRoot.dataset.answerFilename) || "";
+    const expectedFolder = (submitRoot && submitRoot.dataset.roundFolder) || "";
+    const folderLabel = expectedFolder || "\uc81c\ucd9c";
     if (files.length > 32) {
-      showFileError("starters 폴더의 .dig 파일은 최대 32개까지 제출할 수 있습니다.");
+      showFileError(folderLabel + " \ud3f4\ub354\uc758 .dig \ud30c\uc77c\uc740 \ucd5c\ub300 32\uac1c\uae4c\uc9c0 \uc81c\ucd9c\ud560 \uc218 \uc788\uc2b5\ub2c8\ub2e4.");
       return;
     }
 
     let totalSize = 0;
     for (const file of files) {
       if (!file.name.toLowerCase().endsWith(".dig")) {
-        showFileError("starters 폴더에는 .dig 파일만 포함해야 합니다.");
+        showFileError(folderLabel + " \ud3f4\ub354\uc5d0\ub294 .dig \ud30c\uc77c\ub9cc \ud3ec\ud568\ud574\uc57c \ud569\ub2c8\ub2e4.");
         return;
       }
       if (file.size === 0) {
@@ -276,9 +280,6 @@ if (econHasChallengeRuntime) {
       return;
     }
 
-    const submitRoot = root();
-    const expected = (submitRoot && submitRoot.dataset.answerFilename) || "";
-    const expectedFolder = (submitRoot && submitRoot.dataset.roundFolder) || "";
     const hasExpectedFolder = files.every((file) => {
       const parts = String(file.webkitRelativePath || "").replace(/\\/g, "/").split("/");
       return parts.length === 2 && parts[0] === expectedFolder;

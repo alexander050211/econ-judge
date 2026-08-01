@@ -118,9 +118,8 @@
   if (path === "/my-score") scorePage(); else projectorPage();
 })();
 
-/* Participant-facing contest clock. This is deliberately independent from
-   the score/projector replacement above so it can appear on challenges and
-   individual problem pages as well. */
+/* Participant-facing contest clock. It lives in the shared navigation header
+   and broadcasts phase changes so the challenges page can refresh instantly. */
 (function () {
   "use strict";
 
@@ -133,12 +132,22 @@
   function install() {
     if (document.getElementById("econ-round-countdown")) return;
     const style = document.createElement("style");
-    style.textContent = ".econ-round-countdown{position:fixed;right:18px;bottom:18px;z-index:1100;padding:11px 14px;border:1px solid var(--d-brand-line,#e7b86b);background:var(--d-paper,#fbfaf6);box-shadow:0 8px 24px rgba(21,17,10,.12);font:600 13px var(--d-f-ko,system-ui);color:var(--d-ink,#15110a);font-variant-numeric:tabular-nums}.econ-round-countdown strong{font-family:var(--d-f-mono,monospace);margin-left:8px}@media(max-width:720px){.econ-round-countdown{right:12px;bottom:12px;font-size:12px}}";
+    style.textContent = `
+      .navbar{position:relative}
+      .econ-round-countdown{position:absolute;left:50%;top:50%;z-index:1031;transform:translate(-50%,-50%);display:flex;align-items:center;gap:10px;min-width:250px;padding:6px 13px 7px;border:1px solid var(--d-brand-line,#e7b86b);border-radius:999px;background:var(--d-paper,#fbfaf6);box-shadow:0 3px 12px rgba(21,17,10,.08);color:var(--d-ink,#15110a);font-variant-numeric:tabular-nums;pointer-events:none}
+      .econ-round-countdown[data-phase="round1"],.econ-round-countdown[data-phase="round2"]{border-color:var(--d-brand,#c98620);background:var(--d-brand-soft,#fff3dc)}
+      .econ-round-countdown-label{flex:1;font:600 11px var(--d-f-ko,system-ui);letter-spacing:-.01em;white-space:nowrap}
+      .econ-round-countdown-time{font:700 16px var(--d-f-mono,monospace);letter-spacing:.04em;white-space:nowrap}
+      .econ-round-countdown[data-phase="finished"]{justify-content:center;min-width:140px;border-color:var(--d-hair-strong,#bcb5a7);background:var(--d-paper-soft,#f3f0e8)}
+      @media(max-width:760px){.econ-round-countdown{top:calc(100% + 9px);min-width:0;padding:5px 10px;box-shadow:0 4px 14px rgba(21,17,10,.12)}.econ-round-countdown-label{font-size:10px}.econ-round-countdown-time{font-size:13px}}
+    `;
     document.head.appendChild(style);
     const clock = document.createElement("div");
     clock.id = "econ-round-countdown";
+    clock.className = "econ-round-countdown";
     clock.setAttribute("role", "status");
-    document.body.appendChild(clock);
+    const navbar = document.querySelector(".navbar");
+    (navbar || document.body).appendChild(clock);
   }
 
   function format(seconds) {
@@ -163,44 +172,38 @@
     const clock = document.getElementById("econ-round-countdown");
     if (!clock || !competition) return;
     const [label, endAt] = timerSpec(competition);
-    if (!label) {
-      clock.hidden = true;
-      return;
-    }
+    if (!label) { clock.hidden = true; return; }
     clock.hidden = false;
-    if (!endAt) {
-      clock.textContent = label;
-      return;
-    }
+    clock.dataset.phase = competition.phase || "";
+    if (!endAt) { clock.textContent = label; return; }
     const seconds = Math.max(0, Math.ceil((Date.parse(endAt) - Date.now()) / 1000));
-    clock.innerHTML = "<span></span><strong></strong>";
-    clock.querySelector("span").textContent = label;
-    clock.querySelector("strong").textContent = format(seconds);
+    clock.innerHTML = '<span class="econ-round-countdown-label"></span><strong class="econ-round-countdown-time"></strong>';
+    clock.querySelector(".econ-round-countdown-label").textContent = label;
+    clock.querySelector(".econ-round-countdown-time").textContent = format(seconds);
     if (seconds === 0) reachedTarget = true;
   }
 
   async function refresh() {
     try {
-      const response = await fetch("/api/v1/digital/competition", { credentials: "same-origin" });
+      const response = await fetch("/api/v1/digital/competition", { credentials: "same-origin", cache: "no-store" });
       if (!response.ok) return;
       const payload = await response.json();
-      competition = payload.data || null;
+      const next = payload.data || null;
+      const changed = competition && next && competition.phase !== next.phase;
+      competition = next;
       reachedTarget = false;
       render();
+      if (changed) window.dispatchEvent(new CustomEvent("econ:competition-change", { detail: competition }));
     } catch (_error) {
-      // Keep the last successful display; a transient request failure should
-      // not remove an otherwise useful clock.
+      // Keep the last successful display during a transient failure.
     }
   }
 
   function start() {
     install();
     refresh();
-    setInterval(() => {
-      render();
-      if (reachedTarget) refresh();
-    }, 1000);
-    setInterval(refresh, 30000);
+    setInterval(() => { render(); if (reachedTarget) refresh(); }, 1000);
+    setInterval(refresh, 15000);
   }
 
   if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", start);
