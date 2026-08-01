@@ -1,6 +1,5 @@
 import os
 import re
-import shutil
 import subprocess
 import threading
 import xml.etree.ElementTree as ET
@@ -64,18 +63,10 @@ GRADE_CONCURRENCY = max(1, _int_env("ECON_JUDGE_CONCURRENCY", 1))
 QUEUE_WAIT_SEC = _int_env("ECON_JUDGE_QUEUE_WAIT", 8)
 _grade_sem = threading.BoundedSemaphore(GRADE_CONCURRENCY)
 
-# Optional canonical sub-circuits seeded next to the submission so Digital can
-# resolve imports when a participant chooses to reuse an earlier circuit.
-# Gate-only submissions are equally valid; no structure rule requires these
-# components. Nested dependencies are included because 08_full_adder.dig itself
-# imports 07_half_adder.dig.
-CANONICAL_SUBCIRCUITS = {
-    # HWP Round 2: 10 is Full Adder, 11 is the 3-bit adder, and 13 may reuse
-    # the preceding "at least one" circuit. Challenge 8 has no prerequisite.
-    10: ["07_half_adder.dig"],
-    11: ["07_half_adder.dig", "08_full_adder.dig"],
-    13: ["12_at_least_one.dig"],
-}
+# Do not seed reference circuits into contestant submissions. A component must
+# be included in the contestant's selected round folder, so components cannot
+# silently cross a round boundary.
+CANONICAL_SUBCIRCUITS: dict[int, list[str]] = {}
 
 
 def _seed_canonical(challenge_id: int, working_dir: Path) -> list[str]:

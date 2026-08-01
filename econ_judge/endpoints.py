@@ -3,7 +3,7 @@ import json
 import os
 import tempfile
 import time
-from pathlib import Path
+from pathlib import Path, PurePosixPath
 
 from flask import abort, jsonify, request
 from sqlalchemy import func
@@ -30,12 +30,8 @@ MAX_BUNDLE_BYTES = 1024 * 1024
 
 
 def _uploaded_circuit_files():
-    """Return the submitted starter-folder files, with legacy single-file fallback."""
-    uploaded = [item for item in request.files.getlist("files") if item.filename]
-    if uploaded:
-        return uploaded
-    legacy = request.files.get("file")
-    return [legacy] if legacy is not None and legacy.filename else []
+    """Return the files selected from one contestant round folder."""
+    return [item for item in request.files.getlist("files") if item.filename]
 
 
 def _stage_digital_bundle(challenge_id: int, working_dir: str):
@@ -51,14 +47,26 @@ def _stage_digital_bundle(challenge_id: int, working_dir: str):
     if len(uploads) > MAX_BUNDLE_FILES:
         return None, (), "", "제출 폴더의 .dig 파일이 너무 많습니다."
 
-    expected = Path(HWP_STARTER_FILES.get(challenge_id, "")).name
+    starter_path = PurePosixPath(HWP_STARTER_FILES.get(challenge_id, ""))
+    expected = starter_path.name
+    expected_folder = starter_path.parent.name
     if not expected:
         return None, (), "", "이 문제의 제출 파일 구성을 찾을 수 없습니다."
 
     staged: dict[str, str] = {}
     total_size = 0
     for upload in uploads:
-        filename = Path((upload.filename or "").replace("\\", "/")).name
+        relative_path = PurePosixPath((upload.filename or "").replace("\\", "/"))
+        if (
+            relative_path.is_absolute()
+            or len(relative_path.parts) != 2
+            or relative_path.parts[0] != expected_folder
+        ):
+            return None, (), "", (
+                f"{expected_folder} \ud3f4\ub354\ub9cc \uc120\ud0dd\ud574\uc8fc\uc138\uc694. "
+                "\ud558\uc704 \ud3f4\ub354\ub294 \uc0ac\uc6a9\ud560 \uc218 \uc5c6\uc2b5\ub2c8\ub2e4."
+            )
+        filename = relative_path.name
         if not filename.lower().endswith(".dig"):
             return None, (), "", "starters 폴더의 .dig 파일만 제출할 수 있습니다."
         if not filename or filename in staged:

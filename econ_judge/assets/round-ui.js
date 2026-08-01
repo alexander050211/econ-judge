@@ -117,3 +117,92 @@
   addStyle();
   if (path === "/my-score") scorePage(); else projectorPage();
 })();
+
+/* Participant-facing contest clock. This is deliberately independent from
+   the score/projector replacement above so it can appear on challenges and
+   individual problem pages as well. */
+(function () {
+  "use strict";
+
+  const path = window.location.pathname;
+  if (!(path === "/challenges" || path === "/my-score" || path.indexOf("/problems/") === 0)) return;
+
+  let competition = null;
+  let reachedTarget = false;
+
+  function install() {
+    if (document.getElementById("econ-round-countdown")) return;
+    const style = document.createElement("style");
+    style.textContent = ".econ-round-countdown{position:fixed;right:18px;bottom:18px;z-index:1100;padding:11px 14px;border:1px solid var(--d-brand-line,#e7b86b);background:var(--d-paper,#fbfaf6);box-shadow:0 8px 24px rgba(21,17,10,.12);font:600 13px var(--d-f-ko,system-ui);color:var(--d-ink,#15110a);font-variant-numeric:tabular-nums}.econ-round-countdown strong{font-family:var(--d-f-mono,monospace);margin-left:8px}@media(max-width:720px){.econ-round-countdown{right:12px;bottom:12px;font-size:12px}}";
+    document.head.appendChild(style);
+    const clock = document.createElement("div");
+    clock.id = "econ-round-countdown";
+    clock.setAttribute("role", "status");
+    document.body.appendChild(clock);
+  }
+
+  function format(seconds) {
+    const hours = Math.floor(seconds / 3600);
+    const minutes = Math.floor((seconds % 3600) / 60);
+    const remainingSeconds = seconds % 60;
+    return [hours, minutes, remainingSeconds].map((part) => String(part).padStart(2, "0")).join(":");
+  }
+
+  function timerSpec(data) {
+    switch (data.phase) {
+      case "before": return ["1\ub77c\uc6b4\ub4dc \uc2dc\uc791\uae4c\uc9c0 \ub0a8\uc740 \uc2dc\uac04", data.round1_starts_at];
+      case "round1": return ["1\ub77c\uc6b4\ub4dc \ub0a8\uc740 \uc2dc\uac04", data.round1_ends_at];
+      case "break": return ["2\ub77c\uc6b4\ub4dc \uc2dc\uc791\uae4c\uc9c0 \ub0a8\uc740 \uc2dc\uac04", data.round2_starts_at];
+      case "round2": return ["2\ub77c\uc6b4\ub4dc \ub0a8\uc740 \uc2dc\uac04", data.round2_ends_at];
+      case "finished": return ["\ub300\ud68c \uc885\ub8cc", null];
+      default: return ["", null];
+    }
+  }
+
+  function render() {
+    const clock = document.getElementById("econ-round-countdown");
+    if (!clock || !competition) return;
+    const [label, endAt] = timerSpec(competition);
+    if (!label) {
+      clock.hidden = true;
+      return;
+    }
+    clock.hidden = false;
+    if (!endAt) {
+      clock.textContent = label;
+      return;
+    }
+    const seconds = Math.max(0, Math.ceil((Date.parse(endAt) - Date.now()) / 1000));
+    clock.innerHTML = "<span></span><strong></strong>";
+    clock.querySelector("span").textContent = label;
+    clock.querySelector("strong").textContent = format(seconds);
+    if (seconds === 0) reachedTarget = true;
+  }
+
+  async function refresh() {
+    try {
+      const response = await fetch("/api/v1/digital/competition", { credentials: "same-origin" });
+      if (!response.ok) return;
+      const payload = await response.json();
+      competition = payload.data || null;
+      reachedTarget = false;
+      render();
+    } catch (_error) {
+      // Keep the last successful display; a transient request failure should
+      // not remove an otherwise useful clock.
+    }
+  }
+
+  function start() {
+    install();
+    refresh();
+    setInterval(() => {
+      render();
+      if (reachedTarget) refresh();
+    }, 1000);
+    setInterval(refresh, 30000);
+  }
+
+  if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", start);
+  else start();
+})();

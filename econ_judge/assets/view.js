@@ -276,7 +276,18 @@ if (econHasChallengeRuntime) {
       return;
     }
 
-    const expected = (root() && root().dataset.answerFilename) || "";
+    const submitRoot = root();
+    const expected = (submitRoot && submitRoot.dataset.answerFilename) || "";
+    const expectedFolder = (submitRoot && submitRoot.dataset.roundFolder) || "";
+    const hasExpectedFolder = files.every((file) => {
+      const parts = String(file.webkitRelativePath || "").replace(/\\/g, "/").split("/");
+      return parts.length === 2 && parts[0] === expectedFolder;
+    });
+    if (expectedFolder && !hasExpectedFolder) {
+      showFileError(expectedFolder + " \ud3f4\ub354\ub9cc \uc120\ud0dd\ud574\uc8fc\uc138\uc694. \ud558\uc704 \ud3f4\ub354\ub294 \uc0ac\uc6a9\ud560 \uc218 \uc5c6\uc2b5\ub2c8\ub2e4.");
+      return;
+    }
+
     const answer = expected
       ? files.find((file) => file.name === expected)
       : files[0];
@@ -565,7 +576,9 @@ if (econHasChallengeRuntime) {
 
     const fd = new FormData();
     Array.from(input.files).forEach((file) => {
-      const relativeName = file.webkitRelativePath || file.name;
+      const roundFolder = (root() && root().dataset.roundFolder) || "";
+      const relativeName = roundFolder
+        ? roundFolder + "/" + file.name : (file.webkitRelativePath || file.name);
       fd.append("files", file, relativeName);
     });
     const nonce = csrfNonce();

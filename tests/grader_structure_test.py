@@ -162,14 +162,15 @@ class StructureTests(unittest.TestCase):
             work = Path(tmp)
             submission = work / "team_full_adder.dig"
             dependency = work / "team_half_adder.dig"
-            full_adder = (ROOT / "solutions" / "2026-summer" / "08_full_adder.dig").read_text(
+            solution_root = ROOT / "solutions" / "2026-summer"
+            full_adder = next(solution_root.rglob("1-2*.dig")).read_text(
                 encoding="utf-8"
             )
             submission.write_text(
-                full_adder.replace("07_half_adder.dig", dependency.name),
+                full_adder.replace(next(solution_root.rglob("1-1*.dig")).name, dependency.name),
                 encoding="utf-8",
             )
-            shutil.copy2(ROOT / "solutions" / "2026-summer" / "07_half_adder.dig", dependency)
+            shutil.copy2(next(solution_root.rglob("1-1*.dig")), dependency)
 
             result = grader.grade_submission(10, str(submission), (str(dependency),))
             self.assertEqual(result["status"], "graded")

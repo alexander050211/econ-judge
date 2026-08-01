@@ -136,7 +136,7 @@
         </span>
       </div>
       {% endif %}
-      <div id="econ-submit-root" data-mode="page" data-answer-filename="{{ hwp_starter_filename.split('/')[-1] if hwp_starter_filename else '' }}">
+      <div id="econ-submit-root" data-mode="page" data-answer-filename="{{ hwp_starter_filename.split('/')[-1] if hwp_starter_filename else '' }}" data-round-folder="{{ hwp_starter_filename.split('/')[0] if hwp_starter_filename else '' }}">
         <div data-state="empty">
           <label class="dropzone" id="econ-dropzone">
             <input type="file" id="challenge-file" accept=".dig" webkitdirectory directory multiple>

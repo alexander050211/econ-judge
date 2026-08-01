@@ -3,12 +3,23 @@
 from __future__ import annotations
 
 import xml.etree.ElementTree as ET
+import importlib.util
 from dataclasses import dataclass
 from pathlib import Path
 
 
 REPO_ROOT = Path(__file__).resolve().parent.parent
 OUT_DIR = REPO_ROOT / "econ_judge" / "assets" / "starters"
+
+_problemset_spec = importlib.util.spec_from_file_location(
+    "starter_problemset", REPO_ROOT / "econ_judge" / "problemset.py"
+)
+if _problemset_spec is None or _problemset_spec.loader is None:
+    raise RuntimeError("Could not load the starter-file manifest")
+_problemset = importlib.util.module_from_spec(_problemset_spec)
+_problemset_spec.loader.exec_module(_problemset)
+HWP_STARTER_FILES: dict[int, str] = _problemset.HWP_STARTER_FILES
+
 
 
 @dataclass(frozen=True)
@@ -58,9 +69,9 @@ STARTERS = {
     9: Starter(
         "09_three_bit_adder.dig",
         (
-            ("X2", 100, 100), ("Y2", 100, 120),
-            ("X1", 100, 300), ("Y1", 100, 320),
-            ("X0", 100, 500), ("Y0", 100, 520),
+            ("X2", 100, 80), ("Y2", 100, 120),
+            ("X1", 100, 280), ("Y1", 100, 320),
+            ("X0", 100, 480), ("Y0", 100, 520),
         ),
         (
             ("S3", 900, 180), ("S2", 900, 100),
@@ -118,6 +129,13 @@ STARTERS = {
     ),
 }
 
+STARTER_SOURCE_IDS = {
+    2: 2, 3: 3, 4: 4, 5: 5, 6: 6,
+    7: 10, 8: 11,
+    9: 7, 10: 8, 11: 9,
+    12: 12, 13: 13, 14: 14, 15: 15,
+}
+
 
 def _visual_element(parent, name: str, x: int, y: int, label: str | None = None):
     visual = ET.SubElement(parent, "visualElement")
@@ -153,12 +171,13 @@ def write_starter(starter: Starter, path: Path) -> None:
 
 def main() -> None:
     OUT_DIR.mkdir(parents=True, exist_ok=True)
-    expected = {starter.filename for starter in STARTERS.values()}
-    for stale in OUT_DIR.glob("*.dig"):
-        if stale.name not in expected:
+    expected = set(HWP_STARTER_FILES.values())
+    for stale in OUT_DIR.rglob("*.dig"):
+        if stale.relative_to(OUT_DIR).as_posix() not in expected:
             stale.unlink()
-    for challenge_id, starter in STARTERS.items():
-        path = OUT_DIR / starter.filename
+    for challenge_id in HWP_STARTER_FILES:
+        starter = STARTERS[STARTER_SOURCE_IDS[challenge_id]]
+        path = OUT_DIR / HWP_STARTER_FILES[challenge_id]
         write_starter(starter, path)
         print(f"challenge {challenge_id:>2}: {path.relative_to(REPO_ROOT)}")
 
