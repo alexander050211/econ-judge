@@ -20,6 +20,17 @@ ROUND_1_DURATION = timedelta(minutes=70)
 BREAK_DURATION = timedelta(minutes=10)
 ROUND_2_DURATION = timedelta(minutes=80)
 
+
+def rehearsal_mode() -> bool:
+    """Whether this process is running the short, opt-in rehearsal schedule."""
+    return os.environ.get("ECON_JUDGE_REHEARSAL", "").strip().lower() == "true"
+
+
+def _schedule_durations() -> tuple[timedelta, timedelta, timedelta]:
+    if rehearsal_mode():
+        return timedelta(minutes=2), timedelta(minutes=1), timedelta(minutes=2)
+    return ROUND_1_DURATION, BREAK_DURATION, ROUND_2_DURATION
+
 ROUND_INFO = {
     "round1": {
         "label": "1라운드",
@@ -49,10 +60,11 @@ def competition_status(now: datetime | None = None) -> dict:
         "round2_starts_at": None,
         "round2_ends_at": None,
     }
+    round_1_duration, break_duration, round_2_duration = _schedule_durations()
     if start is not None:
-        round_1_end = start + ROUND_1_DURATION
-        round_2_start = round_1_end + BREAK_DURATION
-        round_2_end = round_2_start + ROUND_2_DURATION
+        round_1_end = start + round_1_duration
+        round_2_start = round_1_end + break_duration
+        round_2_end = round_2_start + round_2_duration
         timestamps = {
             "round1_starts_at": start.isoformat(),
             "round1_ends_at": round_1_end.isoformat(),
@@ -61,6 +73,7 @@ def competition_status(now: datetime | None = None) -> dict:
         }
     return {
         "phase": phase.name,
+        "rehearsal": rehearsal_mode(),
         "submissions_open": phase.submissions_open,
         "message": phase.message,
         "visible_challenge_ids": sorted(phase.visible_challenge_ids),
@@ -70,7 +83,11 @@ def competition_status(now: datetime | None = None) -> dict:
                 "label": data["label"],
                 "challenge_ids": sorted(data["challenge_ids"]),
                 "points": data["points"],
-                "duration_minutes": data["duration_minutes"],
+                "duration_minutes": (
+                    int(round_1_duration.total_seconds() // 60)
+                    if key == "round1"
+                    else int(round_2_duration.total_seconds() // 60)
+                ),
             }
             for key, data in ROUND_INFO.items()
         ],
@@ -121,9 +138,10 @@ def current_phase(now: datetime | None = None) -> CompetitionPhase:
     else:
         now = now.astimezone(timezone.utc)
 
-    round_1_end = start + ROUND_1_DURATION
-    break_end = round_1_end + BREAK_DURATION
-    round_2_end = break_end + ROUND_2_DURATION
+    round_1_duration, break_duration, round_2_duration = _schedule_durations()
+    round_1_end = start + round_1_duration
+    break_end = round_1_end + break_duration
+    round_2_end = break_end + round_2_duration
 
     if now < start:
         return CompetitionPhase(

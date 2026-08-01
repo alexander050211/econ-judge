@@ -62,6 +62,32 @@ class CompetitionPhaseTests(unittest.TestCase):
         self.assertEqual(status["phase"], "open")
         self.assertEqual([(r["label"], r["points"]) for r in status["rounds"]], [("1라운드", 35), ("2라운드", 45)])
         self.assertEqual(sum(r["points"] for r in status["rounds"]), 80)
+    def test_rehearsal_schedule_exercises_every_phase_in_five_minutes(self):
+        start = datetime(2026, 8, 1, 9, 0, tzinfo=timezone(timedelta(hours=9)))
+        with patch.dict(
+            os.environ,
+            {
+                "ECON_JUDGE_COMPETITION_START": start.isoformat(),
+                "ECON_JUDGE_REHEARSAL": "true",
+            },
+            clear=True,
+        ):
+            self.assertEqual(competition.current_phase(start).name, "round1")
+            self.assertEqual(
+                competition.current_phase(start + timedelta(minutes=2)).name,
+                "break",
+            )
+            self.assertEqual(
+                competition.current_phase(start + timedelta(minutes=3)).name,
+                "round2",
+            )
+            self.assertEqual(
+                competition.current_phase(start + timedelta(minutes=5)).name,
+                "finished",
+            )
+            status = competition.competition_status(start)
+            self.assertTrue(status["rehearsal"])
+            self.assertEqual([round_["duration_minutes"] for round_ in status["rounds"]], [2, 2])
     def test_bare_start_time_is_rejected(self):
         with patch.dict(
             os.environ,

@@ -25,7 +25,7 @@ ADMIN_EMAIL = os.environ.get("CTFD_ADMIN_EMAIL", "admin@econ-judge.local")
 ADMIN_PASSWORD = os.environ.get("CTFD_ADMIN_PASSWORD", "demo1234")
 CTF_NAME = os.environ.get("CTFD_NAME", "SNU SENS E-CON 논설")
 CTF_DESCRIPTION = os.environ.get(
-    "CTFD_DESCRIPTION", "공헌 공드림 캠프 E-CON 논설 (논리설계) 자동채점 시스템"
+    "CTFD_DESCRIPTION", "2026 하계 공학 캠프 E-CON 논설 (논리설계) 자동채점 시스템"
 )
 PROBLEM_SET_VERSION = "2026-summer-v1"
 # Final HWP flat-number migration. The five entries are a permutation, so
@@ -827,7 +827,7 @@ INDEX_CONTENT = """\
 
     <div class="s1-topmeta">
       <span class="d-livedot">LIVE</span>
-      <span class="s1-tm-mid">SNU SENS &middot; 2026 공헌 공드림 캠프</span>
+      <span class="s1-tm-mid">SNU SENS &middot; 2026 하계 공학 캠프</span>
       <span class="s1-tm-r">SENS&#8209;2026&#8209;001 / v1.0</span>
     </div>
 
@@ -1282,7 +1282,7 @@ MY_SCORE_CONTENT = """\
       <div class="s4-head-meta">
         <span class="d-livedot" id="ms-live-pill">LIVE</span>
         <span class="s4-frozen-tag" id="ms-frozen-pill" style="display:none"><span class="d-pill-dot"></span>FROZEN · 동결</span>
-        <span class="s4-head-doc">SNU SENS · 2026 공헌 공드림 캠프</span>
+        <span class="s4-head-doc">SNU SENS · 2026 하계 공학 캠프</span>
       </div>
       <h1 class="s4-h1">내 점수</h1>
       <p class="s4-head-sub">
@@ -1903,7 +1903,7 @@ PROJECTOR_CONTENT = """\
   <header class="s5-top">
     <div class="s5-top-l">
       <span class="s5-mark">◤ SNU · SENS</span>
-      <span class="s5-doc">E-CON 논설 · Auto-Grader · 2026 공헌 공드림 캠프</span>
+      <span class="s5-doc">E-CON 논설 · Auto-Grader · 2026 하계 공학 캠프</span>
     </div>
     <div class="s5-top-c">
       <span class="s5-phase" id="pj-phase-pill">
