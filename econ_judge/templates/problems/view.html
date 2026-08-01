@@ -131,8 +131,8 @@
           <i class="fa-solid fa-folder-open"></i>
         </span>
         <span class="ep-starter-copy">
-          <strong>{{ hwp_starter_filename.split('/')[0] }} 폴더 안에서만 작업하세요</strong>
-          <small><code>{{ hwp_starter_filename }}</code>에 저장한 뒤, 제출할 때는 해당 라운드 폴더 전체를 선택하세요. 필요한 사용자 부품 .dig 파일도 같은 폴더에 둡니다.</small>
+          <strong>{{ submission_folder }} 폴더 안에서만 작업하세요</strong>
+          <small><code>{{ submission_folder }}/{{ hwp_starter_filename.split('/')[-1] }}</code>에 저장한 뒤, 제출할 때는 해당 라운드 폴더 전체를 선택하세요. 필요한 사용자 부품 .dig 파일도 같은 폴더에 둡니다.</small>
         </span>
       </div>
       {% endif %}
@@ -143,7 +143,7 @@
             <span class="dropzone-icon" aria-hidden="true">
               <i class="fa-regular fa-file-code"></i>
             </span>
-            <strong><span>{{ hwp_starter_filename.split('/')[0] }}</span> 폴더 선택</strong>
+            <strong><span>{{ submission_folder }}</span> 폴더 선택</strong>
             <small>이 문제의 .dig 파일과 사용자 부품을 같은 폴더에서 함께 제출합니다</small>
           </label>
           <div class="file-error" id="econ-file-error" role="alert" hidden></div>

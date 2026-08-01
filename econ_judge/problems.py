@@ -33,6 +33,15 @@ def _problem_sort_key(challenge):
     return (_CATEGORY_ORDER.get(category, 99), category, challenge.id)
 
 
+def _submission_folder(user_name: str, starter_path: str | None) -> str:
+    """Return the team-owned folder expected for a final circuit upload."""
+    if not starter_path:
+        return ""
+    round_suffix = starter_path.split("/", 1)[0].split("_", 1)[-1]
+    team_names = {f"{number}\uc870" for number in range(1, 5)}
+    prefix = user_name if user_name in team_names else "N\uc870"
+    return f"{prefix}_{round_suffix}"
+
 def _problem_neighbors(challenge_id: int):
     challenges = sorted(
         Challenges.query.filter_by(state="visible").all(),
@@ -93,6 +102,9 @@ def digital_problem_page(challenge_id):
         # The final HWP supplies these files on the contest notebooks. Do not
         # publish them from the judge: several final files contain solutions.
         hwp_starter_filename=HWP_STARTER_FILES.get(challenge_id),
+        submission_folder=_submission_folder(
+            user.name, HWP_STARTER_FILES.get(challenge_id)
+        ),
         previous_id=previous_id,
         next_id=next_id,
         submissions_open=phase.submissions_open,

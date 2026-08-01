@@ -123,8 +123,6 @@
 (function () {
   "use strict";
 
-  const path = window.location.pathname;
-  if (!(path === "/challenges" || path === "/my-score" || path.indexOf("/problems/") === 0)) return;
 
   let competition = null;
   let reachedTarget = false;
@@ -200,9 +198,10 @@
   }
 
   function start() {
+    if (!document.querySelector(".navbar")) return;
     install();
     refresh();
-    setInterval(() => { render(); if (reachedTarget) refresh(); }, 1000);
+    setInterval(() => { render(); if (reachedTarget) refresh(); }, 250);
     setInterval(refresh, 15000);
   }
 

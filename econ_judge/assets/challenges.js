@@ -525,6 +525,31 @@ main > .jumbotron:has(+ .container [x-data="ChallengeBoard"]),
 
   let loading = false;
   let pendingRefresh = false;
+  let knownPhase = null;
+
+  function requestRefresh() {
+    if (loading) { pendingRefresh = true; return; }
+    load();
+  }
+
+  function observeCompetition(data) {
+    const phase = data && data.phase;
+    if (!phase) return;
+    const changed = knownPhase !== null && knownPhase !== phase;
+    knownPhase = phase;
+    if (changed) requestRefresh();
+  }
+
+  async function pollCompetitionPhase() {
+    try {
+      const response = await fetch("/api/v1/digital/competition", { credentials: "same-origin", cache: "no-store" });
+      if (!response.ok) return;
+      const payload = await response.json();
+      observeCompetition(payload.data || {});
+    } catch (_error) {
+      // The main load path will retry on the next transition/event.
+    }
+  }
 
   async function load() {
     if (loading) return;
@@ -547,7 +572,9 @@ main > .jumbotron:has(+ .container [x-data="ChallengeBoard"]),
       const chJson = await chRes.json();
       const userJson = userRes.ok ? await userRes.json() : {};
       const competitionJson = competitionRes.ok ? await competitionRes.json() : {};
-      render(chJson.data || [], (userJson && userJson.data) || {}, (competitionJson && competitionJson.data) || {});
+      const competition = (competitionJson && competitionJson.data) || {};
+      render(chJson.data || [], (userJson && userJson.data) || {}, competition);
+      observeCompetition(competition);
     } catch (e) {
       showError("도전 과제를 불러오지 못했습니다: " + (e && e.message ? e.message : "unknown"));
     }
@@ -560,10 +587,10 @@ main > .jumbotron:has(+ .container [x-data="ChallengeBoard"]),
     }
   }
 
-  window.addEventListener("econ:competition-change", () => {
-    if (loading) { pendingRefresh = true; return; }
-    load();
+  window.addEventListener("econ:competition-change", (event) => {
+    observeCompetition(event.detail || {});
   });
+  setInterval(pollCompetitionPhase, 1000);
 
   if (document.readyState === "loading") {
     document.addEventListener("DOMContentLoaded", load);
