@@ -49,15 +49,6 @@ def _stage_digital_bundle(challenge_id: int, working_dir: str):
 
     starter_path = PurePosixPath(HWP_STARTER_FILES.get(challenge_id, ""))
     expected = starter_path.name
-    starter_folder = starter_path.parent.name
-    round_suffix = starter_folder.split("_", 1)[-1]
-    team_names = {f"{number}\uc870" for number in range(1, 5)}
-    user_name = get_current_user().name
-    expected_folder = (
-        f"{user_name}_{round_suffix}"
-        if user_name in team_names
-        else starter_folder
-    )
     if not expected:
         return None, (), "", "이 문제의 제출 파일 구성을 찾을 수 없습니다."
 
@@ -68,10 +59,9 @@ def _stage_digital_bundle(challenge_id: int, working_dir: str):
         if (
             relative_path.is_absolute()
             or len(relative_path.parts) != 2
-            or relative_path.parts[0] != expected_folder
         ):
             return None, (), "", (
-                f"{expected_folder} \ud3f4\ub354\ub9cc \uc120\ud0dd\ud574\uc8fc\uc138\uc694. "
+                "Please select one folder. "
                 "\ud558\uc704 \ud3f4\ub354\ub294 \uc0ac\uc6a9\ud560 \uc218 \uc5c6\uc2b5\ub2c8\ub2e4."
             )
         filename = relative_path.name

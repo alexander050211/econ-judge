@@ -252,8 +252,7 @@ if (econHasChallengeRuntime) {
     if (!files.length) return;
     const submitRoot = root();
     const expected = (submitRoot && submitRoot.dataset.answerFilename) || "";
-    const expectedFolder = (submitRoot && submitRoot.dataset.roundFolder) || "";
-    const folderLabel = expectedFolder || "\uc81c\ucd9c";
+    const folderLabel = "submission";
     if (files.length > 32) {
       showFileError(folderLabel + " \ud3f4\ub354\uc758 .dig \ud30c\uc77c\uc740 \ucd5c\ub300 32\uac1c\uae4c\uc9c0 \uc81c\ucd9c\ud560 \uc218 \uc788\uc2b5\ub2c8\ub2e4.");
       return;
@@ -280,12 +279,12 @@ if (econHasChallengeRuntime) {
       return;
     }
 
-    const hasExpectedFolder = files.every((file) => {
+    const isSingleFolder = files.every((file) => {
       const parts = String(file.webkitRelativePath || "").replace(/\\/g, "/").split("/");
-      return parts.length === 2 && parts[0] === expectedFolder;
+      return parts.length === 2 && parts[0];
     });
-    if (expectedFolder && !hasExpectedFolder) {
-      showFileError(expectedFolder + " \ud3f4\ub354\ub9cc \uc120\ud0dd\ud574\uc8fc\uc138\uc694. \ud558\uc704 \ud3f4\ub354\ub294 \uc0ac\uc6a9\ud560 \uc218 \uc5c6\uc2b5\ub2c8\ub2e4.");
+    if (!isSingleFolder) {
+      showFileError("Please select one folder; subfolders are not supported.");
       return;
     }
 
@@ -577,9 +576,7 @@ if (econHasChallengeRuntime) {
 
     const fd = new FormData();
     Array.from(input.files).forEach((file) => {
-      const roundFolder = (root() && root().dataset.roundFolder) || "";
-      const relativeName = roundFolder
-        ? roundFolder + "/" + file.name : (file.webkitRelativePath || file.name);
+      const relativeName = file.webkitRelativePath || "submission/" + file.name;
       fd.append("files", file, relativeName);
     });
     const nonce = csrfNonce();
