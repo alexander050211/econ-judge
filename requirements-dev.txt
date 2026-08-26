@@ -1,0 +1,38 @@
+# Dependencies for running the test suite locally and in CI:
+#
+#   pip install -r requirements-dev.txt
+#   python -m pytest tests
+#
+# The tests are written with unittest, but pytest collects them (the files are
+# named *_test.py). Flask, Werkzeug and requests are held at CTFd 3.8.5's own
+# pins so the tests exercise the same versions the deployed plugin runs on.
+#
+# Werkzeug is listed explicitly even though Flask pulls it in: Flask 2.1.3
+# declares only "Werkzeug>=2.0" but imports werkzeug.urls.url_quote, which
+# Werkzeug 3.x removed, so an unpinned resolution installs a Flask that cannot
+# import. Same reasoning as the Dockerfile's explicit gevent pin.
+#
+# SQLAlchemy is CTFd 3.8.5's own pin. It is here because six tests in
+# bootstrap_demo_data_test.py rebuild CTFd's joined-table Solves/Submissions
+# shape on in-memory SQLite -- they are the regression tests for a bulk DELETE
+# that would not compile on SQLite and silently wiped every real solve on
+# PostgreSQL. Without this pin they skip, so CI would have gone green on the
+# exact bug they exist to catch.
+#
+# Three cases additionally need a JRE and Digital.jar at the repo root, and
+# they behave differently without them: grader_structure_test.py's
+# component-bundle case shells out to Digital and FAILS, while
+# health_export_test.py's ready-200 and admin-report cases SKIP silently --
+# and the ready-200 one is the only check that /health answers 200 with an
+# empty failed_checks list, so a green run on a JRE-less machine has not
+# exercised it at all. .github/workflows/tests.yml installs both so nothing
+# goes quiet there. Everything else in the suite is pure Python.
+#
+# Keep this file ASCII-only: pip decodes requirements files with the locale
+# codec, so a non-ASCII comment makes `pip install -r` fail outright on a
+# cp949 (Korean Windows) console.
+Flask==2.1.3
+Werkzeug==2.2.3
+SQLAlchemy==1.4.54
+requests==2.32.4
+pytest==9.1.1
