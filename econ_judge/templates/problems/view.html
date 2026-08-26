@@ -131,19 +131,19 @@
           <i class="fa-solid fa-folder-open"></i>
         </span>
         <span class="ep-starter-copy">
-          <strong>Folder name is unrestricted</strong>
-          <small>Save <code>{{ hwp_starter_filename.split('/')[-1] }}</code>, then select any one folder containing it and any required component <code>.dig</code> files.</small>
+          <strong>폴더 이름은 자유롭게 정해도 됩니다</strong>
+          <small><code>{{ hwp_starter_filename.split('/')[-1] }}</code> 파일과 필요한 부품 <code>.dig</code> 파일을 한 폴더에 모아 저장한 뒤, 그 폴더를 선택하세요.</small>
         </span>
       </div>
       {% endif %}
-      <div id="econ-submit-root" data-mode="page" data-answer-filename="{{ hwp_starter_filename.split('/')[-1] if hwp_starter_filename else '' }}" data-round-folder="{{ hwp_starter_filename.split('/')[0] if hwp_starter_filename else '' }}">
+      <div id="econ-submit-root" data-mode="page" data-answer-filename="{{ hwp_starter_filename.split('/')[-1] if hwp_starter_filename else '' }}">
         <div data-state="empty">
           <label class="dropzone" id="econ-dropzone">
             <input type="file" id="challenge-file" accept=".dig" webkitdirectory directory multiple>
             <span class="dropzone-icon" aria-hidden="true">
               <i class="fa-regular fa-file-code"></i>
             </span>
-            <strong>Select submission folder</strong>
+            <strong>제출 폴더 선택</strong>
             <small>이 문제의 .dig 파일과 사용자 부품을 같은 폴더에서 함께 제출합니다</small>
           </label>
           <div class="file-error" id="econ-file-error" role="alert" hidden></div>

@@ -590,7 +590,9 @@ main > .jumbotron:has(+ .container [x-data="ChallengeBoard"]),
   window.addEventListener("econ:competition-change", (event) => {
     observeCompetition(event.detail || {});
   });
-  setInterval(pollCompetitionPhase, 1000);
+  // round-ui.js polls the same endpoint and broadcasts the event above, so this
+  // is only a safety net for the pages where that script fails to load.
+  setInterval(pollCompetitionPhase, 30000);
 
   if (document.readyState === "loading") {
     document.addEventListener("DOMContentLoaded", load);

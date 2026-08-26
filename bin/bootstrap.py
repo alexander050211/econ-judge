@@ -54,12 +54,18 @@ SEED_DEMO_DATA = os.environ.get("CTFD_DEMO_DATA", "true").lower() in (
 # the response with frozen=True. Defer: leave unset until the camp day,
 # then set CTFD_FREEZE_AT to (contest_end - desired_freeze_offset_seconds)
 # via Render's Environment panel. Unset (None) = no freeze.
-_freeze_env = os.environ.get("CTFD_FREEZE_AT", "").strip()
+_freeze_env_raw = os.environ.get("CTFD_FREEZE_AT")
+_freeze_env = (_freeze_env_raw or "").strip()
+# Absent vs. present-but-empty are different intents and a Postgres config
+# row outlives the process, so the empty string has to stay reachable: it is
+# the only env-side way to CLEAR a freeze (see the set_config call in main).
+WRITE_FREEZE = _freeze_env_raw is not None
 try:
     FREEZE_AT = int(_freeze_env) if _freeze_env else None
 except ValueError:
     print(f"[bootstrap] ignoring invalid CTFD_FREEZE_AT={_freeze_env!r}")
     FREEZE_AT = None
+    WRITE_FREEZE = False  # "ignoring" must not silently mean "clearing"
 
 # Four demo teams matching the camp's actual 4-team structure. Solves are
 # (challenge_id, minutes_ago_from_now) — spread realistically over a
@@ -67,6 +73,10 @@ except ValueError:
 # harder composition challenges later, and progressive difficulty stacks
 # (1조 cleared 14/15, 2조 10/15, 3조 7/15, 4조 3/15).
 DEMO_PASSWORD = "demo1234"
+# _seed_demo_data stamps this into Solves.provided. A real submission always
+# records the uploaded starter's basename there, so this marker is what lets
+# _clear_demo_data delete fabricated rows without ever touching a real solve.
+DEMO_SOLVE_MARKER = "(demo seed).dig"
 DEMO_TEAMS = [
     {
         "name": "1조",
@@ -76,7 +86,7 @@ DEMO_TEAMS = [
             (5, 96), (6, 91), (9, 84), (10, 76), (11, 66),
             (7, 55), (8, 43),
             (12, 34), (13, 25), (15, 16),
-        ],  # total: 72 pts
+        ],  # total: 70 pts
     },
     {
         "name": "2조",
@@ -129,7 +139,9 @@ def _team_password_source(name: str) -> str:
     digits = "".join(c for c in name if c.isdigit())
     if digits and os.environ.get(f"CTFD_TEAM{digits}_PASSWORD"):
         return "per-team override"
-    return "shared default"
+    if os.environ.get("CTFD_TEAM_PASSWORD"):
+        return "shared default"
+    return "INSECURE public fallback"
 
 
 def _team_password_is_set() -> bool:
@@ -148,11 +160,10 @@ def _team_password_is_set() -> bool:
 # pick up the same Pretendard + color tokens without per-page styling.
 THEME_HEADER_CSS = """\
 <style id="econ-judge-theme">
-/* E-CON 논설 — Direction D editorial-minimal theme (see
-   docs/theme-drop-in.css for the source of truth + audit notes;
-   the comment is kept short here so its literal text does NOT
-   include any HTML tag sequences that the browser's HTML parser
-   would interpret as terminating this style block. */
+/* E-CON 논설 — Direction D editorial-minimal theme. This block is the
+   only copy of the theme CSS; keep the comment free of any literal HTML
+   tag sequences, which the browser's HTML parser would otherwise treat
+   as terminating this style block. */
 
 /* ── Font imports ────────────────────────────────────────────────── */
 
@@ -406,33 +417,12 @@ button[type="submit"]:hover {
 }
 
 /* Phosphor glow on the key numeric heroes in dark mode — gives the
-   projector + my-score cards a CRT-instrument quality without changing
+   landing + challenges cards a CRT-instrument quality without changing
    their light-mode rendering. */
-:root[data-bs-theme="dark"] .s4-score-n,
-:root[data-bs-theme="dark"] .s4-gap-n,
-:root[data-bs-theme="dark"] .s4m-score-n,
-:root[data-bs-theme="dark"] .s4m-gap-n,
-:root[data-bs-theme="dark"] .s5p-score-n,
-:root[data-bs-theme="dark"] .s5p-fstat-n,
-:root[data-bs-theme="dark"] .s5j-stat-v,
 :root[data-bs-theme="dark"] .s1-stat-num,
 :root[data-bs-theme="dark"] .s2-prog-val {
   text-shadow: 0 0 14px rgba(245, 168, 61, 0.18),
                0 0 28px rgba(245, 168, 61, 0.06);
-}
-:root[data-bs-theme="dark"] .s5-mark,
-:root[data-bs-theme="dark"] .s5-clock,
-:root[data-bs-theme="dark"] .s5-phase {
-  text-shadow: 0 0 6px rgba(245, 168, 61, 0.25);
-}
-
-/* Dark-mode adjustments for the project-phase matrix — the brand-soft
-   submitted cell needs a slightly stronger bg to read on charcoal. */
-:root[data-bs-theme="dark"] .s5j-cell-sub {
-  background: rgba(245, 168, 61, 0.18);
-}
-:root[data-bs-theme="dark"] .s5j-cell-empty {
-  background: rgba(245, 168, 61, 0.03);
 }
 
 /* CTFd Pages content authored before the token system uses raw hex —
@@ -972,1240 +962,67 @@ INDEX_CONTENT = """\
 </div>
 """
 
-# /my-score page content — the anti-toxicity scoreboard surrogate. Mentees
-# only see their own score and the (anonymized) leader's score, never a
-# ranked list. Designed by the ui-designer subagent in matching schematic-
-# notebook aesthetic. Calls /api/v1/digital/my-score (econ_judge plugin)
-# which bypasses score_visibility=admins to serve this restricted slice.
+# /my-score page content — a static shell only. econ_judge/assets/round-ui.js,
+# loaded on every page from THEME_HEADER_CSS, replaces the #ms-root element
+# wholesale via outerHTML and owns the live UI from there. The one contract
+# this Page has to keep is that #ms-root exists when that script runs.
 MY_SCORE_CONTENT = """\
 <style>
-.s4-root {
+.econ-shell {
   width: 100%;
-  min-height: 100%;
-  background: var(--d-paper);
-  font-family: var(--d-f-sans);
-  padding: 32px 56px 28px;
-  display: flex;
-  flex-direction: column;
-  gap: 20px;
-  box-sizing: border-box;
-}
-.s4-root *, .s4-root *::before, .s4-root *::after { box-sizing: inherit; }
-
-.s4-head {
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
-  gap: 32px;
-  padding-bottom: 18px;
-  border-bottom: 1px solid var(--d-hair);
-}
-.s4-head-l { display: flex; flex-direction: column; gap: 4px; }
-.s4-head-meta {
-  display: inline-flex;
-  align-items: center;
-  gap: 14px;
-  flex-wrap: wrap;
-}
-.s4-head-doc {
+  padding: 72px 24px;
+  text-align: center;
   font-family: var(--d-f-ko);
-  font-size: 13px;
   color: var(--d-ink-light);
-  letter-spacing: -0.005em;
 }
-.s4-h1 {
-  font-family: var(--d-f-sans);
-  font-weight: 600;
-  font-size: 48px;
-  letter-spacing: -0.03em;
-  margin: 8px 0 0;
-  color: var(--d-ink);
-}
-.s4-head-sub {
-  font-family: var(--d-f-ko);
-  font-size: 14.5px;
-  color: var(--d-ink-light);
-  line-height: 1.55;
-  margin: 8px 0 0;
-  max-width: 520px;
-}
-.s4-head-r { display: flex; gap: 24px; padding-top: 4px; }
-.s4-meta-cell { display: flex; flex-direction: column; gap: 4px; align-items: flex-end; }
-.s4-meta-cell-v {
+.econ-shell-label {
   font-family: var(--d-f-mono);
-  font-size: 13px;
-  color: var(--d-ink);
-  font-feature-settings: 'tnum';
-  letter-spacing: 0.04em;
-}
-.s4-frozen-tag {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  font-family: var(--d-f-mono);
-  font-size: 10.5px;
-  letter-spacing: 0.14em;
+  font-size: 11px;
+  letter-spacing: 0.13em;
   text-transform: uppercase;
-  font-weight: 600;
-  color: var(--d-ink-mid);
-  background: var(--d-paper-sunk);
-  border: 1px solid var(--d-hair-strong);
-  padding: 4px 10px;
-  border-radius: 999px;
+  color: var(--d-ink-soft);
 }
-
-.s4-cards {
-  display: grid;
-  grid-template-columns: 1.1fr 1fr;
-  gap: 14px;
-}
-.s4-card {
-  padding: 22px 26px;
-  border-radius: 8px;
-  display: flex;
-  flex-direction: column;
-  gap: 16px;
-  position: relative;
-}
-.s4-card-own {
-  background: var(--d-brand-soft);
-  border: 1px solid var(--d-brand-line);
-}
-.s4-card-leader {
-  background: var(--d-paper-soft);
-  border: 1px solid var(--d-hair-strong);
-}
-.s4-card-l { display: flex; flex-direction: column; gap: 4px; }
-.s4-team {
-  font-family: var(--d-f-sans);
-  font-size: 22px;
-  font-weight: 600;
-  color: var(--d-ink);
-  letter-spacing: -0.02em;
-}
-.s4-team-anon {
-  color: var(--d-ink-light);
-  font-style: italic;
-  font-weight: 500;
-}
-
-.s4-score {
-  display: flex;
-  align-items: baseline;
-  gap: 6px;
-  font-feature-settings: 'tnum';
-}
-.s4-score-n {
-  font-family: var(--d-f-sans);
-  font-size: 80px;
-  font-weight: 700;
-  line-height: 0.95;
-  letter-spacing: -0.045em;
-  color: var(--d-ink);
-}
-.s4-score-leader .s4-score-n { color: var(--d-ink-mid); }
-.s4-score-u {
-  font-family: var(--d-f-mono);
-  font-size: 18px;
-  font-weight: 500;
-  color: var(--d-ink-light);
-  letter-spacing: 0.02em;
-}
-.s4-score-f {
-  font-family: var(--d-f-mono);
-  font-size: 14px;
-  color: var(--d-ink-light);
-  margin-left: 6px;
-  letter-spacing: 0.02em;
-}
-
-.s4-progress { display: flex; flex-direction: column; gap: 8px; }
-.s4-prog-track {
-  height: 6px;
-  background: rgba(245,168,61,0.18);
-  border-radius: 3px;
-  overflow: hidden;
-}
-.s4-prog-fill {
-  height: 100%;
-  background: linear-gradient(90deg, var(--d-brand-dark), var(--d-brand));
-  transition: width 0.6s cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-.s4-meta-row {
-  display: flex;
-  justify-content: space-between;
-  align-items: baseline;
-  padding-top: 12px;
-  border-top: 1px dashed var(--d-brand-line);
-}
-.s4-card-leader .s4-meta-row { border-top-color: var(--d-hair); }
-.s4-meta-v {
-  font-family: var(--d-f-mono);
-  font-size: 14px;
-  font-weight: 600;
-  color: var(--d-ink);
-  font-feature-settings: 'tnum';
-}
-.s4-meta-v-mut { color: var(--d-ink-light); }
-
-.s4-leader-note {
-  font-family: var(--d-f-ko);
-  font-size: 13px;
-  color: var(--d-ink-light);
-  font-style: italic;
-  margin-top: -4px;
-}
-
-.s4-frozen-placeholder {
-  background: var(--d-paper-sunk);
-  border: 1px dashed var(--d-hair-strong);
-  border-radius: 6px;
-  padding: 22px 16px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 6px;
-  color: var(--d-ink-light);
-  margin-top: 4px;
-}
-.s4-frozen-h {
-  font-family: var(--d-f-ko);
-  font-size: 15px;
-  font-weight: 500;
-  color: var(--d-ink-mid);
-}
-.s4-frozen-sub {
-  font-family: var(--d-f-ko);
-  font-size: 12.5px;
-  color: var(--d-ink-light);
-}
-
-.s4-gap {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 20px 26px;
-  border: 1px solid var(--d-hair);
-  background: var(--d-paper);
-}
-.s4-gap-l { display: flex; flex-direction: column; gap: 4px; }
-.s4-gap-msg {
-  font-family: var(--d-f-ko);
-  font-size: 16px;
-  font-weight: 500;
-  color: var(--d-ink);
-  line-height: 1.55;
-  margin-top: 4px;
-}
-.s4-gap-r { display: flex; align-items: baseline; gap: 4px; font-feature-settings: 'tnum'; }
-.s4-gap-sign {
-  font-family: var(--d-f-sans);
-  font-size: 24px;
-  color: var(--d-ink-mid);
-  font-weight: 500;
-}
-.s4-gap-n {
-  font-family: var(--d-f-sans);
-  font-size: 38px;
-  font-weight: 700;
-  color: var(--d-ink);
-  letter-spacing: -0.04em;
-  line-height: 0.9;
-}
-.s4-gap-u {
-  font-family: var(--d-f-mono);
-  font-size: 16px;
-  color: var(--d-ink-light);
-  letter-spacing: 0.02em;
-}
-.s4-gap-frozen-pill {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  font-family: var(--d-f-mono);
-  font-size: 11px;
-  font-weight: 600;
-  letter-spacing: 0.14em;
-  color: var(--d-ink-mid);
-  background: var(--d-paper-sunk);
-  border: 1px solid var(--d-hair-strong);
-  padding: 7px 14px;
-  border-radius: 999px;
-}
-.s4-root[data-frozen="true"] .s4-gap { background: var(--d-paper-soft); }
-.s4-root[data-frozen="true"] .s4-gap-msg { color: var(--d-ink-light); }
-
-.s4-foot {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-top: auto;
-  padding-top: 12px;
-}
-.s4-foot-l, .s4-foot-r { display: inline-flex; align-items: baseline; gap: 8px; }
-.s4-foot-v {
-  font-family: var(--d-f-mono);
-  font-size: 11px;
-  color: var(--d-ink-mid);
-}
-
-.s4-error {
-  padding: 14px 18px;
-  border: 1px solid var(--d-fail-line);
-  background: var(--d-fail-soft);
-  color: var(--d-fail);
-  border-radius: 6px;
-  font-family: var(--d-f-ko);
-  font-size: 14px;
-}
-
-@media (max-width: 720px) {
-  .s4-root { padding: 24px 18px 22px; gap: 16px; }
-  .s4-head { flex-direction: column; gap: 12px; padding-bottom: 14px; }
-  .s4-head-r { gap: 14px; align-self: flex-start; }
-  .s4-h1 { font-size: 34px; }
-  .s4-head-sub { font-size: 13.5px; }
-  .s4-cards { grid-template-columns: 1fr; gap: 12px; }
-  .s4-card { padding: 18px 20px; gap: 12px; }
-  .s4-score-n { font-size: 60px; }
-  .s4-gap { flex-direction: column; align-items: flex-start; gap: 10px; padding: 16px 18px; }
-  .s4-gap-r { align-self: flex-end; }
-  .s4-gap-n { font-size: 32px; }
-}
+.econ-shell-msg { margin: 12px 0 0; font-size: 15px; }
 </style>
 
-<div class="d s4-root" id="ms-root" data-frozen="false">
-
-  <header class="s4-head">
-    <div class="s4-head-l">
-      <div class="s4-head-meta">
-        <span class="d-livedot" id="ms-live-pill">LIVE</span>
-        <span class="s4-frozen-tag" id="ms-frozen-pill" style="display:none"><span class="d-pill-dot"></span>FROZEN · 동결</span>
-        <span class="s4-head-doc">SNU SENS · 2026 하계 공학 캠프</span>
-      </div>
-      <h1 class="s4-h1">내 점수</h1>
-      <p class="s4-head-sub">
-        우리 조의 진행 상황과 선두 조와의 격차를 확인하세요. 다른 팀의 순위는 표시되지 않습니다.
-      </p>
-    </div>
-    <div class="s4-head-r">
-      <div class="s4-meta-cell">
-        <span class="d-tiny">UPDATED</span>
-        <span class="s4-meta-cell-v" id="ms-updated">— — : — — : — —</span>
-      </div>
-      <div class="s4-meta-cell">
-        <span class="d-tiny">REFRESH</span>
-        <span class="s4-meta-cell-v">20 s</span>
-      </div>
-    </div>
-  </header>
-
-  <div id="ms-error" class="s4-error" style="display:none"></div>
-
-  <section class="s4-cards">
-
-    <article class="s4-card s4-card-own">
-      <div class="s4-card-l">
-        <div class="d-meta">우리 조</div>
-        <div class="s4-team" id="ms-team-name">—</div>
-      </div>
-      <div class="s4-score">
-        <span class="s4-score-n" id="ms-score-own">—</span>
-        <span class="s4-score-u">pt</span>
-        <span class="s4-score-f">/ <span id="ms-total-own">80</span></span>
-      </div>
-      <div class="s4-progress">
-        <div class="d-tiny" id="ms-progress-meta">달성률 · —%</div>
-        <div class="s4-prog-track">
-          <div class="s4-prog-fill" id="ms-prog-fill" style="width:0%"></div>
-        </div>
-      </div>
-      <div class="s4-meta-row">
-        <span class="d-tiny">해결 / 총 과제</span>
-        <span class="s4-meta-v" id="ms-solved-own">— / —</span>
-      </div>
-    </article>
-
-    <article class="s4-card s4-card-leader" id="ms-leader-live">
-      <div class="s4-card-l">
-        <div class="d-meta">선두 조</div>
-        <div class="s4-team s4-team-anon">익명</div>
-      </div>
-      <div class="s4-score s4-score-leader">
-        <span class="s4-score-n" id="ms-score-leader">—</span>
-        <span class="s4-score-u">pt</span>
-        <span class="s4-score-f">/ <span id="ms-total-leader">80</span></span>
-      </div>
-      <div class="s4-leader-note">
-        팀명은 캠프 종료 후 공개됩니다.
-      </div>
-      <div class="s4-meta-row">
-        <span class="d-tiny">해결 / 총 과제</span>
-        <span class="s4-meta-v s4-meta-v-mut" id="ms-solved-leader">— / —</span>
-      </div>
-    </article>
-
-    <article class="s4-card s4-card-leader" id="ms-leader-frozen" style="display:none">
-      <div class="s4-card-l">
-        <div class="d-meta">선두 조</div>
-        <div class="s4-team s4-team-anon">— —</div>
-      </div>
-      <div class="s4-frozen-placeholder">
-        <svg width="22" height="22" viewBox="0 0 24 24" fill="none"
-             stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-          <rect x="3" y="11" width="18" height="11" rx="2"/>
-          <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
-        </svg>
-        <div class="s4-frozen-h">온라인 라운드 진행 중</div>
-        <div class="s4-frozen-sub">캠프 종료 후 공개됩니다.</div>
-      </div>
-    </article>
-
-  </section>
-
-  <section class="s4-gap" id="ms-gap-live">
-    <div class="s4-gap-l">
-      <div class="d-meta">선두까지</div>
-      <div class="s4-gap-msg" id="ms-gap-msg">—</div>
-    </div>
-    <div class="s4-gap-r" id="ms-gap-r-live">
-      <span class="s4-gap-sign">−</span>
-      <span class="s4-gap-n" id="ms-gap-n">—</span>
-      <span class="s4-gap-u">pt</span>
-    </div>
-  </section>
-
-  <section class="s4-gap" id="ms-gap-frozen" style="display:none">
-    <div class="s4-gap-l">
-      <div class="d-meta">현황</div>
-      <div class="s4-gap-msg">
-        현황은 캠프 종료 시점까지 동결됩니다.<br/>
-        남은 도전 과제 풀이에 집중하세요.
-      </div>
-    </div>
-    <div class="s4-gap-r">
-      <span class="s4-gap-frozen-pill">
-        <span class="d-pill-dot"></span>FROZEN
-      </span>
-    </div>
-  </section>
-
-  <footer class="s4-foot">
-    <div class="s4-foot-l">
-      <span class="d-tiny">DRAWN BY</span>
-      <span class="s4-foot-v">E-CON 논설 · Auto-Grader</span>
-    </div>
-    <div class="s4-foot-r">
-      <span class="d-tiny">REV</span>
-      <span class="s4-foot-v" id="ms-rev">2026-A</span>
-    </div>
-  </footer>
-
+<div class="econ-shell" id="ms-root">
+  <div class="econ-shell-label">SNU SENS · E-CON 논설</div>
+  <p class="econ-shell-msg">점수를 불러오는 중입니다.</p>
+  <noscript>
+    <p class="econ-shell-msg">이 화면은 JavaScript가 필요합니다. 브라우저에서 JavaScript를 켠 뒤 새로고침해 주세요.</p>
+  </noscript>
 </div>
-
-<script>
-(function() {
-  var API = '/api/v1/digital/my-score';
-  var REFRESH_MS = 20000;
-  var timer = null;
-  var hidden = false;
-
-  document.addEventListener('visibilitychange', function() {
-    hidden = document.hidden;
-    if (!hidden) tick();
-  });
-
-  function tick() {
-    fetch(API, { credentials: 'same-origin' })
-      .then(function(r) {
-        /* CTFd's @authed_only redirects 302 → /login when the session
-           expires. fetch follows the redirect and we'd get login HTML
-           with status 200, which then crashes r.json(). Detect the
-           redirect explicitly and surface as an auth error. */
-        if (r.redirected) throw new Error('auth');
-        if (r.status === 401) throw new Error('auth');
-        if (!r.ok) throw new Error('http ' + r.status);
-        return r.json();
-      })
-      .then(render)
-      .catch(handleError)
-      .then(schedule);
-  }
-
-  function render(json) {
-    var d = json.data || {};
-    var root = document.getElementById('ms-root');
-    var frozen = !!d.frozen;
-    root.setAttribute('data-frozen', frozen ? 'true' : 'false');
-
-    document.getElementById('ms-live-pill').style.display   = frozen ? 'none' : '';
-    document.getElementById('ms-frozen-pill').style.display = frozen ? '' : 'none';
-    document.getElementById('ms-updated').textContent = hms();
-    document.getElementById('ms-rev').textContent = '2026-A' + (frozen ? ' · FROZEN' : '');
-
-    var total = (d.total_points != null) ? d.total_points : 80;
-    var totalCh = (d.total_challenges != null) ? d.total_challenges : 15;
-    document.getElementById('ms-total-own').textContent    = total;
-    document.getElementById('ms-total-leader').textContent = total;
-
-    var own = (d.team && d.team.score != null) ? d.team.score : 0;
-    var ownSolved = (d.team && d.team.solved != null) ? d.team.solved : 0;
-    var teamName = (d.team && d.team.name) ? d.team.name : '—';
-    var pct = total > 0 ? Math.round(own / total * 100) : 0;
-    document.getElementById('ms-team-name').textContent = teamName;
-    document.getElementById('ms-score-own').textContent = own;
-    document.getElementById('ms-progress-meta').textContent =
-      '달성률 · ' + pct + '%' + (frozen ? ' (동결 시점)' : '');
-    document.getElementById('ms-prog-fill').style.width = pct + '%';
-    document.getElementById('ms-solved-own').textContent = ownSolved + ' / ' + totalCh;
-
-    var liveCard   = document.getElementById('ms-leader-live');
-    var frozenCard = document.getElementById('ms-leader-frozen');
-    var liveGap    = document.getElementById('ms-gap-live');
-    var frozenGap  = document.getElementById('ms-gap-frozen');
-
-    if (frozen) {
-      liveCard.style.display   = 'none';
-      frozenCard.style.display = '';
-      liveGap.style.display    = 'none';
-      frozenGap.style.display  = 'flex';
-    } else {
-      liveCard.style.display   = '';
-      frozenCard.style.display = 'none';
-      liveGap.style.display    = 'flex';
-      frozenGap.style.display  = 'none';
-
-      var leaderScore  = d.leader ? d.leader.score : null;
-      var leaderSolved = (d.leader && d.leader.solved != null) ? d.leader.solved : null;
-
-      if (leaderScore != null) {
-        document.getElementById('ms-score-leader').textContent = leaderScore;
-        document.getElementById('ms-solved-leader').textContent =
-          (leaderSolved != null ? leaderSolved : '—') + ' / ' + totalCh;
-      } else {
-        document.getElementById('ms-score-leader').textContent = '—';
-        document.getElementById('ms-solved-leader').textContent = '— / ' + totalCh;
-      }
-
-      var gapMsg = document.getElementById('ms-gap-msg');
-      var gapR   = document.getElementById('ms-gap-r-live');
-      if (leaderScore != null && leaderScore > own) {
-        gapR.innerHTML =
-          '<span class="s4-gap-sign">−</span>' +
-          '<span class="s4-gap-n">' + (leaderScore - own) + '</span>' +
-          '<span class="s4-gap-u">pt</span>';
-        gapMsg.textContent = '남은 도전 과제로 충분히 따라잡을 수 있습니다.';
-      } else if (leaderScore != null && leaderScore === own && own > 0) {
-        gapR.innerHTML =
-          '<span class="s4-gap-n">0</span>' +
-          '<span class="s4-gap-u">pt</span>';
-        gapMsg.textContent = '현재 선두와 동률입니다.';
-      } else if (own > 0 && (leaderScore == null || own >= leaderScore)) {
-        gapR.innerHTML =
-          '<span class="s4-gap-n">1</span>' +
-          '<span class="s4-gap-u">위</span>';
-        gapMsg.textContent = '현재 1위입니다. 페이스를 유지하세요.';
-      } else {
-        gapR.innerHTML =
-          '<span class="s4-gap-n">—</span>' +
-          '<span class="s4-gap-u">pt</span>';
-        gapMsg.textContent = '도전 과제를 시작해 보세요.';
-      }
-    }
-
-    document.getElementById('ms-error').style.display = 'none';
-  }
-
-  function handleError(err) {
-    var el = document.getElementById('ms-error');
-    el.style.display = '';
-    el.textContent = (err && err.message === 'auth')
-      ? '로그인이 필요합니다. 페이지를 새로고침하여 다시 로그인하세요.'
-      : '데이터를 불러오지 못했습니다. 네트워크 상태를 확인하세요.';
-    document.getElementById('ms-updated').textContent = 'ERROR';
-  }
-
-  function schedule() {
-    clearTimeout(timer);
-    if (!hidden) timer = setTimeout(tick, REFRESH_MS);
-  }
-
-  function hms() {
-    var d = new Date();
-    function pad(n) { return n < 10 ? '0' + n : '' + n; }
-    return pad(d.getHours()) + ' : ' + pad(d.getMinutes()) + ' : ' + pad(d.getSeconds());
-  }
-
-  tick();
-})();
-</script>
 """
 
 
+# /projector page content — a static shell only, same contract as
+# MY_SCORE_CONTENT above: round-ui.js replaces #pj-root via outerHTML.
 PROJECTOR_CONTENT = """\
 <style>
-.s5-root {
+.econ-shell {
   width: 100%;
-  min-height: 100vh;
-  background: var(--d-paper);
-  font-family: var(--d-f-sans);
-  display: flex;
-  flex-direction: column;
-  box-sizing: border-box;
-  overflow-x: hidden;
-}
-.s5-root *, .s5-root *::before, .s5-root *::after { box-sizing: inherit; }
-
-.s5-top {
-  display: grid;
-  grid-template-columns: 1fr auto 1fr;
-  align-items: center;
-  padding: 28px 56px;
-  border-bottom: 1.5px solid var(--d-hair-strong);
-  background: var(--d-paper);
-}
-.s5-top-l { display: flex; align-items: baseline; gap: 24px; }
-.s5-mark {
-  font-family: var(--d-f-mono);
-  font-size: 20px;
-  font-weight: 600;
-  letter-spacing: 0.14em;
-  color: var(--d-brand-dark);
-}
-.s5-doc {
-  font-family: var(--d-f-ko);
-  font-size: 18px;
-  color: var(--d-ink-mid);
-  letter-spacing: -0.005em;
-}
-.s5-top-c { justify-self: center; }
-.s5-phase {
-  display: inline-flex;
-  align-items: center;
-  gap: 12px;
-  font-family: var(--d-f-mono);
-  font-size: 22px;
-  font-weight: 600;
-  color: var(--d-ink);
-  letter-spacing: 0.14em;
-  text-transform: uppercase;
-  background: var(--d-paper-soft);
-  border: 1px solid var(--d-hair-strong);
-  padding: 12px 26px;
-  border-radius: 999px;
-}
-.s5-phase-dot {
-  width: 12px; height: 12px;
-  background: var(--d-brand-dark);
-  border-radius: 50%;
-  box-shadow: 0 0 0 6px rgba(214,147,54,0.18);
-  animation: d-pulse 2s ease infinite;
-}
-.s5-phase-project .s5-phase-dot {
-  background: var(--d-ink);
-  box-shadow: 0 0 0 6px rgba(21,17,10,0.10);
-}
-.s5-top-r { justify-self: end; display: inline-flex; align-items: baseline; gap: 16px; }
-.s5-clock {
-  font-family: var(--d-f-mono);
-  font-size: 32px;
-  font-weight: 600;
-  color: var(--d-ink);
-  letter-spacing: 0.08em;
-  font-feature-settings: 'tnum';
-}
-
-/* ─── Practice mode stage ────────────────────────────── */
-.s5p-stage {
-  flex: 1;
-  padding: 0 80px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: 28px;
-  min-height: 70vh;
-}
-.s5p-eyebrow {
-  display: inline-flex;
-  align-items: center;
-  gap: 16px;
-}
-.s5p-eyebrow .d-livedot { font-size: 16px; letter-spacing: 0.2em; }
-.s5p-eyebrow-divider { width: 1px; height: 16px; background: var(--d-hair-strong); }
-.s5p-eyebrow-en {
-  font-family: var(--d-f-mono);
-  font-size: 14px;
-  letter-spacing: 0.18em;
-  color: var(--d-ink-light);
-  text-transform: uppercase;
-}
-.s5p-label {
-  font-family: var(--d-f-ko);
-  font-size: 36px;
-  font-weight: 500;
-  color: var(--d-ink-mid);
-  letter-spacing: -0.02em;
-}
-.s5p-score {
-  display: flex;
-  align-items: flex-end;
-  gap: 24px;
-  font-feature-settings: 'tnum';
-}
-.s5p-score-n {
-  font-family: var(--d-f-sans);
-  font-size: 320px;
-  font-weight: 700;
-  line-height: 0.88;
-  letter-spacing: -0.06em;
-  color: var(--d-ink);
-}
-.s5p-score-right {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-  align-items: flex-start;
-  padding-bottom: 32px;
-}
-.s5p-score-u {
-  font-family: var(--d-f-mono);
-  font-size: 42px;
-  color: var(--d-brand-dark);
-  letter-spacing: 0.02em;
-  font-weight: 500;
-}
-.s5p-score-f {
-  font-family: var(--d-f-mono);
-  font-size: 28px;
-  color: var(--d-ink-light);
-  letter-spacing: 0.04em;
-}
-.s5p-progress {
-  width: 640px;
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-}
-.s5p-prog-track {
-  height: 14px;
-  background: var(--d-paper-sunk);
-  border-radius: 7px;
-  overflow: hidden;
-}
-.s5p-prog-fill {
-  height: 100%;
-  background: linear-gradient(90deg, var(--d-brand-dark), var(--d-brand));
-  transition: width 0.8s cubic-bezier(0.4, 0, 0.2, 1);
-}
-.s5p-prog-meta {
-  display: flex;
-  justify-content: space-between;
-  font-family: var(--d-f-mono);
-  font-size: 18px;
-  color: var(--d-ink-mid);
-  letter-spacing: 0.04em;
-}
-.s5p-note {
-  font-family: var(--d-f-ko);
-  font-size: 28px;
-  color: var(--d-ink-light);
-  margin-top: 8px;
-  font-style: italic;
-}
-
-.s5p-foot {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 28px 64px;
-  border-top: 1.5px solid var(--d-hair-strong);
-  background: var(--d-paper-soft);
-  gap: 32px;
-}
-.s5p-foot-l .d-tiny { font-size: 13px; letter-spacing: 0.16em; }
-.s5p-foot-stats { display: flex; align-items: center; gap: 32px; }
-.s5p-fstat { display: flex; flex-direction: column; gap: 4px; align-items: flex-end; }
-.s5p-fstat-n {
-  font-family: var(--d-f-sans);
-  font-weight: 600;
-  font-size: 56px;
-  letter-spacing: -0.035em;
-  color: var(--d-ink);
-  line-height: 0.95;
-  font-feature-settings: 'tnum';
-}
-.s5p-fstat-l {
-  font-family: var(--d-f-ko);
-  font-size: 16px;
-  color: var(--d-ink-light);
-}
-.s5p-fstat-sep { width: 1px; height: 56px; background: var(--d-hair-strong); }
-.s5p-fstat-mut .s5p-fstat-n { color: var(--d-ink-mid); }
-
-/* ─── Project mode stage ─────────────────────────────── */
-.s5j-stage {
-  flex: 1;
-  padding: 36px 56px 44px;
-  display: flex;
-  flex-direction: column;
-  gap: 24px;
-}
-.s5j-head {
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-end;
-  padding-bottom: 18px;
-  border-bottom: 1px solid var(--d-hair);
-}
-.s5j-head-l { display: flex; flex-direction: column; gap: 8px; }
-.s5j-eyebrow.d-meta { font-size: 14px; letter-spacing: 0.18em; }
-.s5j-h2 {
-  font-family: var(--d-f-sans);
-  font-weight: 600;
-  font-size: 48px;
-  letter-spacing: -0.025em;
-  color: var(--d-ink);
-  margin: 0;
-}
-.s5j-sub {
-  font-family: var(--d-f-ko);
-  font-size: 20px;
-  color: var(--d-ink-light);
-  margin: 4px 0 0;
-  max-width: 720px;
-  line-height: 1.5;
-}
-.s5j-head-r { display: flex; gap: 40px; }
-.s5j-stat { display: flex; flex-direction: column; gap: 4px; align-items: flex-end; }
-.s5j-stat .d-tiny { font-size: 13px; letter-spacing: 0.16em; }
-.s5j-stat-v {
-  font-family: var(--d-f-sans);
-  font-weight: 600;
-  font-size: 64px;
-  letter-spacing: -0.035em;
-  color: var(--d-ink);
-  line-height: 0.95;
-  font-feature-settings: 'tnum';
-}
-.s5j-stat-mut { color: var(--d-ink-light); font-size: 32px; }
-
-.s5j-matrix-wrap { flex: 1; display: flex; align-items: stretch; }
-.s5j-matrix {
-  width: 100%;
-  border-collapse: separate;
-  border-spacing: 6px;
-  table-layout: fixed;
-}
-.s5j-matrix thead th {
-  padding: 4px 0 16px;
-  vertical-align: bottom;
-  font-weight: 500;
-}
-.s5j-th-team { width: 130px; }
-.s5j-th-col { text-align: center; }
-.s5j-th-id {
-  font-family: var(--d-f-mono);
-  font-size: 24px;
-  font-weight: 600;
-  color: var(--d-ink);
-  letter-spacing: 0.04em;
-  margin-bottom: 4px;
-}
-.s5j-th-name {
-  font-family: var(--d-f-ko);
-  font-size: 18px;
-  color: var(--d-ink-light);
-  letter-spacing: 0;
-}
-.s5j-td-team {
-  text-align: right;
-  padding-right: 18px;
-  vertical-align: middle;
-}
-.s5j-team-tag {
-  font-family: var(--d-f-sans);
-  font-size: 40px;
-  font-weight: 600;
-  color: var(--d-ink);
-  letter-spacing: -0.02em;
-}
-.s5j-cell {
+  padding: 72px 24px;
   text-align: center;
-  vertical-align: middle;
-  background: var(--d-paper);
-  border: 1px solid var(--d-hair);
-  height: 110px;
-  position: relative;
+  font-family: var(--d-f-ko);
+  color: var(--d-ink-light);
 }
-.s5j-cell-sub {
-  background: var(--d-brand-soft);
-  border-color: var(--d-brand);
-  color: var(--d-brand-dark);
-}
-.s5j-cell-sub svg { width: 40px; height: 40px; display: inline-block; }
-.s5j-cell-empty {
-  background: var(--d-paper-soft);
-  border-style: dashed;
-  border-color: var(--d-hair);
-}
-.s5j-dash {
+.econ-shell-label {
   font-family: var(--d-f-mono);
-  font-size: 32px;
+  font-size: 11px;
+  letter-spacing: 0.13em;
+  text-transform: uppercase;
   color: var(--d-ink-soft);
 }
-
-.s5j-legend {
-  display: flex;
-  align-items: center;
-  gap: 28px;
-  padding: 18px 22px;
-  background: var(--d-paper-soft);
-  border: 1px solid var(--d-hair);
-  border-radius: 6px;
-}
-.s5j-legend-item { display: inline-flex; align-items: center; gap: 12px; }
-.s5j-cell-mini {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 32px;
-  height: 32px;
-  border: 1px solid;
-}
-.s5j-cell-mini.s5j-cell-sub { background: var(--d-brand-soft); border-color: var(--d-brand); color: var(--d-brand-dark); }
-.s5j-cell-mini.s5j-cell-sub svg { width: 14px; height: 14px; }
-.s5j-cell-mini.s5j-cell-empty { background: var(--d-paper-soft); border-color: var(--d-hair); border-style: dashed; }
-.s5j-cell-mini .s5j-dash { font-size: 16px; }
-.s5j-legend-l {
-  font-family: var(--d-f-ko);
-  font-size: 18px;
-  color: var(--d-ink-mid);
-}
-.s5j-legend-note { margin-left: auto; }
-.s5j-legend-note .d-tiny { font-size: 14px; letter-spacing: 0.16em; }
-
-.s5-error {
-  padding: 18px 24px;
-  background: var(--d-fail-soft);
-  border: 1px solid var(--d-fail-line);
-  color: var(--d-fail);
-  font-family: var(--d-f-ko);
-  font-size: 16px;
-  margin: 24px 56px;
-  border-radius: 6px;
-}
+.econ-shell-msg { margin: 12px 0 0; font-size: 15px; }
 </style>
 
-<div class="s5-root" id="pj-root">
-
-  <header class="s5-top">
-    <div class="s5-top-l">
-      <span class="s5-mark">◤ SNU · SENS</span>
-      <span class="s5-doc">E-CON 논설 · Auto-Grader · 2026 하계 공학 캠프</span>
-    </div>
-    <div class="s5-top-c">
-      <span class="s5-phase" id="pj-phase-pill">
-        <span class="s5-phase-dot"></span>
-        <span id="pj-phase-label">— —</span>
-      </span>
-    </div>
-    <div class="s5-top-r">
-      <span class="d-tiny">CLOCK</span>
-      <span class="s5-clock" id="pj-clock">— — : — —</span>
-    </div>
-  </header>
-
-  <div id="pj-error" class="s5-error" style="display:none"></div>
-
-  <!-- Practice phase stage -->
-  <main class="s5p-stage" id="pj-practice">
-
-    <div class="s5p-eyebrow">
-      <span class="d-livedot">LIVE · 익명</span>
-      <span class="s5p-eyebrow-divider"></span>
-      <span class="s5p-eyebrow-en">CURRENT LEADER · ANONYMOUS</span>
-    </div>
-
-    <div class="s5p-label">현재 선두</div>
-
-    <div class="s5p-score">
-      <span class="s5p-score-n" id="pj-leader-score">—</span>
-      <div class="s5p-score-right">
-        <span class="s5p-score-u">pt</span>
-        <span class="s5p-score-f">/ <span id="pj-total-points">80</span></span>
-      </div>
-    </div>
-
-    <div class="s5p-progress">
-      <div class="s5p-prog-track">
-        <div class="s5p-prog-fill" id="pj-leader-fill" style="width:0%"></div>
-      </div>
-      <div class="s5p-prog-meta">
-        <span id="pj-leader-pct">달성률 —%</span>
-        <span id="pj-leader-solved">— / — 도전 과제 해결</span>
-      </div>
-    </div>
-
-    <div class="s5p-note">
-      팀명은 캠프 종료 후 공개됩니다. 지금은 회로 설계에 집중하세요.
-    </div>
-  </main>
-
-  <footer class="s5p-foot" id="pj-practice-foot">
-    <div class="s5p-foot-l">
-      <span class="d-tiny">최근 30분 · COLLECTIVE MOMENTUM</span>
-    </div>
-    <div class="s5p-foot-stats">
-      <div class="s5p-fstat">
-        <span class="s5p-fstat-n" id="pj-mom-solves">—</span>
-        <span class="s5p-fstat-l">새 정답</span>
-      </div>
-      <span class="s5p-fstat-sep"></span>
-      <div class="s5p-fstat">
-        <span class="s5p-fstat-n" id="pj-mom-submits">—</span>
-        <span class="s5p-fstat-l">제출</span>
-      </div>
-      <span class="s5p-fstat-sep"></span>
-      <div class="s5p-fstat">
-        <span class="s5p-fstat-n" id="pj-mom-teams">— / 4</span>
-        <span class="s5p-fstat-l">참여 중인 조</span>
-      </div>
-    </div>
-  </footer>
-
-  <!-- Project phase stage -->
-  <main class="s5j-stage" id="pj-project" style="display:none">
-
-    <div class="s5j-head">
-      <div class="s5j-head-l">
-        <div class="s5j-eyebrow d-meta">SUBMISSION MATRIX · 제출 현황</div>
-        <h2 class="s5j-h2">진행 중</h2>
-        <p class="s5j-sub">
-          점수와 통과 여부는 표시되지 않습니다. 채점은 캠프 종료 후 공개됩니다.
-        </p>
-      </div>
-      <div class="s5j-head-r">
-        <div class="s5j-stat">
-          <span class="d-tiny">제출된 셀</span>
-          <span class="s5j-stat-v" id="pj-filled-cells">—<span class="s5j-stat-mut"> / —</span></span>
-        </div>
-        <div class="s5j-stat">
-          <span class="d-tiny">참여 조</span>
-          <span class="s5j-stat-v" id="pj-active-teams">—<span class="s5j-stat-mut"> / —</span></span>
-        </div>
-      </div>
-    </div>
-
-    <div class="s5j-matrix-wrap">
-      <table class="s5j-matrix">
-        <thead id="pj-matrix-head"><tr><th></th></tr></thead>
-        <tbody id="pj-matrix-body"></tbody>
-      </table>
-    </div>
-
-    <div class="s5j-legend">
-      <span class="s5j-legend-item">
-        <span class="s5j-cell-mini s5j-cell-sub">
-          <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-            <rect x="6" y="6" width="12" height="12" fill="currentColor"/>
-          </svg>
-        </span>
-        <span class="s5j-legend-l">제출됨 (1회 이상)</span>
-      </span>
-      <span class="s5j-legend-item">
-        <span class="s5j-cell-mini s5j-cell-empty"><span class="s5j-dash">—</span></span>
-        <span class="s5j-legend-l">미제출</span>
-      </span>
-      <span class="s5j-legend-item s5j-legend-note">
-        <span class="d-tiny">통과 여부 / 점수 · NOT SHOWN</span>
-      </span>
-    </div>
-  </main>
-
+<div class="econ-shell" id="pj-root">
+  <div class="econ-shell-label">SNU SENS · E-CON 논설 · 운영 화면</div>
+  <p class="econ-shell-msg">현황을 불러오는 중입니다.</p>
+  <noscript>
+    <p class="econ-shell-msg">이 화면은 JavaScript가 필요합니다. 브라우저에서 JavaScript를 켠 뒤 새로고침해 주세요.</p>
+  </noscript>
 </div>
-
-<script>
-(function() {
-  var API = '/api/v1/digital/projector';
-  var REFRESH_MS = 30000;
-  var timer = null;
-  var hidden = false;
-
-  document.addEventListener('visibilitychange', function() {
-    hidden = document.hidden;
-    if (!hidden) tick();
-  });
-
-  /* clock updates locally every second */
-  setInterval(function() {
-    var d = new Date();
-    function pad(n) { return n < 10 ? '0' + n : '' + n; }
-    var el = document.getElementById('pj-clock');
-    if (el) el.textContent = pad(d.getHours()) + ' : ' + pad(d.getMinutes());
-  }, 1000);
-
-  function svgGlyph() {
-    return '<svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">'
-      + '<rect x="6" y="6" width="12" height="12" fill="currentColor"/></svg>';
-  }
-
-  function tick() {
-    fetch(API, { credentials: 'same-origin' })
-      .then(function(r) {
-        /* CTFd's @admins_only redirects 302 → /login for non-admin (or
-           non-logged-in) viewers. fetch follows the redirect, returning
-           login HTML at status 200 — which then crashes r.json(). Catch
-           the redirect explicitly so the mentor laptop shows the
-           "관리자 권한이 필요합니다" message instead of a parse error. */
-        if (r.redirected) throw new Error('forbidden');
-        if (r.status === 401) throw new Error('auth');
-        if (r.status === 403) throw new Error('forbidden');
-        if (!r.ok) throw new Error('http ' + r.status);
-        return r.json();
-      })
-      .then(render)
-      .catch(handleError)
-      .then(schedule);
-  }
-
-  function render(json) {
-    var d = json.data || {};
-    var phase = d.phase || 'practice';
-
-    var phasePill = document.getElementById('pj-phase-pill');
-    var phaseLabel = document.getElementById('pj-phase-label');
-    if (phase === 'project') {
-      phasePill.classList.add('s5-phase-project');
-      phaseLabel.textContent = '2라운드 · ROUND 2';
-    } else {
-      phasePill.classList.remove('s5-phase-project');
-      phaseLabel.textContent = '온라인 라운드 · ONLINE';
-    }
-
-    var practiceStage   = document.getElementById('pj-practice');
-    var practiceFoot    = document.getElementById('pj-practice-foot');
-    var projectStage    = document.getElementById('pj-project');
-
-    if (phase === 'project') {
-      practiceStage.style.display = 'none';
-      practiceFoot.style.display  = 'none';
-      projectStage.style.display  = '';
-      renderProject(d);
-    } else {
-      practiceStage.style.display = '';
-      practiceFoot.style.display  = '';
-      projectStage.style.display  = 'none';
-      renderPractice(d);
-    }
-
-    document.getElementById('pj-error').style.display = 'none';
-  }
-
-  function renderPractice(d) {
-    var total = (d.total_points != null) ? d.total_points : 80;
-    var totalCh = (d.total_challenges != null) ? d.total_challenges : 15;
-    document.getElementById('pj-total-points').textContent = total;
-
-    var leader = d.leader || null;
-    if (leader && leader.score != null) {
-      var score = leader.score;
-      var solved = leader.solved != null ? leader.solved : 0;
-      var pct = total > 0 ? Math.round(score / total * 100) : 0;
-      document.getElementById('pj-leader-score').textContent = score;
-      document.getElementById('pj-leader-fill').style.width = pct + '%';
-      document.getElementById('pj-leader-pct').textContent = '달성률 ' + pct + '%';
-      document.getElementById('pj-leader-solved').textContent =
-        solved + ' / ' + totalCh + ' 도전 과제 해결';
-    } else {
-      document.getElementById('pj-leader-score').textContent = '—';
-      document.getElementById('pj-leader-fill').style.width = '0%';
-      document.getElementById('pj-leader-pct').textContent = '달성률 —%';
-      document.getElementById('pj-leader-solved').textContent = '— / ' + totalCh + ' 도전 과제 해결';
-    }
-
-    var mom = d.momentum || {};
-    document.getElementById('pj-mom-solves').textContent =
-      mom.new_solves != null ? mom.new_solves : '—';
-    document.getElementById('pj-mom-submits').textContent =
-      mom.submits != null ? mom.submits : '—';
-    var act = mom.active_teams != null ? mom.active_teams : '—';
-    var tot = mom.total_teams != null ? mom.total_teams : '—';
-    document.getElementById('pj-mom-teams').textContent = act + ' / ' + tot;
-  }
-
-  function renderProject(d) {
-    var cols  = d.cols  || [];
-    var teams = d.teams || [];
-
-    var thead = document.getElementById('pj-matrix-head');
-    var tbody = document.getElementById('pj-matrix-body');
-
-    var html = '<tr><th class="s5j-th-team"></th>';
-    cols.forEach(function(c) {
-      html += '<th class="s5j-th-col">'
-            + '<div class="s5j-th-id">' + escHtml(c.short || '') + '</div>'
-            + '<div class="s5j-th-name">' + escHtml(c.name || '') + '</div>'
-            + '</th>';
-    });
-    html += '</tr>';
-    thead.innerHTML = html;
-
-    var bhtml = '';
-    var filled = 0;
-    var active = 0;
-    teams.forEach(function(t) {
-      bhtml += '<tr><td class="s5j-td-team"><span class="s5j-team-tag">'
-            + escHtml(t.name || '—') + '</span></td>';
-      var any = false;
-      (t.submits || []).forEach(function(v) {
-        if (v) { filled += 1; any = true; }
-        bhtml += '<td class="s5j-cell ' + (v ? 's5j-cell-sub' : 's5j-cell-empty') + '">'
-              + (v ? svgGlyph() : '<span class="s5j-dash">—</span>')
-              + '</td>';
-      });
-      bhtml += '</tr>';
-      if (any) active += 1;
-    });
-    tbody.innerHTML = bhtml;
-
-    var totalCells = teams.length * cols.length;
-    document.getElementById('pj-filled-cells').innerHTML =
-      filled + '<span class="s5j-stat-mut"> / ' + totalCells + '</span>';
-    document.getElementById('pj-active-teams').innerHTML =
-      active + '<span class="s5j-stat-mut"> / ' + teams.length + '</span>';
-  }
-
-  function handleError(err) {
-    var el = document.getElementById('pj-error');
-    el.style.display = '';
-    if (err && err.message === 'auth') {
-      el.textContent = '로그인이 필요합니다.';
-    } else if (err && err.message === 'forbidden') {
-      el.textContent = '관리자 권한이 필요합니다.';
-    } else {
-      el.textContent = '데이터를 불러오지 못했습니다. (' + (err && err.message ? err.message : 'unknown') + ')';
-    }
-  }
-
-  function schedule() {
-    clearTimeout(timer);
-    if (!hidden) timer = setTimeout(tick, REFRESH_MS);
-  }
-
-  function escHtml(s) {
-    return String(s)
-      .replace(/&/g, '&amp;')
-      .replace(/</g, '&lt;')
-      .replace(/>/g, '&gt;')
-      .replace(/"/g, '&quot;')
-      .replace(/'/g, '&#39;');
-  }
-
-  tick();
-})();
-</script>
 """
 
 def _load_challenges():
@@ -2294,7 +1111,15 @@ def main() -> None:
         # roster of other teams isn't a "who else is here" social distraction.
         # Cascades to /api/v1/users, /users/{id}, and the navbar Users link.
         set_config("account_visibility", "admins")
-        set_config("freeze", FREEZE_AT)
+        # The one config deliberately NOT force-synced, and the rule has two
+        # halves. CTFD_FREEZE_AT absent: leave the stored value alone, so a
+        # freeze set through the CTFd admin UI survives every boot. Present:
+        # write it — including present-but-empty, which stores None and is
+        # the operator's deliberate un-freeze (get_config("freeze") then falls
+        # back to its None default, so /my-score and /projector unfreeze).
+        # Invalid values are warned about above and change nothing.
+        if WRITE_FREEZE:
+            set_config("freeze", FREEZE_AT)
         set_config("challenge_ratings", "disabled")
         # `Configs.social_shares` in templates is a @property that calls
         # `get_config("social_shares", default=True)`. A NULL/missing row makes
@@ -2338,53 +1163,66 @@ def main() -> None:
         # Admin user upsert — env var is the source of truth for the password,
         # so changing CTFD_ADMIN_PASSWORD in Render's Environment + redeploying
         # actually rotates the admin password. @validates('password') re-hashes
-        # on assignment.
-        admin = Users.query.filter_by(name=ADMIN_NAME).first()
-        if admin is None:
-            admin = Users(
-                name=ADMIN_NAME,
-                email=ADMIN_EMAIL,
-                password=ADMIN_PASSWORD,
-                type="admin",
-                verified=True,
-                hidden=True,
-            )
-            db.session.add(admin)
-            db.session.commit()
-            print(f"[bootstrap] Admin '{ADMIN_NAME}' created")
-        else:
-            admin.password = ADMIN_PASSWORD
-            db.session.commit()
-            print(f"[bootstrap] Admin '{ADMIN_NAME}' password synced from env")
+        # on assignment. Wrapped like the roster seeding because entrypoint.sh
+        # runs under `set -e`: an IntegrityError here (e.g. a changed
+        # CTFD_ADMIN_EMAIL colliding with an existing row) would otherwise take
+        # the whole site down. A running site with a stale admin password is
+        # recoverable; a container that will not boot is not.
+        try:
+            admin = Users.query.filter_by(name=ADMIN_NAME).first()
+            if admin is None:
+                admin = Users(
+                    name=ADMIN_NAME,
+                    email=ADMIN_EMAIL,
+                    password=ADMIN_PASSWORD,
+                    type="admin",
+                    verified=True,
+                    hidden=True,
+                )
+                db.session.add(admin)
+                db.session.commit()
+                print(f"[bootstrap] Admin '{ADMIN_NAME}' created")
+            else:
+                admin.password = ADMIN_PASSWORD
+                db.session.commit()
+                print(f"[bootstrap] Admin '{ADMIN_NAME}' password synced from env")
+        except Exception as exc:  # noqa: BLE001 — never let this stop the boot
+            db.session.rollback()
+            print(f"[bootstrap] Admin '{ADMIN_NAME}': FAILED to upsert: {exc}")
 
         # Smoke-test user (hidden) — pre-created so deploy_smoke.py runs
         # don't pollute the public scoreboard. Idempotent: created if missing,
-        # otherwise hidden flag + password reset to canonical values.
-        smoke = Users.query.filter_by(name=SMOKE_NAME).first()
-        if smoke is None:
-            smoke = Users(
-                name=SMOKE_NAME,
-                email=SMOKE_EMAIL,
-                password=SMOKE_PASSWORD,
-                type="user",
-                verified=True,
-                hidden=True,
-            )
-            db.session.add(smoke)
-            db.session.commit()
-            print(f"[bootstrap] Smoke user '{SMOKE_NAME}' created (hidden)")
-        else:
-            changed = False
-            if not smoke.hidden:
-                smoke.hidden = True
-                changed = True
-            # @validates('password') re-hashes on assignment
-            smoke.password = SMOKE_PASSWORD
-            if changed:
+        # otherwise hidden flag + password reset to canonical values. Same
+        # boot-safety wrapper as the admin upsert above, for the same reason.
+        try:
+            smoke = Users.query.filter_by(name=SMOKE_NAME).first()
+            if smoke is None:
+                smoke = Users(
+                    name=SMOKE_NAME,
+                    email=SMOKE_EMAIL,
+                    password=SMOKE_PASSWORD,
+                    type="user",
+                    verified=True,
+                    hidden=True,
+                )
+                db.session.add(smoke)
                 db.session.commit()
-                print(f"[bootstrap] Smoke user '{SMOKE_NAME}' marked hidden")
+                print(f"[bootstrap] Smoke user '{SMOKE_NAME}' created (hidden)")
             else:
-                db.session.commit()
+                changed = False
+                if not smoke.hidden:
+                    smoke.hidden = True
+                    changed = True
+                # @validates('password') re-hashes on assignment
+                smoke.password = SMOKE_PASSWORD
+                if changed:
+                    db.session.commit()
+                    print(f"[bootstrap] Smoke user '{SMOKE_NAME}' marked hidden")
+                else:
+                    db.session.commit()
+        except Exception as exc:  # noqa: BLE001 — never let this stop the boot
+            db.session.rollback()
+            print(f"[bootstrap] Smoke user '{SMOKE_NAME}': FAILED to upsert: {exc}")
 
         # Index page upsert — content always synced from INDEX_CONTENT, same
         # "configuration as code" pattern as the configs block above.
@@ -2407,6 +1245,9 @@ def main() -> None:
             page.title = CTF_NAME
             page.content = INDEX_CONTENT
             page.format = "html"
+            page.auth_required = False
+            page.hidden = False
+            page.draft = False
             db.session.commit()
             print("[bootstrap] Index page synced")
 
@@ -2521,6 +1362,7 @@ def main() -> None:
             _seed_demo_data()
         else:
             print("[bootstrap] CTFD_DEMO_DATA=false — skipping demo solves (roster still seeded)")
+            _clear_demo_data()
 
 
 def _seed_roster() -> None:
@@ -2607,12 +1449,40 @@ def _seed_demo_data() -> None:
                 team_id=None,
                 challenge_id=chal_id,
                 ip="127.0.0.1",
-                provided="(demo seed).dig",
+                provided=DEMO_SOLVE_MARKER,
             )
             solve.date = now - datetime.timedelta(minutes=minutes_ago)
             db.session.add(solve)
         db.session.commit()
         print(f"[demo] {team['name']}: {len(team['solves'])} solves seeded")
+
+
+def _clear_demo_data() -> None:
+    """Delete Solves left behind by an earlier CTFD_DEMO_DATA=true boot.
+
+    Flipping the toggle off is not enough on a database that survives a
+    redeploy: without this, fabricated review-deploy scores would still be on
+    the scoreboard on camp day. Only rows stamped with DEMO_SOLVE_MARKER are
+    touched — a real submission always records the uploaded starter's
+    basename in `provided`, so it can never match.
+
+    Deliberately per-object, NOT a bulk .delete(): Solves is joined-table
+    inheritance (child "solves", parent "submissions") and `provided` lives
+    only on the parent, so a bulk delete carries multi-table criteria —
+    SQLite raises NotImplementedError at compile time on EVERY boot (even an
+    empty DB), and PostgreSQL compiles `DELETE FROM solves USING submissions`
+    with no join predicate, a cross product that wipes real solves while
+    leaving the marked parent rows — and hence the marker — behind. An ORM
+    delete per object removes both rows; the set is ~34 at most."""
+    try:
+        doomed = Solves.query.filter_by(provided=DEMO_SOLVE_MARKER).all()
+        for solve in doomed:
+            db.session.delete(solve)
+        db.session.commit()
+        print(f"[bootstrap] Demo solves removed: {len(doomed)}")
+    except Exception as exc:  # noqa: BLE001 — never let this stop the boot
+        db.session.rollback()
+        print(f"[bootstrap] Demo solves: FAILED to remove: {exc}")
 
 
 if __name__ == "__main__":

@@ -22,8 +22,13 @@ ROUND_2_DURATION = timedelta(minutes=80)
 
 
 def rehearsal_mode() -> bool:
-    """Whether this process is running the short, opt-in rehearsal schedule."""
-    return os.environ.get("ECON_JUDGE_REHEARSAL", "").strip().lower() == "true"
+    """Whether this process is running the short, opt-in rehearsal schedule.
+
+    The accepted spellings mirror bin/bootstrap.py's CTFD_DEMO_DATA toggle so
+    an operator sets either environment variable the same way.
+    """
+    value = os.environ.get("ECON_JUDGE_REHEARSAL", "").strip().lower()
+    return value in ("1", "true", "yes", "on")
 
 
 def _schedule_durations() -> tuple[timedelta, timedelta, timedelta]:
@@ -31,18 +36,18 @@ def _schedule_durations() -> tuple[timedelta, timedelta, timedelta]:
         return timedelta(minutes=2), timedelta(minutes=1), timedelta(minutes=2)
     return ROUND_1_DURATION, BREAK_DURATION, ROUND_2_DURATION
 
+# The point totals are the per-round sums of the challenge ``value`` column in
+# tests/register_challenges.py (ids 1-8 = 35, ids 9-15 = 45); keep both in step.
 ROUND_INFO = {
     "round1": {
         "label": "1라운드",
         "challenge_ids": ROUND_1_CHALLENGE_IDS,
         "points": 35,
-        "duration_minutes": 70,
     },
     "round2": {
         "label": "2라운드",
         "challenge_ids": ROUND_2_CHALLENGE_IDS,
         "points": 45,
-        "duration_minutes": 80,
     },
 }
 
@@ -127,7 +132,7 @@ def current_phase(now: datetime | None = None) -> CompetitionPhase:
         start = _competition_start()
     except ValueError as exc:
         return CompetitionPhase(
-            "misconfigured", frozenset(), False, f"Competition schedule error: {exc}"
+            "misconfigured", frozenset(), False, f"대회 일정 설정 오류입니다. 운영진에게 알려주세요. ({exc})"
         )
     if start is None:
         return CompetitionPhase("open", ALL_CHALLENGE_IDS, True)
@@ -145,7 +150,7 @@ def current_phase(now: datetime | None = None) -> CompetitionPhase:
 
     if now < start:
         return CompetitionPhase(
-            "before", frozenset(), False, "The competition has not started yet."
+            "before", frozenset(), False, "아직 대회가 시작되지 않았습니다."
         )
     if now < round_1_end:
         return CompetitionPhase("round1", ROUND_1_CHALLENGE_IDS, True)
@@ -154,7 +159,7 @@ def current_phase(now: datetime | None = None) -> CompetitionPhase:
             "break",
             ROUND_1_CHALLENGE_IDS,
             False,
-            "Submissions are closed during the break.",
+            "휴식 시간에는 제출할 수 없습니다.",
         )
     if now < round_2_end:
         return CompetitionPhase("round2", ROUND_2_CHALLENGE_IDS, True)
@@ -162,7 +167,7 @@ def current_phase(now: datetime | None = None) -> CompetitionPhase:
         "finished",
         ALL_CHALLENGE_IDS,
         False,
-        "The competition has finished; submissions are closed.",
+        "대회가 종료되어 제출이 마감되었습니다.",
     )
 
 

@@ -114,7 +114,8 @@
       return `<th class="h-cat" colspan="${span}">${esc(cat)}</th>`;
     }).join("");
 
-    // Problem number sub-row — use 1-based sequential index within category.
+    // Problem number sub-row — 1-based index running flat across every
+    // category, matching the printed problem numbering.
     let probIdx = 0;
     const probHeaderCells = chals.map((c) => {
       probIdx++;
@@ -378,8 +379,7 @@
   contain: layout;
 }
 
-/* ── Dark mode override (class or ?dark=1) ──────────────────────────────── */
-#${ROOT_ID}.esb-dark,
+/* ── Dark mode override (system preference) ─────────────────────────────── */
 @media (prefers-color-scheme: dark) {
   #${ROOT_ID}:not(.esb-light) {
     --solve-bg:    rgba(16, 185, 129, 0.16);

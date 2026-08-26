@@ -157,9 +157,14 @@ if (econHasChallengeRuntime) {
         ? data.concepts
         : ["회로 동작"]);
 
+    // A submission the endpoint refused (round closed, attempt already used)
+    // was never graded, so there is no bench run to replay.
+    const rejected =
+      (data && data.status) === "unavailable" || (data && data.status) === "locked";
+
     // If the bench isn't the active view (간단히) or motion is reduced, skip the
     // animation entirely and go straight to the result.
-    if (!benchDetailOn() || prefersReducedMotion || !term || !bar) {
+    if (rejected || !benchDetailOn() || prefersReducedMotion || !term || !bar) {
       done();
       return;
     }
@@ -247,7 +252,10 @@ if (econHasChallengeRuntime) {
     return div.innerHTML;
   }
 
-  function selectFiles(fileList) {
+  // `paths` holds the folder-relative path of each file, parallel to `fileList`.
+  // The directory picker puts that on the File itself; a folder drop cannot, so
+  // the drop path supplies it separately.
+  function selectFiles(fileList, paths) {
     const files = Array.from(fileList || []);
     if (!files.length) return;
     const submitRoot = root();
@@ -279,12 +287,13 @@ if (econHasChallengeRuntime) {
       return;
     }
 
-    const isSingleFolder = files.every((file) => {
-      const parts = String(file.webkitRelativePath || "").replace(/\\/g, "/").split("/");
+    const isSingleFolder = files.every((file, index) => {
+      const relative = (paths && paths[index]) || file.webkitRelativePath || "";
+      const parts = String(relative).replace(/\\/g, "/").split("/");
       return parts.length === 2 && parts[0];
     });
     if (!isSingleFolder) {
-      showFileError("Please select one folder; subfolders are not supported.");
+      showFileError("폴더 하나만 선택해주세요. 하위 폴더는 제출할 수 없습니다.");
       return;
     }
 
@@ -318,6 +327,84 @@ if (econHasChallengeRuntime) {
     setStandaloneSubmitDisabled(true);
   }
 
+  // ---------- Folder drop ----------
+  //
+  // A dropped File carries an empty webkitRelativePath, so the folder shape is
+  // only visible through DataTransferItem.webkitGetAsEntry. The entry list must
+  // be read synchronously — the drop event's items are cleared as soon as the
+  // handler yields — and what comes back is validated against exactly the
+  // limits the directory picker path enforces.
+
+  function readDirectory(entry, limit) {
+    const reader = entry.createReader();
+    const all = [];
+    return new Promise((resolve, reject) => {
+      // readEntries returns the directory in batches and signals the end with
+      // an empty batch; one call is not enough.
+      const step = () => {
+        reader.readEntries((batch) => {
+          all.push.apply(all, batch);
+          // Stop one entry past the limit so a mis-dropped folder (Downloads,
+          // Desktop) fails on the count check instead of stalling the tab on
+          // thousands of entries. A folder that could still pass is read to
+          // the end, so subfolder detection never sees a truncated list.
+          if (all.length > limit) {
+            resolve(all.slice(0, limit + 1));
+            return;
+          }
+          if (!batch.length) {
+            resolve(all);
+            return;
+          }
+          step();
+        }, reject);
+      };
+      step();
+    });
+  }
+
+  function fileFromEntry(entry) {
+    return new Promise((resolve, reject) => entry.file(resolve, reject));
+  }
+
+  async function selectDroppedFolder(dataTransfer) {
+    const items = (dataTransfer && dataTransfer.items) || [];
+    const roots = [];
+    for (const item of Array.from(items)) {
+      if (typeof item.webkitGetAsEntry !== "function") break;
+      const entry = item.webkitGetAsEntry();
+      if (entry) roots.push(entry);
+    }
+    if (!roots.length) {
+      showFileError("폴더를 인식하지 못했습니다. 영역을 클릭해 제출 폴더를 선택해주세요.");
+      return;
+    }
+    if (roots.length > 1 || !roots[0].isDirectory) {
+      showFileError("제출 폴더 하나만 끌어다 놓아주세요.");
+      return;
+    }
+
+    let files, paths;
+    try {
+      // 32 is the per-folder file limit selectFiles enforces below.
+      const entries = await readDirectory(roots[0], 32);
+      if (!entries.length) {
+        showFileError("선택한 폴더가 비어 있습니다.");
+        return;
+      }
+      if (!entries.every((entry) => entry.isFile)) {
+        showFileError("폴더 하나만 선택해주세요. 하위 폴더는 제출할 수 없습니다.");
+        return;
+      }
+      files = await Promise.all(entries.map(fileFromEntry));
+      paths = entries.map((entry) => roots[0].name + "/" + entry.name);
+    } catch (error) {
+      showFileError("폴더를 읽지 못했습니다. 영역을 클릭해 제출 폴더를 선택해주세요.");
+      return;
+    }
+    selectFiles(files, paths);
+  }
+
   // ---------- Result parsing ----------
 
   function parseResult(message) {
@@ -348,6 +435,21 @@ if (econHasChallengeRuntime) {
   const ICON_PASS = '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>';
   const ICON_WARN = '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 9v4"/><path d="M12 17h.01"/><path d="M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/></svg>';
   const ICON_FAIL = '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>';
+  const ICON_CLOSED = '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><polyline points="12 7 12 12 15 14"/></svg>';
+  const ICON_LOCK = '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="10" width="16" height="10" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></svg>';
+
+  // A refused submission is not a grading verdict, so it must not borrow
+  // .is-fail. Neither problem.css (page) nor view.html (modal) goes past
+  // pass/partial/fail, so the neutral variant is scoped in from here.
+  function ensureNoticeStyle() {
+    if (document.getElementById("econ-notice-style")) return;
+    const style = document.createElement("style");
+    style.id = "econ-notice-style";
+    style.textContent =
+      "#econ-submit-root .result.is-notice{background:var(--d-paper-soft,#f5f1e6);border-color:var(--d-hair-strong,#c8b48a)}" +
+      "#econ-submit-root .result.is-notice .marker{background:var(--d-ink-light,#8c8270)}";
+    document.head.appendChild(style);
+  }
 
   function renderResult(data) {
     const card = $("#econ-result");
@@ -355,6 +457,35 @@ if (econHasChallengeRuntime) {
     const status = (data && data.status) || "incorrect";
     const parsed = parseResult(data && data.message);
     const head = parsed.head;
+
+    // The round is closed, or the single truth-table attempt is already spent.
+    // Nothing was graded: show the server's explanation on a calm card and stop
+    // before any of the pass/partial/fail tiering below.
+    if (status === "unavailable" || status === "locked") {
+      const locked = status === "locked";
+      ensureNoticeStyle();
+      card.className = "result is-notice";
+      card.innerHTML =
+        '<div class="head">' +
+          '<div class="marker">' + (locked ? ICON_LOCK : ICON_CLOSED) + "</div>" +
+          '<div class="text">' +
+            '<div class="title">' +
+              (locked ? "이미 제출한 문제입니다" : "지금은 제출할 수 없습니다") +
+            "</div>" +
+            '<div class="subtitle">' +
+              escapeHtml(
+                head ||
+                  (locked
+                    ? "이 문제는 한 번만 제출할 수 있습니다."
+                    : "라운드가 열리면 다시 제출해주세요.")
+              ) +
+            "</div>" +
+          "</div>" +
+        "</div>";
+      setState("result");
+      return;
+    }
+
     // Prefer the structured count when the endpoint provides it; fall back to
     // the parsed message (older payloads / error states with no counts).
     const passed = (data && typeof data.passed === "number") ? data.passed : parsed.passed;
@@ -499,8 +630,7 @@ if (econHasChallengeRuntime) {
       });
     });
     dz.addEventListener("drop", (e) => {
-      const files = e.dataTransfer && e.dataTransfer.files;
-      selectFiles(files);
+      selectDroppedFolder(e.dataTransfer);
     });
 
     if (clearBtn) clearBtn.addEventListener("click", clearSelection);

@@ -47,11 +47,22 @@
       const payload = await response.json();
       const data = payload && payload.data ? payload.data : {};
 
-      controls.forEach(function (control) { control.disabled = true; });
-      submit.hidden = true;
+      // "unavailable" means the round is shut, not that the one attempt is spent —
+      // leave the form usable so the mentee can submit when the round reopens.
+      const closed = data.status === "unavailable";
+      const spent = data.status === "locked";
+      if (closed) {
+        submit.disabled = false;
+        submit.innerHTML = '<i class="fa-solid fa-play" aria-hidden="true"></i> 채점 요청';
+      } else {
+        controls.forEach(function (control) { control.disabled = true; });
+        submit.hidden = true;
+      }
       if (result) {
         result.hidden = false;
-        result.className = "ep-truth-result " + (data.status === "correct" ? "is-pass" : "is-fail");
+        result.className = "ep-truth-result" + (
+          closed || spent ? "" : data.status === "correct" ? " is-pass" : " is-fail"
+        );
         result.textContent = data.message || "제출이 기록되었습니다.";
       }
 
