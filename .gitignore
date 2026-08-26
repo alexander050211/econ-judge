@@ -44,8 +44,10 @@ uploads/
 # Docker
 docker-compose.override.yml
 
-# Secret testcases (don't commit answers)
-tests/secret/
+# Answer material is COMMITTED, not ignored: the graded testcases live in
+# secret_tests/ and the reference circuits in solutions/, both tracked in git
+# (the Dockerfile COPYs secret_tests/ into the image). This repository is
+# public, so a future camp must author fresh testcases rather than reuse these.
 
 # Local reference clones (large, read-only)
 reference/

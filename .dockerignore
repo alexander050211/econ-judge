@@ -8,7 +8,7 @@ venv
 .vscode
 .idea
 .DS_Store
-tests/samples
+tests/5jo-26winter
 tests/smoke_submit.py
 Digital.jar
 *.db

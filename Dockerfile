@@ -1,4 +1,4 @@
-# Auto-grader deployment image: CTFd 3.8.5 + econ_judge plugin + Java 17 + Digital.jar.
+# Auto-grader deployment image: CTFd 3.8.5 + econ_judge plugin + Java 21 + Digital.jar.
 # Used by Render (or any container host) to deploy the working state.
 FROM python:3.11-slim
 
@@ -19,7 +19,12 @@ WORKDIR /opt
 RUN git clone --depth 1 --branch ${CTFD_VERSION} https://github.com/CTFd/CTFd.git
 
 WORKDIR /opt/CTFd
-RUN pip install -r requirements.txt && pip install requests gunicorn
+# The extra pins match CTFd 3.8.5's own requirements.txt, so this install
+# resolves without disturbing anything CTFd already resolved. gevent is named
+# explicitly rather than left transitive because bin/entrypoint.sh defaults
+# WEB_WORKER_CLASS to gevent, and render.yaml asks for CLEAR CACHE rebuilds.
+RUN pip install -r requirements.txt \
+    && pip install requests==2.32.4 gunicorn==23.0.0 gevent==25.5.1
 
 ENV DIGITAL_VERSION=v0.31
 RUN curl -sSL -o /tmp/Digital.zip \
