@@ -26,6 +26,25 @@
     });
   });
 
+  // The quiz shares its verdict vocabulary with the .dig upload panel
+  // (view.js): the Korean state word leads in a chip, the sentence follows.
+  // Both go in as text — server strings are never HTML — and a submission that
+  // was refused or never reached the judge takes 안내 / 채점 오류 rather than
+  // the failure skin, which belongs to a wrong answer alone.
+  function showResult(klass, word, message) {
+    if (!result) return;
+    result.hidden = false;
+    result.className = "ep-truth-result " + klass;
+    result.textContent = "";
+    const chip = document.createElement("span");
+    chip.className = "state-chip";
+    chip.textContent = word;
+    const text = document.createElement("span");
+    text.textContent = message;
+    result.appendChild(chip);
+    result.appendChild(text);
+  }
+
   submit.addEventListener("click", async function () {
     const values = answers();
     if (!values) return;
@@ -58,12 +77,19 @@
         controls.forEach(function (control) { control.disabled = true; });
         submit.hidden = true;
       }
-      if (result) {
-        result.hidden = false;
-        result.className = "ep-truth-result" + (
-          closed || spent ? "" : data.status === "correct" ? " is-pass" : " is-fail"
+      if (closed || spent) {
+        showResult(
+          "is-notice",
+          "안내",
+          data.message ||
+            (spent
+              ? "이 문제는 한 번만 제출할 수 있습니다."
+              : "라운드가 열리면 다시 제출해주세요.")
         );
-        result.textContent = data.message || "제출이 기록되었습니다.";
+      } else if (data.status === "correct") {
+        showResult("is-pass", "전체 통과", data.message || "제출이 기록되었습니다.");
+      } else {
+        showResult("is-fail", "실패", data.message || "제출이 기록되었습니다.");
       }
 
       if (data.status === "correct") {
@@ -76,11 +102,14 @@
     } catch (error) {
       submit.disabled = false;
       submit.innerHTML = '<i class="fa-solid fa-play" aria-hidden="true"></i> 채점 요청';
-      if (result) {
-        result.hidden = false;
-        result.className = "ep-truth-result is-fail";
-        result.textContent = "제출하지 못했습니다. 연결을 확인한 뒤 다시 시도해주세요.";
-      }
+      // No verdict came back at all, so this is not one: 채점 오류, not 실패.
+      // The form stays usable, as it was, because the attempt may never have
+      // been recorded.
+      showResult(
+        "is-error",
+        "채점 오류",
+        "제출하지 못했습니다. 연결을 확인한 뒤 다시 시도해주세요."
+      );
     }
   });
 })();

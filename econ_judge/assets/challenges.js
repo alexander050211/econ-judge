@@ -20,9 +20,14 @@
   if (window.location.pathname !== "/challenges") return;
 
   const CATEGORY_ORDER = {
-    "1라운드": { idx: 0, label: "1라운드", sub: "70분 · 35점 · 8문제", tagCls: "" },
-    "2라운드": { idx: 1, label: "2라운드", sub: "80분 · 45점 · 7문제", tagCls: "d-tag-mission" },
+    "1라운드": { idx: 0, label: "1라운드", sub: "70분 · 35점 · 8문제" },
+    "2라운드": { idx: 1, label: "2라운드", sub: "80분 · 45점 · 7문제" },
   };
+
+  /* The phases where a round is actually running. Anything else — including a
+     phase name a newer server invents — gets the standalone banner, which is
+     the safe side: the board never claims a round is live on its own. */
+  const RUNNING_PHASES = ["round1", "round2"];
 
   function phaseText(phase) {
     return {
@@ -34,6 +39,19 @@
       open: "준비 모드 · 운영 검토를 위해 두 라운드가 모두 열려 있습니다.",
       misconfigured: "일정 설정이 필요합니다.",
     }[phase] || "현재 라운드 상태를 확인하는 중입니다.";
+  }
+
+  /* Why the locked round says something different from the banner: the banner
+     explains the clock, this explains what the greyed table in front of you
+     is waiting for. */
+  function lockedNote(phase) {
+    return {
+      before: "시작 시간에 열립니다",
+      round1: "1라운드가 끝나면 열립니다",
+      break: "휴식 시간에는 제출할 수 없습니다",
+      round2: "2라운드 종료 후 다시 열립니다",
+      finished: "제출이 마감되었습니다",
+    }[phase] || "지금은 제출할 수 없습니다";
   }
 
   /* Inject our CSS + markup container once. We hide the stock jumbotron
@@ -56,252 +74,284 @@ main > .jumbotron:has(+ .container [x-data="ChallengeBoard"]),
 /* Fallback selector for browsers without :has() — use a JS-applied class. */
 .s2-hide-stock { display: none !important; }
 
-/* ─── s2 layout ─── */
+/* ─── s2 board ───
+   Cool page, one white hairline card per round, 48px rows. Salience rule:
+   the board carries exactly one filled blue button (.s2-row-next, the first
+   unsolved problem of the open round) so "what do I do next" is one glance.
+   Every colour is a shared --d-* token, so CTFd's dark toggle swaps this
+   screen with the rest of the theme. */
 .s2-wrap {
-  padding: 36px 0 64px;
+  padding: 24px 0 40px;
   display: flex;
   flex-direction: column;
-  gap: 28px;
+  gap: 20px;
+  font-family: var(--d-f-sans);
+  color: var(--d-ink);
 }
 .s2-wrap *, .s2-wrap *::before, .s2-wrap *::after { box-sizing: border-box; }
-.s2-head {
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-end;
-  gap: 32px;
-  padding-bottom: 18px;
-  border-bottom: 1px solid var(--d-hair);
-}
-.s2-head-l { display: flex; flex-direction: column; gap: 6px; }
+.s2-wrap svg { width: 14px; height: 14px; flex: none; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+
+.s2-head { display: flex; justify-content: space-between; align-items: flex-end; gap: 24px; }
+.s2-head-l { min-width: 0; }
 .s2-h1 {
-  font-family: var(--d-f-sans);
-  font-weight: 600;
-  font-size: 48px;
-  letter-spacing: -0.03em;
-  margin: 4px 0 0;
-  color: var(--d-ink);
-  line-height: 1.05;
-}
-.s2-h1-ko {
-  font-family: var(--d-f-ko);
+  margin: 0;
   font-size: 28px;
-  font-weight: 500;
-  color: var(--d-ink-light);
+  font-weight: 600;
+  line-height: 1.2;
   letter-spacing: -0.015em;
-  margin-left: 4px;
+  color: var(--d-ink);
 }
-.s2-head-sub {
-  font-family: var(--d-f-ko);
-  font-size: 15px;
-  color: var(--d-ink-light);
-  line-height: 1.55;
-  margin: 12px 0 0;
-  max-width: 540px;
+/* Korean leads and the English word trails it as a quiet gloss — B drops the
+   uppercase mono kickers the old board used above every heading. */
+.s2-h1-en {
+  margin-left: 10px;
+  font-size: 13px;
+  font-weight: 400;
+  letter-spacing: 0;
+  color: var(--d-text-3);
+  vertical-align: 2px;
 }
+.s2-head-sub { margin: 6px 0 0; font-size: 14px; line-height: 1.5; color: var(--d-text-2); }
+.s2-head-sub b { font-weight: 500; color: var(--d-ink); }
+/* The phase line lives here while a round runs and in #s2-round-status
+   otherwise — render() shows exactly one of the two, so the board never
+   prints the same sentence twice. (The navbar countdown is round-ui.js's.) */
+.s2-head-phase[hidden] { display: none; }
+.s2-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  height: 36px;
+  padding: 0 14px;
+  border: 1px solid var(--d-border-strong);
+  border-radius: 6px;
+  background: var(--d-surface);
+  color: var(--d-ink);
+  box-shadow: var(--d-shadow-1);
+  font-family: inherit;
+  font-size: 14px;
+  font-weight: 500;
+  white-space: nowrap;
+  text-decoration: none;
+  transition: background 0.15s var(--d-ease), border-color 0.15s var(--d-ease);
+}
+.s2-btn:hover { background: var(--d-surface-2); color: var(--d-ink); text-decoration: none; }
+.s2-btn:focus-visible { outline: none; border-color: var(--d-accent); box-shadow: 0 0 0 3px var(--d-focus); }
+
 .s2-progress {
   display: grid;
-  grid-template-columns: 1fr 1fr 1fr 2fr;
-  gap: 0;
-  border: 1px solid var(--d-hair-strong);
-  background: var(--d-paper-soft);
+  grid-template-columns: repeat(4, 1fr);
+  background: var(--d-surface);
+  border: 1px solid var(--d-border);
+  border-radius: 10px;
+  box-shadow: var(--d-shadow-1);
 }
-.s2-prog-cell {
-  padding: 14px 20px 16px;
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
-  border-right: 1px solid var(--d-hair);
-}
-.s2-prog-cell:last-child { border-right: none; }
+.s2-prog-cell { padding: 14px 20px; border-left: 1px solid var(--d-border); min-width: 0; }
+.s2-prog-cell:first-child { border-left: 0; }
+.s2-prog-label { display: block; font-size: 12.5px; color: var(--d-text-2); margin-bottom: 4px; }
 .s2-prog-val {
-  font-family: var(--d-f-sans);
+  display: block;
+  font-size: 22px;
   font-weight: 600;
-  font-size: 28px;
-  letter-spacing: -0.025em;
+  line-height: 1.2;
+  letter-spacing: -0.01em;
   color: var(--d-ink);
-  font-feature-settings: 'tnum';
-  display: flex;
-  align-items: baseline;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
-.s2-prog-mut {
-  color: var(--d-ink-light);
-  font-weight: 500;
-  font-size: 18px;
-  margin-left: 2px;
-  letter-spacing: 0;
-}
-.s2-prog-cell-bar { gap: 10px; padding-top: 14px; padding-bottom: 14px; justify-content: center; }
+/* The amber phosphor glow THEME_HEADER_CSS puts on dark-mode hero numbers is
+   Direction D's CRT conceit; B has no amber on this screen. */
+:root[data-bs-theme="dark"] .s2-prog-val { text-shadow: none; }
+.s2-prog-mut { color: var(--d-text-3); font-weight: 500; }
+.s2-prog-row { display: flex; align-items: center; gap: 10px; height: 26px; }
 .s2-prog-track {
-  height: 8px;
-  background: var(--d-paper-sunk);
-  position: relative;
+  flex: 1;
+  height: 6px;
+  background: var(--d-surface-2);
+  border-radius: 3px;
   overflow: hidden;
 }
 .s2-prog-fill {
+  display: block;
   height: 100%;
-  background: linear-gradient(90deg, var(--d-brand-dark), var(--d-brand));
-  transition: width 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+  background: var(--d-accent);
+  border-radius: inherit;
+  transition: width 0.22s var(--d-ease);
 }
-.s2-prog-bar-meta {
-  font-family: var(--d-f-mono);
-  font-size: 11px;
-  color: var(--d-ink-mid);
-  letter-spacing: 0.04em;
-  align-self: flex-end;
-}
-.s2-sections { display: flex; flex-direction: column; gap: 28px; }
-.s2-round-status { padding: 12px 15px; border: 1px solid var(--d-brand-line); background: var(--d-brand-soft); color: var(--d-brand-ink); font-family: var(--d-f-ko); font-size: 14px; }
-.s2-cat { display: flex; flex-direction: column; gap: 10px; }
-.s2-cat-head {
+.s2-prog-bar-meta { font-size: 14px; font-weight: 600; color: var(--d-ink); font-variant-numeric: tabular-nums; }
+
+/* Standalone banner: only for the phases where no round is running. */
+.s2-round-status {
   display: flex;
-  justify-content: space-between;
-  align-items: baseline;
-  gap: 16px;
-}
-.s2-cat-head-l { display: flex; align-items: baseline; gap: 12px; flex-wrap: wrap; }
-.s2-cat-title {
-  font-family: var(--d-f-sans);
-  font-weight: 600;
-  font-size: 22px;
-  letter-spacing: -0.02em;
-  color: var(--d-ink);
-  margin: 0;
-}
-.s2-cat-sub { font-family: var(--d-f-ko); font-size: 14px; color: var(--d-ink-light); }
-.s2-cat-head-r {
-  display: inline-flex;
-  align-items: baseline;
+  align-items: center;
   gap: 10px;
-  font-family: var(--d-f-mono);
+  min-height: 40px;
+  padding: 9px 14px;
+  border-radius: 8px;
+  background: var(--d-accent-soft);
+  color: var(--d-accent-text);
+  font-size: 13.5px;
+  font-weight: 500;
 }
-.s2-cat-divider { width: 1px; height: 12px; background: var(--d-hair-strong); display: inline-block; align-self: center; }
-.s2-cat-frac {
-  font-family: var(--d-f-sans);
-  font-weight: 600;
-  font-size: 18px;
-  color: var(--d-ink);
-  letter-spacing: -0.01em;
-  font-feature-settings: 'tnum';
-}
-.s2-cat-frac-mut { color: var(--d-ink-light); font-weight: 500; font-size: 14px; }
+.s2-round-status svg { width: 16px; height: 16px; }
+.s2-round-status-quiet { background: var(--d-surface-2); color: var(--d-text-2); }
+.s2-round-status-alert { background: var(--d-bad-soft); color: var(--d-bad-text); }
+.s2-round-status[hidden] { display: none; }
+
+.s2-sections { display: flex; flex-direction: column; gap: 28px; }
+.s2-cat { display: flex; flex-direction: column; gap: 12px; }
+.s2-cat-head { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+.s2-cat-title { margin: 0; font-size: 18px; font-weight: 600; letter-spacing: -0.01em; color: var(--d-ink); }
+.s2-cat-sub { font-size: 13.5px; color: var(--d-text-2); }
+.s2-cat-lock { display: inline-flex; align-items: center; gap: 6px; font-size: 13px; color: var(--d-text-2); }
+.s2-cat-lock svg { width: 14px; height: 14px; }
+.s2-cat-stat { margin-left: auto; font-size: 13.5px; color: var(--d-text-2); font-variant-numeric: tabular-nums; }
+.s2-cat-frac { color: var(--d-ink); font-weight: 500; }
+
 .s2-tbl {
   width: 100%;
-  border-collapse: collapse;
-  border-top: 1.5px solid var(--d-ink);
-  border-bottom: 1.5px solid var(--d-ink);
-  font-family: var(--d-f-ko);
+  table-layout: fixed;
+  border-collapse: separate;
+  border-spacing: 0;
+  background: var(--d-surface);
+  border: 1px solid var(--d-border);
+  border-radius: 10px;
+  box-shadow: var(--d-shadow-1);
+  overflow: hidden;
 }
-.s2-tbl thead th {
-  font-family: var(--d-f-mono);
-  font-size: 10px;
-  letter-spacing: 0.14em;
-  color: var(--d-ink-light);
-  text-transform: uppercase;
-  text-align: left;
-  padding: 8px 14px;
-  border-bottom: 1px solid var(--d-ink);
-  font-weight: 600;
-  background: var(--d-paper);
-}
-.s2-th-id { width: 60px; }
-.s2-th-pts { width: 80px; text-align: right !important; }
-.s2-th-status { width: 170px; }
-.s2-th-action { width: 110px; text-align: right !important; }
-.s2-row {
-  border-bottom: 1px solid var(--d-hair);
-  transition: background 0.12s ease;
-  cursor: pointer;
-}
-.s2-row:last-child { border-bottom: none; }
-.s2-row:hover { background: var(--d-paper-soft); }
-.s2-row:focus-visible {
-  outline: 2px solid var(--d-brand-dark);
-  outline-offset: -2px;
-  background: var(--d-paper-soft);
-}
+.s2-row { transition: background 0.15s var(--d-ease); cursor: pointer; }
+.s2-row:hover { background: var(--d-surface-2); }
+.s2-row:focus-visible { outline: 2px solid var(--d-accent); outline-offset: -2px; }
 .s2-row td {
-  padding: 12px 14px;
+  height: 48px;
+  padding: 0 6px;
   vertical-align: middle;
   font-size: 14.5px;
   color: var(--d-ink);
 }
-.s2-row-locked .s2-name { color: var(--d-ink-mid); }
-.s2-id-badge {
-  font-family: var(--d-f-mono);
-  font-size: 12px;
-  font-weight: 500;
-  color: var(--d-ink-light);
-  letter-spacing: 0.04em;
-}
-.s2-td-name { padding-right: 24px !important; }
-.s2-name {
-  font-family: var(--d-f-ko);
-  font-size: 15px;
-  font-weight: 500;
-  color: var(--d-ink);
-  letter-spacing: -0.005em;
-  line-height: 1.4;
-}
-.s2-problem-link {
-  color: inherit;
-  text-decoration: none;
-}
-.s2-problem-link:hover { color: inherit; }
-.s2-td-pts {
-  text-align: right;
-  font-family: var(--d-f-sans);
-  font-feature-settings: 'tnum';
-}
-.s2-pts {
-  font-weight: 600;
-  font-size: 16px;
-  color: var(--d-ink);
-  letter-spacing: -0.01em;
-}
-.s2-pts-u {
-  font-family: var(--d-f-mono);
-  font-size: 11px;
-  color: var(--d-ink-light);
-  margin-left: 3px;
-  letter-spacing: 0.04em;
-}
-.s2-td-status .d-pill { vertical-align: middle; }
-.s2-td-action { text-align: right; }
-.s2-action {
-  font-family: var(--d-f-mono);
-  font-size: 11.5px;
-  font-weight: 600;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  color: var(--d-ink-light);
+.s2-row td:first-child { padding-left: 16px; }
+.s2-row td:last-child { padding-right: 14px; }
+.s2-row + .s2-row td { border-top: 1px solid var(--d-border); }
+.s2-td-id { width: 52px; }
+.s2-td-pts { width: 72px; text-align: right; }
+.s2-td-status { width: 118px; }
+.s2-td-action { width: 116px; text-align: right; }
+.s2-id-badge { font-family: var(--d-f-mono); font-size: 12.5px; letter-spacing: -0.01em; color: var(--d-text-3); }
+.s2-name { font-size: 14.5px; font-weight: 500; color: var(--d-ink); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.s2-problem-link { color: inherit; text-decoration: none; }
+.s2-problem-link:hover { color: inherit; text-decoration: none; }
+.s2-pts { font-size: 13px; color: var(--d-text-2); font-variant-numeric: tabular-nums; }
+.s2-pts-u { font-size: 13px; color: var(--d-text-2); margin-left: 3px; }
+.s2-chip {
   display: inline-flex;
   align-items: center;
   gap: 5px;
-  transition: color 0.12s ease;
+  height: 24px;
+  padding: 0 8px;
+  border-radius: 6px;
+  background: var(--d-surface-2);
+  color: var(--d-text-2);
+  font-size: 12.5px;
+  font-weight: 500;
+  white-space: nowrap;
 }
-.s2-row:hover .s2-action { color: var(--d-ink); }
-.s2-row:hover .s2-action svg { transform: translateX(2px); }
-.s2-action svg { transition: transform 0.12s ease; }
-.s2-loading, .s2-error {
+.s2-chip svg { width: 13px; height: 13px; stroke-width: 2.4; }
+.s2-chip-pass { background: var(--d-ok-soft); color: var(--d-ok-text); }
+.s2-action {
+  display: inline-flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 5px;
+  font-size: 13.5px;
+  font-weight: 500;
+  color: var(--d-text-2);
+  white-space: nowrap;
+  text-decoration: none;
+  transition: color 0.15s var(--d-ease), background 0.15s var(--d-ease), border-color 0.15s var(--d-ease);
+}
+.s2-action:hover { color: var(--d-ink); text-decoration: none; }
+.s2-action svg { width: 14px; height: 14px; }
+/* Unsolved rows get a hairline button; the one next row (below) fills it in. */
+.s2-action-btn {
+  justify-content: center;
+  height: 30px;
+  padding: 0 10px;
+  border: 1px solid var(--d-border-strong);
+  border-radius: 6px;
+  background: var(--d-surface);
+  color: var(--d-ink);
+}
+.s2-action-btn:hover { background: var(--d-surface-2); color: var(--d-ink); }
+.s2-action:focus-visible { outline: none; border-radius: 6px; box-shadow: 0 0 0 3px var(--d-focus); }
+
+/* The single next problem: left rail, faint accent tint, the only filled
+   button on the board. The chip flips to the card colour so it still reads
+   against the tint. */
+.s2-row-next { background: var(--d-accent-soft); }
+.s2-row-next:hover { background: var(--d-accent-soft); }
+.s2-row-next td:first-child { box-shadow: inset 3px 0 0 var(--d-accent); }
+.s2-row-next .s2-name { font-weight: 600; }
+.s2-row-next .s2-chip { background: var(--d-surface); color: var(--d-accent-text); }
+.s2-row-next .s2-action-btn {
+  background: var(--d-accent);
+  border-color: var(--d-accent);
+  color: var(--d-on-accent);
+}
+.s2-row-next .s2-action-btn:hover { background: var(--d-accent-hover); border-color: var(--d-accent-hover); color: var(--d-on-accent); }
+
+/* A locked round is recoloured, never dimmed with opacity: mentees read these
+   names to plan the next round, so every one of them has to stay legible. */
+.s2-tbl-locked { background: var(--d-surface-2); box-shadow: none; }
+.s2-tbl-locked .s2-row { cursor: default; }
+.s2-tbl-locked .s2-row:hover { background: transparent; }
+/* Every locked cell stops at --d-text-2, including the quiet #NN and points:
+   this card's ground is --d-surface-2, and --d-text-3 only clears 4.5:1 on
+   --d-surface. */
+.s2-tbl-locked .s2-name, .s2-tbl-locked .s2-action, .s2-tbl-locked .s2-chip,
+.s2-tbl-locked .s2-id-badge, .s2-tbl-locked .s2-pts, .s2-tbl-locked .s2-pts-u { color: var(--d-text-2); }
+.s2-tbl-locked .s2-chip { background: transparent; border: 1px solid var(--d-border-strong); }
+
+.s2-loading, .s2-empty, .s2-error {
   padding: 24px;
   text-align: center;
-  font-family: var(--d-f-ko);
-  color: var(--d-ink-light);
   font-size: 14px;
+  color: var(--d-text-2);
+  background: var(--d-surface);
+  border: 1px solid var(--d-border);
+  border-radius: 10px;
 }
-.s2-error {
-  background: var(--d-fail-soft);
-  border: 1px solid var(--d-fail-line);
-  color: var(--d-fail);
-  border-radius: 6px;
+.s2-error { background: var(--d-bad-soft); border-color: var(--d-bad-line); color: var(--d-bad-text); }
+
+/* 1366×768: nav 56 + 16 + head 61 + strip 68 + round head 26 + 8 rows × 44
+   ≈ 613 — the whole of round 1 stays above the fold on a school laptop. */
+@media (min-width: 1200px) and (max-height: 800px) {
+  .s2-wrap { padding-top: 16px; gap: 14px; }
+  .s2-head-sub { margin-top: 4px; }
+  .s2-prog-cell { padding: 11px 20px; }
+  .s2-sections { gap: 20px; }
+  .s2-cat { gap: 10px; }
+  .s2-row td { height: 44px; }
 }
+/* Phone: the whole row is the link, so the points and the action button give
+   up their columns to the problem name — the status chip is what a mentee
+   scans for on a small screen. */
 @media (max-width: 720px) {
   .s2-progress { grid-template-columns: 1fr 1fr; }
-  .s2-prog-cell { border-right: none; border-bottom: 1px solid var(--d-hair); }
-  .s2-prog-cell:nth-child(odd) { border-right: 1px solid var(--d-hair); }
-  .s2-prog-cell-bar { grid-column: 1 / -1; }
-  .s2-h1 { font-size: 36px; }
-  .s2-th-status, .s2-td-status { display: none; }
+  .s2-prog-cell:nth-child(3) { border-left: 0; }
+  .s2-prog-cell:nth-child(n+3) { border-top: 1px solid var(--d-border); }
+  .s2-head { flex-direction: column; align-items: flex-start; gap: 14px; }
+  .s2-h1 { font-size: 24px; }
+  .s2-td-id { width: 44px; }
+  .s2-td-status { width: 104px; }
+  .s2-td-pts, .s2-td-action { display: none; }
+  .s2-row td:first-child { padding-left: 12px; }
+  .s2-row .s2-td-status { padding-right: 12px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .s2-wrap *, .s2-wrap *::before, .s2-wrap *::after { transition: none !important; animation: none !important; }
 }
 `;
     document.head.appendChild(style);
@@ -331,45 +381,46 @@ main > .jumbotron:has(+ .container [x-data="ChallengeBoard"]),
     root.innerHTML = `
       <header class="s2-head">
         <div class="s2-head-l">
-          <div class="d-meta">SECTION · 도전 과제</div>
-          <h1 class="s2-h1">Challenges<span class="s2-h1-ko">&nbsp;도전 과제</span></h1>
+          <h1 class="s2-h1">도전 과제<span class="s2-h1-en">Challenges</span></h1>
           <p class="s2-head-sub">
-            총 <span id="s2-total-count">—</span>개의 온라인 논리설계 과제.
-            <span id="s2-round-status-text">현재 라운드를 확인하는 중입니다.</span>
+            총 <span id="s2-total-count">—</span>개의 온라인 논리설계 과제<span
+              class="s2-head-phase" id="s2-head-phase" hidden> · <b id="s2-round-status-text"></b></span>
           </p>
         </div>
         <div class="s2-head-r">
-          <a class="d-btn d-btn-ghost" href="/my-score">내 점수 보기</a>
+          <a class="s2-btn" href="/my-score">내 점수 보기</a>
         </div>
       </header>
 
       <section class="s2-progress">
         <div class="s2-prog-cell">
-          <div class="d-meta">우리 조</div>
+          <div class="s2-prog-label">우리 조</div>
           <div class="s2-prog-val" id="s2-team-name">—</div>
         </div>
         <div class="s2-prog-cell">
-          <div class="d-meta">해결 / 총 과제</div>
+          <div class="s2-prog-label">해결 / 총 과제</div>
           <div class="s2-prog-val">
             <span id="s2-solved">—</span><span class="s2-prog-mut"> / <span id="s2-total">—</span></span>
           </div>
         </div>
         <div class="s2-prog-cell">
-          <div class="d-meta">획득 / 만점</div>
+          <div class="s2-prog-label">획득 / 만점</div>
           <div class="s2-prog-val">
             <span id="s2-score">—</span><span class="s2-prog-mut"> / <span id="s2-total-pts">—</span></span>
           </div>
         </div>
         <div class="s2-prog-cell s2-prog-cell-bar">
-          <div class="d-meta">진행도</div>
-          <div class="s2-prog-track">
-            <div class="s2-prog-fill" id="s2-prog-fill" style="width:0%"></div>
+          <div class="s2-prog-label">진행도</div>
+          <div class="s2-prog-row">
+            <div class="s2-prog-track">
+              <div class="s2-prog-fill" id="s2-prog-fill" style="width:0%"></div>
+            </div>
+            <div class="s2-prog-bar-meta" id="s2-prog-pct">0%</div>
           </div>
-          <div class="s2-prog-bar-meta" id="s2-prog-pct">0%</div>
         </div>
       </section>
 
-      <div class="s2-round-status" id="s2-round-status">현재 라운드를 확인하는 중입니다.</div>
+      <div class="s2-round-status s2-round-status-quiet" id="s2-round-status" hidden></div>
       <div class="s2-sections" id="s2-sections">
         <div class="s2-loading">도전 과제를 불러오는 중…</div>
       </div>
@@ -391,68 +442,125 @@ main > .jumbotron:has(+ .container [x-data="ChallengeBoard"]),
     if (el) el.textContent = txt;
   }
 
-  function pillForStatus(status) {
-    if (status === "pass") {
-      return '<span class="d-pill d-pill-pass"><span class="d-pill-dot"></span>전체 통과</span>';
+  /* All icons are 24-unit strokes; the size comes from the CSS of whatever
+     wraps them (chip 13, action 14, banner 16), so none carry a width here. */
+  function svgIcon(body) {
+    return '<svg viewBox="0 0 24 24" aria-hidden="true">' + body + '</svg>';
+  }
+
+  const ICON = {
+    check: '<polyline points="20 6 9 17 4 12"/>',
+    circle: '<circle cx="12" cy="12" r="7"/>',
+    lock: '<rect x="4" y="11" width="16" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/>',
+    arrow: '<path d="M5 12h14M13 6l6 6-6 6"/>',
+    clock: '<circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/>',
+    pause: '<path d="M10 4H6v16h4zM18 4h-4v16h4z"/>',
+    done: '<circle cx="12" cy="12" r="9"/><polyline points="16 9 11 15 8 12"/>',
+    layers: '<path d="M12 3l9 4.5-9 4.5-9-4.5z"/><path d="M3 12l9 4.5 9-4.5M3 16.5 12 21l9-4.5"/>',
+    alert: '<path d="M12 3.4 2.7 20.6h18.6z"/><path d="M12 10v4M12 17.4v.01"/>',
+  };
+
+  /* Every state carries a glyph and a Korean word, never colour alone. */
+  function statusChip(state) {
+    if (state === "pass") {
+      return '<span class="s2-chip s2-chip-pass">' + svgIcon(ICON.check) + '전체 통과</span>';
     }
-    return '<span class="d-pill d-pill-locked"><span class="d-pill-dot"></span>미시작</span>';
+    if (state === "locked") {
+      return '<span class="s2-chip">' + svgIcon(ICON.lock) + '잠김</span>';
+    }
+    /* /api/v1/challenges carries no per-problem attempt count, so an unsolved
+       problem is 미시작 whether or not the team has already tried it. */
+    return '<span class="s2-chip">' + svgIcon(ICON.circle) + '미시작</span>';
   }
 
-  function arrowSvg() {
-    return '<svg width="12" height="12" viewBox="0 0 16 16" fill="none" aria-hidden="true">'
-      + '<path d="M5 4l4 4-4 4" stroke="currentColor" stroke-width="1.6" '
-      + 'stroke-linecap="round" stroke-linejoin="round"/></svg>';
+  function bannerIcon(phase) {
+    return svgIcon({
+      before: ICON.clock,
+      break: ICON.pause,
+      finished: ICON.done,
+      open: ICON.layers,
+      misconfigured: ICON.alert,
+    }[phase] || ICON.clock);
   }
 
-  function renderRow(c) {
-    const cls = c.solved_by_me ? "s2-row s2-row-pass" : "s2-row s2-row-locked";
-    const actionLabel = c.solved_by_me ? "다시 보기" : "풀어보기";
+  function bannerTone(phase) {
+    if (phase === "misconfigured") return "s2-round-status-alert";
+    /* 휴식 시간 is the one banner that asks for something (get ready), so it
+       keeps the accent ground; the rest are just state. */
+    return phase === "break" ? "" : "s2-round-status-quiet";
+  }
+
+  /* opts: { locked, paused, nextId, phase }. locked means the server is not
+     listing this round's problems yet, so the rows are inert; paused means
+     they are readable but closed for submission (휴식/종료). nextId marks the
+     single row that gets the board's only filled button. */
+  function renderRow(c, opts) {
+    const solved = !!c.solved_by_me;
+    const isNext = opts.nextId !== null && c.id === opts.nextId;
     const problemUrl = "/problems/" + encodeURIComponent(c.id);
+    let cls = "s2-row " + (solved ? "s2-row-pass" : "s2-row-todo");
+    if (isNext) cls += " s2-row-next";
+
+    /* A locked round's rows are inert: no link, no tab stop, and no
+       data-problem-url for the delegated handler in render() to act on. */
+    const openAttrs = opts.locked
+      ? ' aria-disabled="true"'
+      : ' data-problem-url="' + problemUrl + '" tabindex="0" role="link"'
+        + ' aria-label="' + esc(c.name + " 문제 페이지 열기") + '"';
+
+    const name = opts.locked
+      ? esc(c.name)
+      : '<a class="s2-problem-link" href="' + problemUrl + '">' + esc(c.name) + '</a>';
+
+    let action;
+    if (opts.locked) {
+      action = '<span class="s2-action">대기 중</span>';
+    } else if (solved) {
+      action = '<a class="s2-action" href="' + problemUrl + '">다시 보기' + svgIcon(ICON.arrow) + '</a>';
+    } else {
+      /* 풀어보기 promises a submission, so a paused round says 문제 보기. */
+      action = '<a class="s2-action s2-action-btn" href="' + problemUrl + '">'
+        + (opts.paused ? "문제 보기" : "풀어보기")
+        + (isNext ? svgIcon(ICON.arrow) : "") + '</a>';
+    }
+
+    /* A solved problem stays 전체 통과 in every phase — a closed round does
+       not undo the team's work. */
+    const state = solved ? "pass" : (opts.locked ? "locked" : "todo");
+
     return ''
-      + '<tr class="' + cls + '" data-challenge-id="' + c.id + '"'
-      + ' data-problem-url="' + problemUrl + '" tabindex="0" role="link"'
-      + ' aria-label="' + esc(c.name + " 문제 페이지 열기") + '">'
-      +   '<td class="s2-td-id"><span class="s2-id-badge">' + esc(String(c.id).padStart(2, "0")) + '</span></td>'
-      +   '<td class="s2-td-name"><div class="s2-name"><a class="s2-problem-link" href="' + problemUrl + '">' + esc(c.name) + '</a></div></td>'
+      + '<tr class="' + cls + '" data-challenge-id="' + c.id + '"' + openAttrs + '>'
+      +   '<td class="s2-td-id"><span class="s2-id-badge">#' + esc(String(c.id).padStart(2, "0")) + '</span></td>'
+      +   '<td class="s2-td-name"><div class="s2-name">' + name + '</div></td>'
       +   '<td class="s2-td-pts">'
       +     '<span class="s2-pts">' + esc(c.value) + '</span><span class="s2-pts-u">pt</span>'
       +   '</td>'
-      +   '<td class="s2-td-status">' + pillForStatus(c.solved_by_me ? "pass" : "locked") + '</td>'
-      +   '<td class="s2-td-action"><a class="s2-action" href="' + problemUrl + '">' + actionLabel + arrowSvg() + '</a></td>'
+      +   '<td class="s2-td-status">' + statusChip(state) + '</td>'
+      +   '<td class="s2-td-action">' + action + '</td>'
       + '</tr>';
   }
 
-  function renderCategory(cat, info, items) {
+  function renderCategory(cat, info, items, opts) {
     const passed = items.filter(i => i.solved_by_me).length;
     const total = items.length;
     const gotPts = items.reduce((a, i) => a + (i.solved_by_me ? (i.value || 0) : 0), 0);
     const totalPts = items.reduce((a, i) => a + (i.value || 0), 0);
-    const tagCls = info.tagCls ? "d-tag " + info.tagCls : "d-tag";
+    const lock = opts.locked || opts.paused
+      ? '<span class="s2-cat-lock">' + svgIcon(ICON.lock) + esc(lockedNote(opts.phase)) + '</span>'
+      : '';
     return ''
       + '<section class="s2-cat" data-cat="' + esc(cat) + '">'
       +   '<header class="s2-cat-head">'
-      +     '<div class="s2-cat-head-l">'
-      +       '<span class="' + tagCls + '">' + esc(cat) + '</span>'
-      +       '<h2 class="s2-cat-title">' + esc(info.label) + '</h2>'
-      +       '<span class="s2-cat-sub">' + esc(info.sub) + '</span>'
-      +     '</div>'
-      +     '<div class="s2-cat-head-r">'
-      +       '<span class="d-tiny">SOLVED</span>'
-      +       '<span class="s2-cat-frac">' + passed + '<span class="s2-cat-frac-mut">/' + total + '</span></span>'
-      +       '<span class="s2-cat-divider"></span>'
-      +       '<span class="d-tiny">POINTS</span>'
-      +       '<span class="s2-cat-frac">' + gotPts + '<span class="s2-cat-frac-mut">/' + totalPts + '</span></span>'
-      +     '</div>'
+      +     '<h2 class="s2-cat-title">' + esc(info.label) + '</h2>'
+      +     '<span class="s2-cat-sub">' + esc(info.sub) + '</span>'
+      +     lock
+      +     '<span class="s2-cat-stat">'
+      +       '해결 <span class="s2-cat-frac">' + passed + ' / ' + total + '</span>'
+      +       ' · 점수 <span class="s2-cat-frac">' + gotPts + ' / ' + totalPts + '</span>'
+      +     '</span>'
       +   '</header>'
-      +   '<table class="s2-tbl">'
-      +     '<thead><tr>'
-      +       '<th class="s2-th-id">#</th>'
-      +       '<th>도전 과제</th>'
-      +       '<th class="s2-th-pts">점수</th>'
-      +       '<th class="s2-th-status">상태</th>'
-      +       '<th class="s2-th-action"></th>'
-      +     '</tr></thead>'
-      +     '<tbody>' + items.map(renderRow).join("") + '</tbody>'
+      +   '<table class="s2-tbl' + (opts.locked ? ' s2-tbl-locked' : '') + '">'
+      +     '<tbody>' + items.map(i => renderRow(i, opts)).join("") + '</tbody>'
       +   '</table>'
       + '</section>';
   }
@@ -477,9 +585,23 @@ main > .jumbotron:has(+ .container [x-data="ChallengeBoard"]),
     const pct = totalPts > 0 ? Math.round(gotPts / totalPts * 100) : 0;
 
     setText("s2-total-count", totalCount);
-    const currentPhaseText = phaseText(competition && competition.phase);
-    setText("s2-round-status", currentPhaseText);
+    const phase = (competition && competition.phase) || "";
+    const currentPhaseText = phaseText(phase);
+    const running = RUNNING_PHASES.indexOf(phase) !== -1;
+
+    /* One sentence, one place: the page header carries it while a round runs,
+       the banner carries it otherwise. Printing both cost ~90px and pushed
+       the last two round-1 rows below the fold on a 1366×768 laptop. */
     setText("s2-round-status-text", currentPhaseText);
+    const headPhase = document.getElementById("s2-head-phase");
+    if (headPhase) headPhase.hidden = !running;
+    const banner = document.getElementById("s2-round-status");
+    if (banner) {
+      banner.className = ("s2-round-status " + bannerTone(phase)).trim();
+      banner.innerHTML = bannerIcon(phase) + "<span>" + esc(currentPhaseText) + "</span>";
+      banner.hidden = running;
+    }
+
     setText("s2-team-name", user && user.name ? user.name : "—");
     setText("s2-solved", solvedCount);
     setText("s2-total", totalCount);
@@ -491,13 +613,52 @@ main > .jumbotron:has(+ .container [x-data="ChallengeBoard"]),
 
     const root = document.getElementById("s2-sections");
     if (!root) return;
+
+    /* Two different closed states. A round the server is not listing yet is
+       locked (inert rows); a round it lists with submissions off is paused
+       (readable, but nothing to start). visible_challenge_ids is missing only
+       when the competition endpoint failed, and then we fall back to open — a
+       network blip must not lock a live contest's board.
+
+       Note that in a real round only an admin, a rehearsal ("open") board or a
+       finished contest ever reaches the locked branch: sync_challenge_states()
+       sets every challenge outside the running phase to "hidden", and
+       /api/v1/challenges?view=user does not return hidden challenges to a
+       mentee — so for a mentee the other round drops off the board instead of
+       locking. Rendering it locked would mean building it from
+       competition.rounds, which the board already fetches. */
+    const submissionsOpen = competition && typeof competition.submissions_open === "boolean"
+      ? competition.submissions_open
+      : true;
+    const visibleIds = competition && Array.isArray(competition.visible_challenge_ids)
+      ? competition.visible_challenge_ids
+      : null;
+
     let html = "";
+    let nextTaken = false;
     sortedCats.forEach(cat => {
-      const info = CATEGORY_ORDER[cat] || { label: cat, sub: "", tagCls: "" };
+      const info = CATEGORY_ORDER[cat] || { label: cat, sub: "" };
       const items = groups[cat].slice().sort((a, b) => a.id - b.id);
-      html += renderCategory(cat, info, items);
+      const locked = visibleIds !== null && !items.some(i => visibleIds.indexOf(i.id) !== -1);
+      const paused = !locked && !submissionsOpen;
+      /* Exactly one row on the whole board gets the filled button: the first
+         unsolved problem of the first round that is open right now. */
+      let nextId = null;
+      if (!locked && !paused && !nextTaken) {
+        const next = items.filter(i => !i.solved_by_me)[0];
+        if (next) {
+          nextId = next.id;
+          nextTaken = true;
+        }
+      }
+      html += renderCategory(cat, info, items, {
+        locked: locked,
+        paused: paused,
+        nextId: nextId,
+        phase: phase,
+      });
     });
-    root.innerHTML = html;
+    root.innerHTML = html || '<div class="s2-empty">지금 열려 있는 도전 과제가 없습니다.</div>';
 
     root.querySelectorAll(".s2-row").forEach(row => {
       const navigate = () => {

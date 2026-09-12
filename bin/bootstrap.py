@@ -154,195 +154,451 @@ def _team_password_is_set() -> bool:
         for t in DEMO_TEAMS
     )
 
-# SENS brand palette extracted from sens.snu.ac.kr's CSS. SENS the club uses
-# warm orange/amber, distinct from SNU University's navy. Loaded globally
-# via CTFd's `theme_header` config so all pages (login, scoreboard, admin)
-# pick up the same Pretendard + color tokens without per-page styling.
+# The whole product's design tokens. SENS the club brands itself in warm
+# orange/amber (from sens.snu.ac.kr), distinct from SNU University's navy;
+# Direction B keeps that amber as a mark rather than a palette, because it
+# cannot carry text on a near-white ground, and gives the work of an
+# accent colour to blue. Loaded globally via CTFd's `theme_header` config
+# so every page (login, scoreboard, admin) picks up the same fonts and
+# color tokens without per-page styling.
 THEME_HEADER_CSS = """\
 <style id="econ-judge-theme">
-/* E-CON 논설 — Direction D editorial-minimal theme. This block is the
+/* E-CON 논설 — Direction B "editorial product" theme. This block is the
    only copy of the theme CSS; keep the comment free of any literal HTML
    tag sequences, which the browser's HTML parser would otherwise treat
-   as terminating this style block. */
+   as terminating this style block. Cool-neutral ground, white cards,
+   hairline borders, one blue action colour. The mandated SENS amber
+   survives in exactly two places — the navbar brand dot and the PARTIAL
+   verdict disc — because amber text does not clear AA on near-white. */
 
 /* ── Font imports ────────────────────────────────────────────────── */
 
+/* Pretendard is imported first AND listed ahead of Noto Sans KR in every
+   stack below. Font matching is per character, so whichever Korean face
+   comes first in the stack claims all Hangul; put Noto first and the
+   jsDelivr file is downloaded on every page load and never drawn. */
 @import url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable.min.css');
-@import url('https://fonts.googleapis.com/css2?family=Inter+Tight:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400..700&family=Geist+Mono:wght@400;500&family=Noto+Sans+KR:wght@400;500;700&display=swap');
 
 /* ── Tokens ──────────────────────────────────────────────────────── */
 
 :root {
+  /* Direction B palette. These were contrast-checked as a set, so reach
+     for one of them rather than mixing a new shade: --d-text-3 is the
+     lowest rung and only clears 4.5:1 against --d-surface, never against
+     --d-surface-2. */
+  --d-bg:            #f7f8fa;
+  --d-surface:       #ffffff;
+  --d-surface-2:     #f1f3f6;
+  --d-console:       #f1f3f6;
+  --d-border:        #e4e7ec;
+  --d-border-strong: #cfd5dd;
+
+  --d-ink:           #1a1d23;
+  --d-text-2:        #5c6370;
+  --d-text-3:        #626977;
+
+  --d-accent:        #2457e0;
+  --d-accent-hover:  #1e4bc7;
+  --d-accent-soft:   #e9efff;
+  --d-accent-text:   #1e47b8;
+  --d-on-accent:     #ffffff;
+
+  --d-ok:            #0f7a57;
+  --d-ok-soft:       #e3f6ec;
+  --d-ok-text:       #0f6b4c;
+  --d-ok-line:       #bcd6cd;
+  --d-on-ok:         #ffffff;
+
+  /* On light, amber is a fill under dark glyphs and never a text colour:
+     --d-warn paints the PARTIAL disc, --d-warn-fill the bar and the card
+     strip, --d-warn-text the words. In dark the two amber roles merge. */
+  --d-warn:          #f5a83d;
+  --d-warn-fill:     #8a5412;
+  --d-warn-soft:     #fff4e0;
+  --d-warn-text:     #8a5412;
+  --d-warn-line:     #dcccb8;
+  --d-on-warn:       #1a1d23;
+
+  --d-bad:           #c93833;
+  --d-bad-soft:      #fdeceb;
+  --d-bad-text:      #b42323;
+  --d-bad-line:      #eac1c1;
+  --d-on-bad:        #ffffff;
+
+  --d-notice-soft:   #f1f3f6;
+  --d-notice-text:   #5c6370;
+
   /* Brand — SENS, mandated */
-  --d-brand:       #f5a83d;
-  --d-brand-dark:  #d69336;
-  --d-brand-ink:   #7a5a1f;
-  --d-brand-soft:  #fff4e0;
-  --d-brand-line:  rgba(245,168,61,0.32);
+  --d-brand:         #f5a83d;
 
-  /* Paper (warm whites) */
-  --d-paper:       #fbfaf6;
-  --d-paper-soft:  #f5f1e6;
-  --d-paper-sunk:  #efe9d7;
+  --d-focus:         rgba(36,87,224,.35);
+  --d-navbar:        rgba(255,255,255,.85);
 
-  /* Ink (warm blacks) */
-  --d-ink:         #15110a;
-  --d-ink-mid:     #4a3f2a;
-  --d-ink-light:   #8c8270;
-  --d-ink-soft:    #b8ad95;
+  --d-shadow-1: 0 1px 2px rgba(16,24,40,.04), 0 1px 3px rgba(16,24,40,.06);
+  --d-shadow-2: 0 0 0 1px rgba(16,24,40,.04), 0 4px 12px -2px rgba(16,24,40,.06), 0 12px 32px -8px rgba(16,24,40,.08);
+  --d-shadow-3: 0 0 0 1px rgba(16,24,40,.05), 0 12px 24px -8px rgba(16,24,40,.10), 0 32px 64px -24px rgba(16,24,40,.14);
+  --d-ease: cubic-bezier(.2,.8,.2,1);
 
-  /* Lines */
-  --d-hair:        #e7dfcd;
-  --d-hair-strong: #c8b48a;
+  /* Legacy aliases — REQUIRED. INDEX_CONTENT, MY_SCORE_CONTENT,
+     PROJECTOR_CONTENT and roughly 1200 lines of problem.css were written
+     against the warm-paper names; re-pointing them here is what lets the
+     palette change without touching a thousand call sites, and the dark
+     swap below reaches them for free. --d-brand-dark reads as "the
+     interactive colour" in those files (52 uses, nearly all hovers), and
+     in B that role belongs to the blue accent, not to a darker amber. */
+  --d-paper:       var(--d-bg);
+  --d-paper-soft:  var(--d-surface);
+  --d-paper-sunk:  var(--d-surface-2);
+  --d-ink-mid:     var(--d-text-2);
+  --d-ink-light:   var(--d-text-3);
+  --d-ink-soft:    var(--d-text-3);
+  --d-hair:        var(--d-border);
+  --d-hair-strong: var(--d-border-strong);
+  --d-brand-dark:  var(--d-accent);
+  --d-brand-ink:   var(--d-warn-text);
+  --d-brand-soft:  var(--d-warn-soft);
+  --d-brand-line:  var(--d-warn-line);
+  --d-pass:        var(--d-ok);
+  --d-pass-soft:   var(--d-ok-soft);
+  --d-pass-line:   var(--d-ok-line);
+  --d-fail:        var(--d-bad);
+  --d-fail-soft:   var(--d-bad-soft);
+  --d-fail-line:   var(--d-bad-line);
 
-  /* Status — warmed greens / rusts / amber */
-  --d-pass:        #2e7d52;
-  --d-pass-soft:   #e6f1e7;
-  --d-pass-line:   #b9d6bf;
-  --d-warn:        #a8761d;
-  --d-warn-soft:   #fff4dd;
-  --d-warn-line:   #e9c98c;
-  --d-fail:        #b04a3a;
-  --d-fail-soft:   #fbece3;
-  --d-fail-line:   #ecbeb0;
-
-  /* Type families (3 only) */
-  --d-f-sans: 'Inter Tight', 'Pretendard Variable', system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
-  --d-f-ko:   'Pretendard Variable', 'Pretendard', system-ui, sans-serif;
-  --d-f-mono: 'IBM Plex Mono', ui-monospace, 'SF Mono', 'JetBrains Mono', Consolas, monospace;
+  /* Type families (3 names, 2 real stacks — B does not split the Latin
+     and Korean faces). Pretendard leads Noto Sans KR everywhere; the
+     mono stack carries the same Korean fallback so 통과 / 실패 inside the
+     testbench render in a designed face instead of dropping to whatever
+     Hangul the OS pairs with Consolas. */
+  --d-f-sans: 'Inter', 'Pretendard Variable', 'Noto Sans KR', system-ui, -apple-system, 'Apple SD Gothic Neo', 'Malgun Gothic', sans-serif;
+  --d-f-ko:   var(--d-f-sans);
+  --d-f-mono: 'Geist Mono', ui-monospace, SFMono-Regular, Consolas, 'Pretendard Variable', 'Noto Sans KR', monospace;
 
   /* Spacing */
   --d-s-1:  4px;  --d-s-2:  8px;  --d-s-3: 12px;
   --d-s-4: 16px;  --d-s-5: 20px;  --d-s-6: 24px;
   --d-s-7: 32px;  --d-s-8: 48px;  --d-s-9: 64px;
 
-  /* Radius (used sparingly) */
-  --d-r-sm:   4px;
+  /* Radius — B's 6 / 8 / 10 / 14 scale. --d-r-pill keeps its 999px value
+     rather than being retargeted: CTFd Pages authored through the admin
+     UI can reference it and those live in the database where we cannot
+     grep. Nothing we ship uses it any more, and no button does. */
+  --d-r-sm:   6px;
   --d-r-md:   8px;
+  --d-r-lg:  10px;
+  --d-r-xl:  14px;
   --d-r-pill: 999px;
 
-  /* CTFd legacy aliases — templates that read --theme-color, --sens-* keep working */
+  /* CTFd legacy aliases — templates that read --theme-color, --sens-* keep
+     working, and keep meaning the amber they were authored against. */
   --theme-color:    var(--d-brand);
   --sens-brand:     var(--d-brand);
-  --sens-brand-dark:var(--d-brand-dark);
+  --sens-brand-dark:var(--d-brand-ink);
   --sens-brand-ink: var(--d-brand-ink);
   --sens-brand-soft:var(--d-brand-soft);
+
+  /* Bootstrap 5.3 resolves its own chrome — buttons, links, tables, form
+     controls, modals — through these. Leave them alone and CTFd paints a
+     second, brighter blue right next to our accent. */
+  --bs-primary: #2457e0;
+  --bs-primary-rgb: 36, 87, 224;
+  --bs-link-color: var(--d-accent-text);
+  --bs-link-color-rgb: 30, 71, 184;
+  --bs-link-hover-color: var(--d-accent-hover);
+  --bs-border-color: var(--d-border);
+  --bs-border-color-translucent: var(--d-border);
+  --bs-border-radius: 6px;
+  --bs-border-radius-sm: 4px;
+  --bs-border-radius-lg: 10px;
+  --bs-body-bg: var(--d-bg);
+  --bs-body-color: var(--d-ink);
+  --bs-body-font-family: var(--d-f-sans);
+  --bs-body-font-size: 14px;
+  --bs-emphasis-color: var(--d-ink);
+  --bs-secondary-color: var(--d-text-2);
+  --bs-focus-ring-color: var(--d-focus);
+  --bs-focus-ring-width: 3px;
 }
 
 /* ── Base ────────────────────────────────────────────────────────── */
 
 body {
-  background: var(--d-paper);
+  background: var(--d-bg);
   color: var(--d-ink);
-  font-family: var(--d-f-ko);
-  font-feature-settings: 'tnum' on;
+  font-family: var(--d-f-sans);
+  font-size: 14px;
+  line-height: 1.5;
+  /* Korean wants to break between phrases, but a Digital filename or an
+     underscore-joined problem title offers no phrase boundary — let those
+     break mid-token instead of shoving a card off the grid. */
+  word-break: keep-all;
+  overflow-wrap: anywhere;
+  /* 'cv05'/'cv11' are Inter's single-storey l and open-tail g, which is
+     what makes B's captions read as a product rather than a document.
+     'tnum' stays on globally, unlike the specimen: MY_SCORE_CONTENT and
+     PROJECTOR_CONTENT are frozen for this pass and their score columns
+     line up only because the whole page has tabular figures. */
+  font-feature-settings: 'cv05', 'cv11', 'tnum';
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
 }
 
-a { color: var(--d-ink); text-decoration: none; }
-a:hover { color: var(--d-brand-dark); text-decoration: none; }
+/* Links inherit rather than claim the accent — in B the blue is reserved
+   for the one action on the screen, and a page full of blue words is
+   exactly what that reservation is protecting against. */
+a { color: inherit; text-decoration: none; }
+a:hover { color: var(--d-accent-hover); text-decoration: none; }
 
 /* ── CTFd navbar / jumbotron / buttons overrides ─────────────────── */
 
+/* B's bar is a 56px sheet of translucent near-white over a blurred page,
+   held down by a single hairline. --d-navbar carries the alpha, so the
+   blur has something to reveal. */
 .navbar,
 .navbar.navbar-dark,
 .navbar.bg-dark {
-  background-color: var(--d-paper) !important;
+  --bs-navbar-padding-y: 0;
+  min-height: 56px;
+  background-color: var(--d-navbar) !important;
   background-image: none !important;
-  border-bottom: 1px solid var(--d-hair-strong);
-  box-shadow: 0 1px 0 var(--d-paper-sunk);
+  border-bottom: 1px solid var(--d-border);
+  box-shadow: none;
+  -webkit-backdrop-filter: blur(8px);
+  backdrop-filter: blur(8px);
 }
 /* CTFd's stock navbar carries Bootstrap classes `navbar-dark bg-dark`,
    which paint .navbar-brand + .nav-link white on the assumption of a
-   dark background. We flip the bg to warm paper above, so the text
+   dark background. We flip the bg to near-white above, so the text
    needs explicit overrides — otherwise the brand wordmark and link text
    render in white and become invisible. */
 .navbar .navbar-brand,
 .navbar.navbar-dark .navbar-brand {
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
   color: var(--d-ink) !important;
   font-family: var(--d-f-sans);
-  font-weight: 700;
-  letter-spacing: -0.015em;
-  font-size: 16px;
+  font-weight: 600;
+  letter-spacing: -0.005em;
+  font-size: 15px;
+}
+/* The one amber in the chrome. It is a pseudo-element so that CTFd's own
+   brand slot — the ctf_name text or an uploaded logo — stays whatever the
+   organiser configured. */
+.navbar .navbar-brand::before {
+  content: '';
+  flex: none;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--d-brand);
 }
 .navbar .navbar-brand:hover,
 .navbar.navbar-dark .navbar-brand:hover {
-  color: var(--d-brand-dark) !important;
+  color: var(--d-ink) !important;
 }
 .navbar .nav-link,
 .navbar.navbar-dark .nav-link {
-  color: var(--d-ink-mid) !important;
-  font-family: var(--d-f-ko);
+  color: var(--d-text-2) !important;
+  font-family: var(--d-f-sans);
   font-weight: 500;
   font-size: 14px;
-  letter-spacing: -0.005em;
-  padding: 8px 12px !important;
-  border-bottom: 2px solid transparent !important;
-  border-radius: 6px;
+  letter-spacing: 0;
+  padding: 6px 10px !important;
+  border-bottom: 0 !important;
+  border-radius: var(--d-r-sm);
+  transition: background 0.15s var(--d-ease), color 0.15s var(--d-ease);
 }
 .navbar .nav-link:hover,
 .navbar.navbar-dark .nav-link:hover {
   color: var(--d-ink) !important;
-  background: var(--d-paper-soft);
+  background: var(--d-surface-2);
 }
+/* The current page is marked with an offset accent underline rather than
+   a border on the box: the box already uses its background for hover, and
+   a border would fight the 6px corner. */
 .navbar .nav-link.active,
 .navbar.navbar-dark .nav-link.active,
 .navbar .nav-item.active > .nav-link {
   color: var(--d-ink) !important;
-  border-bottom: 2px solid var(--d-brand-dark) !important;
-  border-radius: 0;
   background: transparent !important;
+  text-decoration: underline;
+  text-decoration-color: var(--d-accent);
+  text-decoration-thickness: 2px;
+  text-underline-offset: 7px;
 }
 .navbar .navbar-toggler,
 .navbar.navbar-dark .navbar-toggler {
-  border-color: var(--d-hair-strong) !important;
+  border-color: var(--d-border-strong) !important;
+  border-radius: var(--d-r-sm);
   color: var(--d-ink) !important;
+  padding: 4px 9px;
 }
 .navbar.navbar-dark .navbar-toggler-icon {
   /* Bootstrap renders the hamburger as a white SVG background-image;
-     invert it so it shows on warm paper. */
-  filter: invert(1) brightness(0.4);
+     invert it so it shows on the near-white bar. */
+  filter: invert(1) brightness(0.35);
+}
+.navbar .nav-link:focus-visible,
+.navbar .navbar-brand:focus-visible,
+.navbar .navbar-toggler:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 3px var(--d-focus);
+  border-radius: var(--d-r-sm);
+}
+/* CTFd's light/dark toggle is an icon inside a nav-link; give it the
+   square footprint B uses for icon-only actions so it stops reading as a
+   word that lost its letters. */
+.navbar #color-mode-switcher {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 32px;
 }
 
 .jumbotron {
-  background-color: var(--d-paper) !important;
-  border-bottom: 1px solid var(--d-hair);
+  background-color: var(--d-surface) !important;
+  border-bottom: 1px solid var(--d-border);
 }
 
-.btn,
-.btn-primary,
-button[type="submit"] {
-  font-family: var(--d-f-sans);
-  font-weight: 600;
-  letter-spacing: -0.005em;
-  border-radius: var(--d-r-pill) !important;
-  transition: background 0.15s ease, border-color 0.15s ease, color 0.15s ease;
+/* One filled button per screen, and it is blue. Everything else is a
+   hairline ghost on white. Geometry goes through Bootstrap's own --bs-btn-*
+   variables so that .btn-sm and .btn-lg still mean something; the colours
+   stay on !important because CTFd's compiled theme sets some of them as
+   plain declarations and would otherwise win the cascade. */
+.btn {
+  --bs-btn-padding-y: 7px;
+  --bs-btn-padding-x: 14px;
+  --bs-btn-font-family: var(--d-f-sans);
+  --bs-btn-font-size: 14px;
+  --bs-btn-font-weight: 500;
+  --bs-btn-border-radius: var(--d-r-sm);
+  --bs-btn-focus-box-shadow: 0 0 0 3px var(--d-focus);
+  letter-spacing: 0;
+  transition: background 0.15s var(--d-ease), border-color 0.15s var(--d-ease),
+              color 0.15s var(--d-ease), box-shadow 0.15s var(--d-ease);
 }
+.btn-sm { --bs-btn-padding-y: 4px; --bs-btn-padding-x: 12px; --bs-btn-font-size: 13px; }
+.btn-lg { --bs-btn-padding-y: 11px; --bs-btn-padding-x: 20px; --bs-btn-font-size: 14.5px; }
+/* The submit rules carry the type and the attribute, which out-specifies
+   the plain .btn-outline-secondary class below however late that rule
+   comes — so a secondary submit anywhere in CTFd would render as the one
+   filled blue action. Excusing the two secondary classes here is what
+   keeps "one filled button per screen" true off the mentee screens. */
 .btn-primary,
-button[type="submit"] {
-  background-color: var(--d-ink) !important;
-  border-color: var(--d-ink) !important;
-  color: var(--d-paper) !important;
+button[type="submit"]:not(.btn-outline-secondary):not(.btn-secondary) {
+  background-color: var(--d-accent) !important;
+  border-color: var(--d-accent) !important;
+  color: var(--d-on-accent) !important;
+  box-shadow: 0 1px 2px rgba(16,24,40,.12);
 }
 .btn-primary:hover,
 .btn-primary:focus,
 .btn-primary:active,
-button[type="submit"]:hover {
-  background-color: var(--d-brand-dark) !important;
-  border-color: var(--d-brand-dark) !important;
-  color: var(--d-paper) !important;
+button[type="submit"]:not(.btn-outline-secondary):not(.btn-secondary):hover,
+button[type="submit"]:not(.btn-outline-secondary):not(.btn-secondary):focus,
+button[type="submit"]:not(.btn-outline-secondary):not(.btn-secondary):active {
+  background-color: var(--d-accent-hover) !important;
+  border-color: var(--d-accent-hover) !important;
+  color: var(--d-on-accent) !important;
+}
+/* Some CTFd forms submit through a bare button that never gets .btn, so
+   it inherits the UA's outset border and 2px corner. Spell the shape out
+   or those buttons alone keep the old chrome. */
+button[type="submit"]:not(.btn) {
+  padding: 7px 14px;
+  border: 1px solid var(--d-accent);
+  border-radius: var(--d-r-sm);
+  font-family: var(--d-f-sans);
+  font-size: 14px;
+  font-weight: 500;
+}
+/* The colour rules above are !important, so the disabled state has to be
+   too or a dead button keeps advertising itself as the live one. The grey
+   is --d-text-2 rather than the lighter --d-text-3, because the fill here
+   is --d-surface-2 — the one ground --d-text-3 is not allowed to sit on.
+   The two :not() clauses are carried over from the live rule because each
+   of them adds specificity: without them the blue outranks the dead
+   state and every disabled submit still looks clickable. */
+.btn-primary:disabled,
+.btn-primary.disabled,
+button[type="submit"]:not(.btn-outline-secondary):not(.btn-secondary):disabled {
+  background-color: var(--d-surface-2) !important;
+  border-color: var(--d-border) !important;
+  color: var(--d-text-2) !important;
+  box-shadow: none;
+  opacity: 1;
 }
 
-.btn-outline-secondary {
-  background: transparent !important;
+.btn-outline-secondary,
+.btn-secondary {
+  background: var(--d-surface) !important;
   color: var(--d-ink) !important;
-  border-color: var(--d-hair-strong) !important;
+  border-color: var(--d-border-strong) !important;
+  box-shadow: var(--d-shadow-1);
 }
-.btn-outline-secondary:hover {
-  background: var(--d-paper-soft) !important;
-  border-color: var(--d-ink) !important;
+.btn-outline-secondary:hover,
+.btn-secondary:hover {
+  background: var(--d-surface-2) !important;
+  border-color: var(--d-border-strong) !important;
   color: var(--d-ink) !important;
+}
+.btn:focus-visible,
+button:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 3px var(--d-focus) !important;
+}
+
+/* ── Form controls ───────────────────────────────────────────────── */
+
+/* Bootstrap's focus shadow is a hard-coded washed blue that does not
+   answer to --bs-primary, so it is replaced outright by the 3px --d-focus
+   ring. 44px is B's input height; textareas keep growing. */
+.form-control,
+.form-select {
+  border-color: var(--d-border-strong);
+  border-radius: var(--d-r-sm);
+  background-color: var(--d-surface);
+  color: var(--d-ink);
+  font-family: var(--d-f-sans);
+  font-size: 14px;
+  box-shadow: var(--d-shadow-1);
+  transition: border-color 0.15s var(--d-ease), box-shadow 0.15s var(--d-ease);
+}
+input.form-control,
+.form-select { height: 44px; padding: 0 12px; }
+input.form-control-sm,
+.form-select-sm { height: 34px; font-size: 13px; }
+textarea.form-control { min-height: 96px; padding: 10px 12px; line-height: 1.6; }
+.form-control::placeholder { color: var(--d-text-3); opacity: 1; }
+.form-control:focus,
+.form-select:focus {
+  border-color: var(--d-accent);
+  background-color: var(--d-surface);
+  color: var(--d-ink);
+  box-shadow: 0 0 0 3px var(--d-focus);
+}
+.form-check-input:checked { background-color: var(--d-accent); border-color: var(--d-accent); }
+.form-check-input:focus { border-color: var(--d-accent); box-shadow: 0 0 0 3px var(--d-focus); }
+.form-label { font-size: 13px; font-weight: 500; color: var(--d-ink); }
+.form-text { color: var(--d-text-2); }
+.input-group-text {
+  background: var(--d-surface-2);
+  border-color: var(--d-border-strong);
+  color: var(--d-text-2);
+}
+
+/* --bs-body-bg is the page ground now, so the Bootstrap surfaces that
+   default to it would come out grey; they are cards and want white. */
+.card,
+.modal-content,
+.dropdown-menu,
+.list-group-item {
+  background-color: var(--d-surface);
+  border-color: var(--d-border);
+  color: var(--d-ink);
 }
 
 /* Korean-only camp — hide CTFd language switcher (Chrome 105+, Safari 15.4+, FF 121+) */
@@ -352,77 +608,71 @@ button[type="submit"]:hover {
 
 /* ── Dark mode ────────────────────────────────────────────────────
  *
- * CTFd's color_mode_switcher.js sets `data-bs-theme="dark"` on <html>
- * (Bootstrap 5.3 convention) when the navbar sun/moon button is clicked
- * or when prefers-color-scheme: dark is detected. We swap the token
- * palette under that selector — warm charcoal paper, cream phosphor ink,
- * amber stays as the brand accent. Every surface that uses `var(--d-*)`
- * inherits the swap automatically (landing, /my-score, /projector, s2
- * challenges table, s7 login). A handful of inverted-treatment elements
- * (the ink-filled primary button, admin tags, drop-zone glyph) need
- * element-level overrides because they treat --d-ink as a background —
- * flipping ink to cream alone would produce cream-on-dark mush.
+ * CTFd's color_mode_switcher.js sets `data-bs-theme="dark"` on the root
+ * element (Bootstrap 5.3 convention) when the navbar sun/moon button is
+ * clicked or when prefers-color-scheme: dark is detected. Only the token
+ * values change here — every surface that reads var(--d-*) follows, and
+ * so do the legacy aliases above, because they are declared as var()
+ * references rather than as copies of the light hexes.
+ *
+ * The old build needed a second block of element-level overrides for
+ * anything that painted --d-ink as a BACKGROUND. B has no such element:
+ * the filled button is --d-accent on --d-on-accent in both modes, and
+ * both sides of that pair swap together. The overrides are gone with it.
  */
 
-:root[data-bs-theme="dark"] {
-  --d-paper:       #0e0b07;
-  --d-paper-soft:  #161108;
-  --d-paper-sunk:  #1f1810;
+[data-bs-theme="dark"] {
+  --d-bg:            #0f1115;
+  --d-surface:       #171a20;
+  --d-surface-2:     #1f232b;
+  --d-console:       #0f1115;
+  --d-border:        #2a2f38;
+  --d-border-strong: #3a404b;
 
-  --d-ink:         #f5ecd6;
-  --d-ink-mid:     #c9b88e;
-  --d-ink-light:   #8e7a52;
-  --d-ink-soft:    #5a4d33;
+  --d-ink:           #eceef2;
+  --d-text-2:        #a3aab6;
+  --d-text-3:        #8a91a1;
 
-  --d-hair:        rgba(245, 168, 61, 0.10);
-  --d-hair-strong: rgba(245, 168, 61, 0.22);
+  --d-accent:        #6f92ff;
+  --d-accent-hover:  #86a4ff;
+  --d-accent-soft:   #1a2440;
+  --d-accent-text:   #9db4ff;
+  --d-on-accent:     #0f1115;
 
-  --d-brand:       #f5a83d;
-  --d-brand-dark:  #ffc26a;
-  --d-brand-ink:   #ffc26a;
-  --d-brand-soft:  rgba(245, 168, 61, 0.10);
-  --d-brand-line:  rgba(245, 168, 61, 0.32);
+  --d-ok:            #34c98a;
+  --d-ok-soft:       #10281f;
+  --d-ok-text:       #5fd9a4;
+  --d-ok-line:       #2b5045;
+  --d-on-ok:         #0f1115;
 
-  --d-pass:        #6fb368;
-  --d-pass-soft:   rgba(111, 179, 104, 0.10);
-  --d-pass-line:   rgba(111, 179, 104, 0.32);
-  --d-fail:        #d97757;
-  --d-fail-soft:   rgba(217, 119, 87, 0.10);
-  --d-fail-line:   rgba(217, 119, 87, 0.32);
-  --d-warn:        #f5a83d;
-  --d-warn-soft:   rgba(245, 168, 61, 0.10);
-  --d-warn-line:   rgba(245, 168, 61, 0.32);
-}
+  /* On a dark ground amber finally clears AA, so the disc colour and the
+     bar colour collapse back into one value. */
+  --d-warn:          #f5a83d;
+  --d-warn-fill:     #f5a83d;
+  --d-warn-soft:     #2c2214;
+  --d-warn-text:     #f7be6b;
+  --d-warn-line:     #5a4b37;
+  --d-on-warn:       #0f1115;
 
-/* Inverted-treatment overrides — these elements use --d-ink as a
-   BACKGROUND in light mode (dark-on-light contrast block). In dark
-   mode flip to amber-filled with dark ink as text, echoing Direction
-   E's "RUN" key chrome rather than producing cream-on-dark mush. */
-:root[data-bs-theme="dark"] .btn-primary,
-:root[data-bs-theme="dark"] button[type="submit"],
-:root[data-bs-theme="dark"] .submit-row > .key-submit .challenge-submit,
-:root[data-bs-theme="dark"] .d-btn-primary {
-  background-color: var(--d-brand) !important;
-  border-color: var(--d-brand) !important;
-  color: #0e0b07 !important;
-}
-:root[data-bs-theme="dark"] .btn-primary:hover,
-:root[data-bs-theme="dark"] button[type="submit"]:hover,
-:root[data-bs-theme="dark"] .submit-row > .key-submit .challenge-submit:hover,
-:root[data-bs-theme="dark"] .d-btn-primary:hover {
-  background-color: var(--d-brand-dark) !important;
-  border-color: var(--d-brand-dark) !important;
-  color: #0e0b07 !important;
-  box-shadow: 0 0 18px rgba(245, 168, 61, 0.22);
-}
+  --d-bad:           #f0625d;
+  --d-bad-soft:      #2e1717;
+  --d-bad-text:      #ff8a85;
+  --d-bad-line:      #58393c;
+  --d-on-bad:        #0f1115;
 
-/* Phosphor glow on the key numeric heroes in dark mode — gives the
-   landing + challenges cards a CRT-instrument quality without changing
-   their light-mode rendering. */
-:root[data-bs-theme="dark"] .s1-stat-num,
-:root[data-bs-theme="dark"] .s2-prog-val {
-  text-shadow: 0 0 14px rgba(245, 168, 61, 0.18),
-               0 0 28px rgba(245, 168, 61, 0.06);
+  --d-notice-soft:   #1f232b;
+  --d-notice-text:   #a3aab6;
+
+  --d-focus:         rgba(111,146,255,.45);
+  --d-navbar:        rgba(15,17,21,.8);
+
+  --d-shadow-1: 0 0 0 1px rgba(255,255,255,.04), 0 1px 2px rgba(0,0,0,.4);
+  --d-shadow-2: 0 0 0 1px rgba(255,255,255,.05), 0 8px 24px -8px rgba(0,0,0,.6);
+  --d-shadow-3: 0 0 0 1px rgba(255,255,255,.06), 0 24px 48px -16px rgba(0,0,0,.7);
+
+  --bs-primary: #6f92ff;
+  --bs-primary-rgb: 111, 146, 255;
+  --bs-link-color-rgb: 157, 180, 255;
 }
 
 /* CTFd Pages content authored before the token system uses raw hex —
@@ -441,16 +691,16 @@ button[type="submit"]:hover {
 }
 .submit-row > .key-submit .challenge-submit {
   height: auto !important;
-  padding: 0.65rem 1rem !important;
-  background: var(--d-ink) !important;
-  border-color: var(--d-ink) !important;
-  color: var(--d-paper) !important;
-  font-weight: 600 !important;
-  border-radius: var(--d-r-pill) !important;
+  padding: 11px 16px !important;
+  background: var(--d-accent) !important;
+  border-color: var(--d-accent) !important;
+  color: var(--d-on-accent) !important;
+  font-weight: 500 !important;
+  border-radius: var(--d-r-sm) !important;
 }
 .submit-row > .key-submit .challenge-submit:hover {
-  background: var(--d-brand-dark) !important;
-  border-color: var(--d-brand-dark) !important;
+  background: var(--d-accent-hover) !important;
+  border-color: var(--d-accent-hover) !important;
 }
 
 /* ── Shared component classes (used by Pages markup + plugin assets) ── */
@@ -458,56 +708,69 @@ button[type="submit"]:hover {
 .d-btn {
   display: inline-flex;
   align-items: center;
+  justify-content: center;
   gap: 8px;
-  font-family: var(--d-f-sans);
-  font-weight: 600;
-  font-size: 14.5px;
-  letter-spacing: -0.005em;
-  text-decoration: none;
-  transition: background 0.15s ease, color 0.15s ease, border-color 0.15s ease;
-  cursor: pointer;
-  border: 1px solid transparent;
-  white-space: nowrap;
-}
-.d-btn-primary {
-  background: var(--d-ink);
-  color: var(--d-paper);
-  padding: 13px 22px;
-  border-radius: var(--d-r-pill);
-  border-color: var(--d-ink);
-}
-.d-btn-primary:hover { background: var(--d-brand-dark); border-color: var(--d-brand-dark); color: var(--d-paper); text-decoration: none; }
-.d-btn-ghost {
-  background: transparent;
+  height: 36px;
+  padding: 0 14px;
+  border: 1px solid var(--d-border-strong);
+  border-radius: var(--d-r-sm);
+  background: var(--d-surface);
   color: var(--d-ink);
-  padding: 13px 22px;
-  border-radius: var(--d-r-pill);
-  border-color: var(--d-hair-strong);
+  box-shadow: var(--d-shadow-1);
+  font-family: var(--d-f-sans);
+  font-weight: 500;
+  font-size: 14px;
+  letter-spacing: 0;
+  text-decoration: none;
+  white-space: nowrap;
+  cursor: pointer;
+  transition: background 0.15s var(--d-ease), color 0.15s var(--d-ease),
+              border-color 0.15s var(--d-ease), box-shadow 0.15s var(--d-ease);
 }
-.d-btn-ghost:hover { border-color: var(--d-ink); background: var(--d-paper-soft); text-decoration: none; }
+.d-btn:hover { background: var(--d-surface-2); color: var(--d-ink); text-decoration: none; }
+.d-btn:focus-visible { outline: none; box-shadow: 0 0 0 3px var(--d-focus); }
+.d-btn:active { transform: translateY(1px); box-shadow: none; }
+/* 44px for the one button that carries a whole page — a login submit or
+   a landing CTA — matching the input height it sits under. */
+.d-btn-lg { height: 44px; padding: 0 20px; font-size: 14.5px; }
+.d-btn-primary {
+  background: var(--d-accent);
+  border-color: var(--d-accent);
+  color: var(--d-on-accent);
+  box-shadow: 0 1px 2px rgba(16,24,40,.12);
+}
+.d-btn-primary:hover { background: var(--d-accent-hover); border-color: var(--d-accent-hover); color: var(--d-on-accent); text-decoration: none; }
+.d-btn-ghost {
+  background: var(--d-surface);
+  color: var(--d-ink);
+  border-color: var(--d-border-strong);
+}
+.d-btn-ghost:hover { background: var(--d-surface-2); border-color: var(--d-border-strong); color: var(--d-ink); text-decoration: none; }
+/* The quiet third tier: reads as a link, keeps a button's hit area. */
 .d-btn-text {
   background: transparent;
-  color: var(--d-ink-mid);
-  padding: 13px 6px;
-  border: none;
-  border-bottom: 1px solid transparent;
-  border-radius: 0;
+  border-color: transparent;
+  box-shadow: none;
+  color: var(--d-accent-text);
+  padding: 0 6px;
 }
-.d-btn-text:hover { color: var(--d-ink); border-bottom-color: var(--d-ink); text-decoration: none; }
+.d-btn-text:hover { background: transparent; color: var(--d-accent-hover); text-decoration: underline; text-underline-offset: 3px; }
 
 .d-pill {
   display: inline-flex;
   align-items: center;
-  gap: 6px;
-  font-family: var(--d-f-mono);
-  font-size: 10.5px;
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
-  font-weight: 600;
-  padding: 4px 10px 4px 8px;
-  border-radius: var(--d-r-pill);
-  white-space: nowrap;
+  gap: 5px;
+  height: 24px;
+  padding: 0 8px;
   border: 1px solid transparent;
+  border-radius: var(--d-r-sm);
+  background: var(--d-surface-2);
+  color: var(--d-text-2);
+  font-family: var(--d-f-sans);
+  font-size: 12.5px;
+  font-weight: 500;
+  letter-spacing: 0;
+  white-space: nowrap;
 }
 .d-pill-dot {
   width: 6px;
@@ -516,77 +779,188 @@ button[type="submit"]:hover {
   background: currentColor;
   flex-shrink: 0;
 }
-.d-pill-pass   { background: var(--d-pass-soft); color: var(--d-pass);   border-color: var(--d-pass-line); }
-.d-pill-warn   { background: var(--d-warn-soft); color: var(--d-warn);   border-color: var(--d-warn-line); }
-.d-pill-fail   { background: var(--d-fail-soft); color: var(--d-fail);   border-color: var(--d-fail-line); }
-.d-pill-locked { background: var(--d-paper-sunk); color: var(--d-ink-light); border-color: var(--d-hair); }
-.d-pill-brand  { background: var(--d-brand-soft); color: var(--d-brand-ink); border-color: var(--d-brand-line); }
+.d-pill-pass   { background: var(--d-ok-soft);   color: var(--d-ok-text);   border-color: var(--d-ok-line); }
+.d-pill-warn   { background: var(--d-warn-soft); color: var(--d-warn-text); border-color: var(--d-warn-line); }
+.d-pill-fail   { background: var(--d-bad-soft);  color: var(--d-bad-text);  border-color: var(--d-bad-line); }
+/* Locked takes --d-text-2, not the lighter --d-text-3: on --d-surface-2
+   that rung drops under 4.5:1, and a locked row still has to be read. */
+.d-pill-locked { background: var(--d-surface-2); color: var(--d-text-2);   border-color: var(--d-border-strong); }
+/* "Brand" here means the amber family, which on light can only appear as
+   a wash behind --d-warn-text, never as the text itself. */
+.d-pill-brand  { background: var(--d-warn-soft); color: var(--d-warn-text); border-color: var(--d-warn-line); }
 
 .d-tag {
   display: inline-flex;
   align-items: center;
-  font-family: var(--d-f-mono);
-  font-size: 10.5px;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  font-weight: 600;
-  padding: 3px 8px;
+  height: 22px;
+  padding: 0 7px;
   border-radius: var(--d-r-sm);
-  background: var(--d-paper-sunk);
-  color: var(--d-ink-mid);
+  background: var(--d-surface-2);
+  color: var(--d-text-2);
+  font-family: var(--d-f-mono);
+  font-size: 11.5px;
+  font-weight: 500;
+  letter-spacing: 0;
   white-space: nowrap;
 }
-.d-tag-mission { background: rgba(245,168,61,0.16); color: var(--d-brand-ink); }
-.d-tag-p1      { background: rgba(46,125,82,0.13);  color: var(--d-pass); }
-.d-tag-p2      { background: rgba(176,74,58,0.13);  color: var(--d-fail); }
+.d-tag-mission { background: var(--d-warn-soft); color: var(--d-warn-text); }
+.d-tag-p1      { background: var(--d-ok-soft);   color: var(--d-ok-text); }
+.d-tag-p2      { background: var(--d-bad-soft);  color: var(--d-bad-text); }
 
+/* The amber dot is the brand mark, so it stays; the word beside it moves
+   to --d-text-2, because amber lettering fails AA on a near-white page. */
 .d-livedot {
   display: inline-flex;
   align-items: center;
   gap: 8px;
-  font-family: var(--d-f-mono);
-  font-size: 11px;
-  letter-spacing: 0.14em;
-  text-transform: uppercase;
-  color: var(--d-brand-dark);
-  font-weight: 600;
+  font-family: var(--d-f-sans);
+  font-size: 12.5px;
+  letter-spacing: 0;
+  color: var(--d-text-2);
+  font-weight: 500;
 }
 .d-livedot::before {
   content: '';
   width: 7px; height: 7px;
-  background: var(--d-brand-dark);
+  background: var(--d-brand);
   border-radius: 50%;
-  box-shadow: 0 0 0 4px rgba(214,147,54,0.18);
+  box-shadow: 0 0 0 4px rgba(245,168,61,0.18);
   animation: d-pulse 2s ease infinite;
 }
 @keyframes d-pulse {
-  0%, 100% { box-shadow: 0 0 0 4px rgba(214,147,54,0.18); }
-  50%      { box-shadow: 0 0 0 7px rgba(214,147,54,0.04); }
+  0%, 100% { box-shadow: 0 0 0 4px rgba(245,168,61,0.18); }
+  50%      { box-shadow: 0 0 0 7px rgba(245,168,61,0.04); }
 }
 
 .d-meta {
-  font-family: var(--d-f-mono);
-  font-size: 11px;
-  letter-spacing: 0.16em;
-  text-transform: uppercase;
-  color: var(--d-ink-light);
+  font-family: var(--d-f-sans);
+  font-size: 12.5px;
+  font-weight: 500;
+  letter-spacing: 0;
+  color: var(--d-text-2);
 }
 .d-tiny {
-  font-family: var(--d-f-mono);
-  font-size: 10px;
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
-  color: var(--d-ink-light);
+  font-family: var(--d-f-sans);
+  font-size: 12px;
+  font-weight: 400;
+  letter-spacing: 0;
+  color: var(--d-text-3);
 }
 .d-code {
   font-family: var(--d-f-mono);
   font-size: 0.92em;
-  background: var(--d-brand-soft);
-  padding: 2px 6px;
-  border-radius: var(--d-r-sm);
-  color: var(--d-brand-ink);
+  background: var(--d-surface-2);
+  border: 1px solid var(--d-border);
+  padding: 1px 5px;
+  border-radius: 4px;
+  color: var(--d-ink);
+  word-break: break-all;
 }
-.d-rule { height: 1px; background: var(--d-hair); border: none; margin: var(--d-s-7) 0; }
+.d-rule { height: 1px; background: var(--d-border); border: none; margin: var(--d-s-7) 0; }
+
+/* ── Round countdown ─────────────────────────────────────────────
+ *
+ * round-ui.js builds this widget inside the navbar and injects its own
+ * layout CSS at runtime, so these rules are keyed on the id: an id beats
+ * a class no matter which style element the browser saw last, and the
+ * two files stay out of each other's way. Placement stays round-ui.js's
+ * business — only the skin and the digits are ours. .is-warn (5분 이하)
+ * and .is-crit (1분 이하) are set by round-ui.js.
+ */
+
+#econ-round-countdown {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  min-width: 0;
+  height: 38px;
+  padding: 0 10px 0 12px;
+  border: 1px solid var(--d-border);
+  border-radius: var(--d-r-sm);
+  background: var(--d-surface);
+  color: var(--d-ink);
+  box-shadow: var(--d-shadow-1);
+  transition: background 0.22s var(--d-ease), color 0.22s var(--d-ease),
+              border-color 0.22s var(--d-ease);
+}
+/* round-ui.js hides the pill between phases with the hidden attribute, but
+   both it and the rule above declare a display, and any author display
+   beats the UA's [hidden] rule — so the clock has to be switched off here
+   or a stale time sits in the navbar with nothing counting it down. */
+#econ-round-countdown[hidden] { display: none; }
+#econ-round-countdown .econ-round-countdown-label {
+  flex: 0 1 auto;
+  font-family: var(--d-f-sans);
+  font-size: 12px;
+  font-weight: 500;
+  letter-spacing: 0;
+  color: var(--d-text-2);
+  white-space: nowrap;
+}
+/* Tabular figures plus a fixed 8ch box, so 00:42:17 and 00:09:08 occupy
+   the same width and the bar never twitches on the tick. round-ui.js sets
+   this element's type with the `font` shorthand, which resets
+   font-variant-numeric — hence restating it at higher specificity. */
+#econ-round-countdown .econ-round-countdown-time {
+  font-family: var(--d-f-sans);
+  font-size: 18px;
+  font-weight: 600;
+  line-height: 1;
+  letter-spacing: 0.01em;
+  color: inherit;
+  font-variant-numeric: tabular-nums;
+  min-width: 8ch;
+  text-align: right;
+  white-space: nowrap;
+}
+#econ-round-countdown.is-warn {
+  background: var(--d-warn-soft);
+  border-color: var(--d-warn-line);
+  color: var(--d-warn-text);
+}
+#econ-round-countdown.is-crit {
+  background: var(--d-bad-soft);
+  border-color: var(--d-bad);
+  color: var(--d-bad-text);
+}
+#econ-round-countdown.is-warn .econ-round-countdown-label,
+#econ-round-countdown.is-crit .econ-round-countdown-label { color: inherit; }
+/* Weight, not just hue, so the last minute is legible from the back of
+   the room and to anyone who cannot separate the two washes. */
+#econ-round-countdown.is-crit .econ-round-countdown-time { font-weight: 700; }
+/* Contest over: the clock becomes a record, not an alarm. */
+#econ-round-countdown[data-phase="finished"] {
+  min-width: 0;
+  justify-content: center;
+  background: var(--d-surface-2);
+  border-color: var(--d-border);
+  color: var(--d-text-2);
+  box-shadow: none;
+}
+@media (max-width: 760px) {
+  /* Phone: the label is the part that can go; the digits are the part
+     the room is watching. */
+  #econ-round-countdown { height: 32px; padding: 0 8px; gap: 6px; }
+  #econ-round-countdown .econ-round-countdown-label { font-size: 11px; }
+  #econ-round-countdown .econ-round-countdown-time { font-size: 15px; min-width: 7ch; }
+}
+@media (max-width: 400px) {
+  /* Below 560px round-ui.js stops centring the countdown and tucks it in
+     beside the toggler, which clears the brand down to about 390px. On a
+     360px phone the two would still touch by a couple of pixels, so the
+     brand gives up one step of size rather than truncating: measured at
+     360px the brand now ends at 170 and the pill starts at 190. */
+  .navbar .navbar-brand,
+  .navbar.navbar-dark .navbar-brand { font-size: 13.5px; gap: 7px; }
+}
+
+/* Colour and opacity still carry every state; only movement stops. */
+@media (prefers-reduced-motion: reduce) {
+  .d-livedot::before { animation: none; }
+  .d-btn, .btn, .navbar .nav-link, #econ-round-countdown,
+  .form-control, .form-select { transition: none; }
+  .d-btn:active, .btn:active { transform: none; }
+}
 </style>
 <script defer src="/plugins/econ_judge/assets/scoreboard.js"></script>
 <script defer src="/plugins/econ_judge/assets/challenges.js"></script>

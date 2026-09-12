@@ -19,8 +19,13 @@ if (econHasChallengeRuntime) {
   "use strict";
 
   const MAX_BYTES = 256 * 1024;
-  // Keep the concept replay and post-grade checklist available, but dormant
-  // until the camp workflow is ready to use detailed submission feedback.
+  // How much the grader tells a mentee is a camp-workflow decision rather than
+  // a styling one, so it stays off until the organiser makes it. While this is
+  // false the grading state a mentee sees is the spinner and one line: the
+  // testbench console below (#econ-grading-bench, and the .s3-bench-* rules in
+  // problem.css that dress it as Direction B's inset terminal), the concept
+  // replay and the post-grade checklist are all built and styled but never
+  // rendered. Flipping this to true is the only thing they are waiting on.
   const DETAILED_GRADING_FEEDBACK = false;
 
   const $ = (sel, root) => (root || document).querySelector(sel);
@@ -433,27 +438,78 @@ if (econHasChallengeRuntime) {
   }
 
   const ICON_PASS = '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>';
-  const ICON_WARN = '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 9v4"/><path d="M12 17h.01"/><path d="M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/></svg>';
+  // The warning triangle marks 채점 오류 — the judge could not run. A partial
+  // pass is a graded answer, so it gets its own quieter mark instead: the two
+  // states must never look like the same thing.
+  const ICON_ERROR = '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 9v4"/><path d="M12 17h.01"/><path d="M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/></svg>';
+  const ICON_PARTIAL = '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v9"/><path d="M12 18.5h.01"/></svg>';
   const ICON_FAIL = '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>';
   const ICON_CLOSED = '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><polyline points="12 7 12 12 15 14"/></svg>';
   const ICON_LOCK = '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="10" width="16" height="10" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></svg>';
+  const ICON_ARROW = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14"/><path d="M13 6l6 6-6 6"/></svg>';
 
-  // A refused submission is not a grading verdict, so it must not borrow
-  // .is-fail. Neither problem.css (page) nor view.html (modal) goes past
-  // pass/partial/fail, so the neutral variant is scoped in from here.
-  function ensureNoticeStyle() {
-    if (document.getElementById("econ-notice-style")) return;
-    const style = document.createElement("style");
-    style.id = "econ-notice-style";
-    style.textContent =
-      "#econ-submit-root .result.is-notice{background:var(--d-paper-soft,#f5f1e6);border-color:var(--d-hair-strong,#c8b48a)}" +
-      "#econ-submit-root .result.is-notice .marker{background:var(--d-ink-light,#8c8270)}";
-    document.head.appendChild(style);
+  // The Korean word beside the disc. Every verdict carries icon + word +
+  // number, so a mentee never has to read the state out of the colour alone.
+  const STATE_WORDS = {
+    "is-pass": "전체 통과",
+    "is-partial": "부분 통과",
+    "is-fail": "실패",
+    "is-error": "채점 오류",
+    "is-notice": "안내",
+  };
+
+  // The state chip and the title/subtitle column are identical across all five
+  // verdicts — only the words and the disc change — so the skeleton is built
+  // once here. `subtitleText` is server text and is escaped; everything else is
+  // a literal from this file.
+  function headHtml(klass, icon, titleHtml, subtitleText) {
+    return (
+      '<div class="head">' +
+        '<div class="marker">' + icon + "</div>" +
+        '<div class="text">' +
+          '<span class="state-chip">' + STATE_WORDS[klass] + "</span>" +
+          '<div class="title">' + titleHtml + "</div>" +
+          (subtitleText
+            ? '<div class="subtitle">' + escapeHtml(subtitleText) + "</div>"
+            : "") +
+        "</div>" +
+      "</div>"
+    );
+  }
+
+  // After a full pass the mentee's next move is the next problem, so that link
+  // is the card's primary action. The page shell carries the URL; an absent or
+  // empty data-next-url means this was the last problem of the round, and the
+  // problem list is the honest destination instead.
+  function nextProblemLink() {
+    const page = document.querySelector(".ep-page");
+    const url = (page && page.dataset.nextUrl) || "";
+    const link = document.createElement("a");
+    link.id = "econ-next-problem";
+    link.href = url || "/challenges";
+    link.innerHTML = url ? "다음 문제" + ICON_ARROW : "전체 문제";
+    return link;
+  }
+
+  // The template ships 다시 제출하기 as a sibling of the card; the verdict
+  // design puts it in an action row inside it, beside the next-problem link.
+  // The real node is moved (never copied) so the click binding from bindUI
+  // survives, and it has to be re-appended on every render because setting
+  // card.innerHTML detaches whatever was there before.
+  function renderActions(card, resubmitBtn, isPass) {
+    const actions = document.createElement("div");
+    actions.className = "result-actions";
+    if (isPass) actions.appendChild(nextProblemLink());
+    if (resubmitBtn) actions.appendChild(resubmitBtn);
+    card.appendChild(actions);
   }
 
   function renderResult(data) {
     const card = $("#econ-result");
     if (!card) return;
+    // Held before any innerHTML write, which detaches the button from the card
+    // it was moved into by the previous render.
+    const resubmitBtn = document.getElementById("econ-resubmit");
     const status = (data && data.status) || "incorrect";
     const parsed = parseResult(data && data.message);
     const head = parsed.head;
@@ -463,25 +519,17 @@ if (econHasChallengeRuntime) {
     // before any of the pass/partial/fail tiering below.
     if (status === "unavailable" || status === "locked") {
       const locked = status === "locked";
-      ensureNoticeStyle();
       card.className = "result is-notice";
-      card.innerHTML =
-        '<div class="head">' +
-          '<div class="marker">' + (locked ? ICON_LOCK : ICON_CLOSED) + "</div>" +
-          '<div class="text">' +
-            '<div class="title">' +
-              (locked ? "이미 제출한 문제입니다" : "지금은 제출할 수 없습니다") +
-            "</div>" +
-            '<div class="subtitle">' +
-              escapeHtml(
-                head ||
-                  (locked
-                    ? "이 문제는 한 번만 제출할 수 있습니다."
-                    : "라운드가 열리면 다시 제출해주세요.")
-              ) +
-            "</div>" +
-          "</div>" +
-        "</div>";
+      card.innerHTML = headHtml(
+        "is-notice",
+        locked ? ICON_LOCK : ICON_CLOSED,
+        locked ? "이미 제출한 문제입니다" : "지금은 제출할 수 없습니다",
+        head ||
+          (locked
+            ? "이 문제는 한 번만 제출할 수 있습니다."
+            : "라운드가 열리면 다시 제출해주세요.")
+      );
+      renderActions(card, resubmitBtn, false);
       setState("result");
       return;
     }
@@ -502,9 +550,25 @@ if (econHasChallengeRuntime) {
         : []
       : [];
 
+    // A run that never produced a verdict is not a wrong answer, and must not
+    // wear the failure skin: "the judge could not run" would read as "your
+    // circuit is wrong". The endpoint marks it either with a non-verdict status
+    // or — for a run that evaluated no case at all — with a 0/0 count. A real
+    // 0/M stays a failure and keeps its bar.
+    const graderError =
+      status === "error" ||
+      status === "invalid" ||
+      status === "rejected" ||
+      total === 0;
+
     let klass, icon, titleHtml, subtitleText, showBar = false, pct = 0;
 
-    if (status === "correct" && passed != null && total != null) {
+    if (graderError) {
+      klass = "is-error";
+      icon = ICON_ERROR;
+      titleHtml = "채점 오류";
+      subtitleText = head || "제출 파일을 확인해주세요.";
+    } else if (status === "correct" && passed != null && total != null) {
       klass = "is-pass";
       icon = ICON_PASS;
       titleHtml =
@@ -519,17 +583,12 @@ if (econHasChallengeRuntime) {
       subtitleText = "완벽한 회로입니다.";
     } else if (passed != null && total != null && total > 0 && passed > 0) {
       klass = "is-partial";
-      icon = ICON_WARN;
+      icon = ICON_PARTIAL;
       titleHtml =
         '<span class="count">' + passed + " / " + total + "</span> 테스트케이스 통과";
       subtitleText = "조금만 더 다듬어보세요.";
       showBar = true;
       pct = (passed / total) * 100;
-    } else if (total === 0 || (passed === 0 && total === 0)) {
-      klass = "is-fail";
-      icon = ICON_FAIL;
-      titleHtml = "채점 오류";
-      subtitleText = head || "제출 파일을 확인해주세요.";
     } else if (passed === 0 && total != null && total > 0) {
       klass = "is-fail";
       icon = ICON_FAIL;
@@ -539,23 +598,18 @@ if (econHasChallengeRuntime) {
       showBar = true;
       pct = 0;
     } else {
-      klass = "is-fail";
-      icon = ICON_FAIL;
+      // No counts came back at all: a refused upload, a grader fault, or the
+      // network handler above. Nothing was graded, so this is an error too —
+      // only the wording is kept as it was.
+      klass = "is-error";
+      icon = ICON_ERROR;
       titleHtml = "채점 실패";
       subtitleText = head || "";
     }
 
     card.className = "result " + klass;
     card.innerHTML =
-      '<div class="head">' +
-        '<div class="marker">' + icon + "</div>" +
-        '<div class="text">' +
-          '<div class="title">' + titleHtml + "</div>" +
-          (subtitleText
-            ? '<div class="subtitle">' + escapeHtml(subtitleText) + "</div>"
-            : "") +
-        "</div>" +
-      "</div>" +
+      headHtml(klass, icon, titleHtml, subtitleText) +
       (showBar
         ? '<div class="bar"><i style="width: 0%"></i></div>'
         : "") +
@@ -578,6 +632,11 @@ if (econHasChallengeRuntime) {
         });
       }
     }
+
+    // On a full pass 다음 문제 leads and 다시 제출하기 steps back to a quiet
+    // link; on every other verdict 다시 제출하기 is the only action, and stays
+    // the primary button.
+    renderActions(card, resubmitBtn, klass === "is-pass");
 
     setState("result");
 

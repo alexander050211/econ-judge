@@ -311,60 +311,65 @@
   100% { transform: scale(1) rotate(0deg); opacity: 1; }
 }
 
-/* ── Root variables — light mode ────────────────────────────────────────── */
+/* ── Root variables — Direction B, dark set ─────────────────────────────── */
+/* This board only ever runs on the hall projector, so it takes B's dark tokens
+   whatever the room's browser prefers; the two override blocks below used to
+   supply a dark palette and now only declare color-scheme. Amber stays the one
+   accent (B allows amber to carry weight on dark), blue is not used because the
+   board has no actions. */
 #${ROOT_ID} {
   /* Brand */
   --brand:       #f5a83d;
-  --brand-dark:  #d69336;
-  --brand-ink:   #7a5a1f;
-  --brand-soft:  #fff4e0;
+  --brand-dark:  #f7be6b;
+  --brand-ink:   #f7be6b;
+  --brand-soft:  #2c2214;
   --brand-glow:  rgba(245, 168, 61, 0.35);
 
   /* Solved cells */
-  --solve-bg:    #d1fae5;
-  --solve-ink:   #065f46;
-  --solve-border:#6ee7b7;
+  --solve-bg:    #10281f;
+  --solve-ink:   #5fd9a4;
+  --solve-border:#2b5045;
 
   /* First-blood cells */
-  --fb-bg:       #fffbeb;
-  --fb-ink:      #92400e;
-  --fb-border:   #f59e0b;
-  --fb-star:     #d97706;
-  --fb-shimmer-a:#fef3c7;
-  --fb-shimmer-b:#fde68a;
-  --fb-shimmer-c:#fef9c3;
+  --fb-bg:       #2c2214;
+  --fb-ink:      #f7be6b;
+  --fb-border:   #5a4b37;
+  --fb-star:     #f5a83d;
+  --fb-shimmer-a:rgba(245,168,61,0.08);
+  --fb-shimmer-b:rgba(245,168,61,0.22);
+  --fb-shimmer-c:rgba(245,168,61,0.06);
 
   /* Empty cells */
-  --empty-bg:    #f8fafc;
-  --empty-ink:   #94a3b8;
+  --empty-bg:    #1f232b;
+  --empty-ink:   #8a91a1;
 
   /* Page chrome */
-  --ink:         #0f172a;
-  --ink-2:       #334155;
-  --muted:       #64748b;
-  --line:        #e2e8f0;
-  --line-strong: #cbd5e1;
-  --surface:     #ffffff;
-  --surface-2:   #f8fafc;
+  --ink:         #eceef2;
+  --ink-2:       #a3aab6;
+  --muted:       #8a91a1;
+  --line:        #2a2f38;
+  --line-strong: #3a404b;
+  --surface:     #171a20;
+  --surface-2:   #0f1115;
 
   /* Header row backgrounds */
-  --thead-bg:    #1e1e2e;
-  --thead-cat-bg:#2a2a3e;
-  --thead-ink:   #e2e8f0;
+  --thead-bg:    #1f232b;
+  --thead-cat-bg:#0f1115;
+  --thead-ink:   #a3aab6;
   --thead-brand: #f5a83d;
 
-  /* Rank row accents */
-  --gold-bg:     linear-gradient(135deg, #fef3c7 0%, #fde68a 50%, #fcd34d 100%);
-  --gold-ink:    #78350f;
-  --gold-left:   #f59e0b;
+  /* Rank row accents — amber, then ink, then neutral; no invented shades. */
+  --gold-bg:     linear-gradient(135deg, rgba(245,168,61,0.16) 0%, rgba(245,168,61,0.08) 100%);
+  --gold-ink:    #f7be6b;
+  --gold-left:   #f5a83d;
 
-  --silver-bg:   linear-gradient(135deg, #f1f5f9 0%, #e2e8f0 50%, #cbd5e1 100%);
-  --silver-ink:  #334155;
-  --silver-left: #94a3b8;
+  --silver-bg:   linear-gradient(135deg, rgba(236,238,242,0.10) 0%, rgba(236,238,242,0.05) 100%);
+  --silver-ink:  #eceef2;
+  --silver-left: #a3aab6;
 
-  --bronze-bg:   linear-gradient(135deg, #fff7ed 0%, #fed7aa 50%, #fdba74 100%);
-  --bronze-ink:  #7c2d12;
-  --bronze-left: #ea580c;
+  --bronze-bg:   linear-gradient(135deg, rgba(163,170,182,0.10) 0%, rgba(163,170,182,0.05) 100%);
+  --bronze-ink:  #a3aab6;
+  --bronze-left: #3a404b;
 
   /* Misc */
   --radius:      10px;
@@ -372,91 +377,24 @@
   --sans:        'Pretendard Variable', Pretendard, -apple-system, BlinkMacSystemFont,
                  'Apple SD Gothic Neo', 'Malgun Gothic', sans-serif;
 
+  color-scheme: dark;
   font-family: var(--sans);
   color: var(--ink);
+  /* The board carries its own dark ground now that the palette no longer
+     follows the page: its header and footer sit outside the table and would
+     otherwise be light-on-light wherever CTFd is in its light theme. */
+  background: var(--surface-2);
+  border-radius: var(--radius);
+  padding: 1.25rem 1.5rem 1rem;
   margin: 3.5rem 0 2.5rem;
   display: block;
   contain: layout;
 }
 
-/* ── Dark mode override (system preference) ─────────────────────────────── */
-@media (prefers-color-scheme: dark) {
-  #${ROOT_ID}:not(.esb-light) {
-    --solve-bg:    rgba(16, 185, 129, 0.16);
-    --solve-ink:   #6ee7b7;
-    --solve-border:#065f46;
-
-    --fb-bg:       rgba(245, 158, 11, 0.14);
-    --fb-ink:      #fbbf24;
-    --fb-border:   #d97706;
-    --fb-star:     #fbbf24;
-    --fb-shimmer-a:rgba(245,168,61,0.08);
-    --fb-shimmer-b:rgba(245,168,61,0.22);
-    --fb-shimmer-c:rgba(245,168,61,0.06);
-
-    --empty-bg:    rgba(255,255,255,0.03);
-    --empty-ink:   #475569;
-
-    --ink:         #e2e8f0;
-    --ink-2:       #94a3b8;
-    --muted:       #64748b;
-    --line:        rgba(255,255,255,0.07);
-    --line-strong: rgba(255,255,255,0.12);
-    --surface:     #1e1e2e;
-    --surface-2:   #16161f;
-
-    --thead-bg:    #13131c;
-    --thead-cat-bg:#0f0f18;
-    --thead-ink:   #94a3b8;
-
-    --gold-bg:     linear-gradient(135deg, rgba(253,230,138,0.18) 0%, rgba(252,211,77,0.24) 100%);
-    --gold-ink:    #fcd34d;
-    --gold-left:   #f59e0b;
-
-    --silver-bg:   linear-gradient(135deg, rgba(226,232,240,0.08) 0%, rgba(203,213,225,0.14) 100%);
-    --silver-ink:  #cbd5e1;
-    --silver-left: #64748b;
-
-    --bronze-bg:   linear-gradient(135deg, rgba(254,215,170,0.12) 0%, rgba(253,186,116,0.18) 100%);
-    --bronze-ink:  #fdba74;
-    --bronze-left: #ea580c;
-  }
-}
-
-/* Apply dark explicitly when the class is set (overrides media query check above) */
-#${ROOT_ID}.esb-dark {
-  --solve-bg:    rgba(16, 185, 129, 0.16);
-  --solve-ink:   #6ee7b7;
-  --solve-border:#065f46;
-  --fb-bg:       rgba(245, 158, 11, 0.14);
-  --fb-ink:      #fbbf24;
-  --fb-border:   #d97706;
-  --fb-star:     #fbbf24;
-  --fb-shimmer-a:rgba(245,168,61,0.08);
-  --fb-shimmer-b:rgba(245,168,61,0.22);
-  --fb-shimmer-c:rgba(245,168,61,0.06);
-  --empty-bg:    rgba(255,255,255,0.03);
-  --empty-ink:   #475569;
-  --ink:         #e2e8f0;
-  --ink-2:       #94a3b8;
-  --muted:       #64748b;
-  --line:        rgba(255,255,255,0.07);
-  --line-strong: rgba(255,255,255,0.12);
-  --surface:     #1e1e2e;
-  --surface-2:   #16161f;
-  --thead-bg:    #13131c;
-  --thead-cat-bg:#0f0f18;
-  --thead-ink:   #94a3b8;
-  --gold-bg:     linear-gradient(135deg, rgba(253,230,138,0.18) 0%, rgba(252,211,77,0.24) 100%);
-  --gold-ink:    #fcd34d;
-  --gold-left:   #f59e0b;
-  --silver-bg:   linear-gradient(135deg, rgba(226,232,240,0.08) 0%, rgba(203,213,225,0.14) 100%);
-  --silver-ink:  #cbd5e1;
-  --silver-left: #64748b;
-  --bronze-bg:   linear-gradient(135deg, rgba(254,215,170,0.12) 0%, rgba(253,186,116,0.18) 100%);
-  --bronze-ink:  #fdba74;
-  --bronze-left: #ea580c;
-}
+/* The system-preference and ?dark palette overrides that used to live here are
+   gone: the block above is the dark palette now, in every environment. The
+   esb-dark class the mount still sets, and the esb-light escape hatch, no
+   longer change any colour. */
 
 /* ── Fullscreen projection mode (.esb-fullscreen or double-click toggle) ── */
 #${ROOT_ID}.esb-fullscreen {
@@ -503,7 +441,7 @@
   width: 8px;
   height: 8px;
   border-radius: 50%;
-  background: #22c55e;
+  background: var(--solve-ink);
   animation: esb-live-blink 2s ease-in-out infinite;
   flex-shrink: 0;
 }
@@ -611,7 +549,7 @@
 /* ── Problem number sub-row ──────────────────────────────────────────────── */
 #${ROOT_ID} .tr-probs th {
   background: var(--thead-bg);
-  color: rgba(148,163,184,0.7);
+  color: var(--muted);
   font-family: var(--mono);
   font-size: 0.72rem;
   font-weight: 500;
@@ -648,9 +586,9 @@
 #${ROOT_ID} tbody tr.top3-3 > td:first-child { border-left-color: var(--bronze-left); }
 
 /* Top-3 row background tint */
-#${ROOT_ID} tbody tr.top3-1 > td { background: rgba(253, 230, 138, 0.06); }
-#${ROOT_ID} tbody tr.top3-2 > td { background: rgba(226, 232, 240, 0.04); }
-#${ROOT_ID} tbody tr.top3-3 > td { background: rgba(254, 215, 170, 0.05); }
+#${ROOT_ID} tbody tr.top3-1 > td { background: rgba(245, 168, 61, 0.06); }
+#${ROOT_ID} tbody tr.top3-2 > td { background: rgba(236, 238, 242, 0.04); }
+#${ROOT_ID} tbody tr.top3-3 > td { background: rgba(163, 170, 182, 0.04); }
 
 #${ROOT_ID} tbody td {
   padding: 0.55rem 0.4rem;
@@ -704,8 +642,6 @@
   background: var(--brand-soft);
   letter-spacing: -0.01em;
 }
-/* dark: soften the score background */
-#${ROOT_ID}.esb-dark td.score { background: rgba(245,168,61,0.08); }
 
 /* ── Problem cells — shared base ─────────────────────────────────────────── */
 #${ROOT_ID} td.cell {
@@ -864,6 +800,18 @@
   #${ROOT_ID} .c-solved { width: 44px; }
   #${ROOT_ID} .c-score  { width: 54px; }
   #${ROOT_ID} .c-prob   { width: 34px; }
+}
+
+/* ── Reduced motion ──────────────────────────────────────────────────────── */
+/* Only movement stops. Every state this board reports survives it: the first
+   blood cell keeps its outline and star glyph without the shimmer and glow,
+   and the fade-in keyframes only ever animated a cell towards the appearance
+   it already has, so a cell that never animates is simply already there. */
+@media (prefers-reduced-motion: reduce) {
+  #${ROOT_ID} *, #${ROOT_ID} *::before, #${ROOT_ID} *::after {
+    animation: none !important;
+    transition: none !important;
+  }
 }
 `;
 

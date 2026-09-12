@@ -6,7 +6,7 @@
 {% endblock %}
 
 {% block content %}
-<div class="ep-page" data-challenge-id="{{ challenge.id }}">
+<div class="ep-page" data-challenge-id="{{ challenge.id }}" data-next-url="{% if next_id %}/problems/{{ next_id }}{% endif %}">
   <header class="ep-header">
     <div class="ep-header-main">
       <nav class="ep-breadcrumb" aria-label="문제 위치">
@@ -22,16 +22,12 @@
 
       <div class="ep-title-row">
         <div class="ep-title-copy">
-          <div class="ep-kicker">PROBLEM {{ "%02d" | format(challenge.id) }}</div>
           <h1>{{ challenge.name }}</h1>
-        </div>
-        <div class="ep-points" aria-label="{{ challenge.value }}점">
-          <strong>{{ challenge.value }}</strong>
-          <span>POINTS</span>
         </div>
       </div>
 
       <div class="ep-meta-row">
+        <span class="ep-points" aria-label="{{ challenge.value }}점">{{ challenge.value }} pt</span>
         <span class="ep-category">{{ challenge.category }}</span>
         <span
           id="econ-problem-status"
@@ -72,7 +68,6 @@
   <div class="ep-workspace">
     <article class="ep-statement" aria-labelledby="ep-statement-title">
       <div class="ep-section-heading">
-        <span>01</span>
         <h2 id="ep-statement-title">문제</h2>
       </div>
       <div class="ep-description">
@@ -82,10 +77,7 @@
 
     <aside class="ep-submit-panel" aria-labelledby="ep-submit-title">
       <div class="ep-submit-heading">
-        <div>
-          <div class="ep-kicker">SUBMISSION</div>
-          <h2 id="ep-submit-title">{% if truth_table_mode %}진리표 제출{% else %}회로 제출{% endif %}</h2>
-        </div>
+        <h2 id="ep-submit-title">{% if truth_table_mode %}진리표 제출{% else %}회로 제출{% endif %}</h2>
         <span class="ep-file-kind">{% if truth_table_mode %}0 / 1{% else %}.DIG{% endif %}</span>
       </div>
 
@@ -126,15 +118,24 @@
       </div>
       {% else %}
       {% if hwp_starter_filename %}
-      <div class="ep-starter-file" role="note">
-        <span class="ep-starter-icon" aria-hidden="true">
-          <i class="fa-solid fa-folder-open"></i>
-        </span>
-        <span class="ep-starter-copy">
+      {# The note answers one question — where to put the files — so it folds to
+         a single line once read and stops crowding the dropzone. It ships open
+         because the answer matters most on a first visit; nothing carries the
+         mentee's choice across a reload, which is deliberate rather than a gap:
+         hiding the folder rule from someone who has not read it costs more than
+         re-showing it to someone who has. #}
+      <details class="ep-starter-file" open>
+        <summary>
+          <span class="ep-starter-icon" aria-hidden="true">
+            <i class="fa-solid fa-folder-open"></i>
+          </span>
           <strong>폴더 이름은 자유롭게 정해도 됩니다</strong>
+          <i class="fa-solid fa-chevron-down" aria-hidden="true"></i>
+        </summary>
+        <span class="ep-starter-copy">
           <small><code>{{ hwp_starter_filename.split('/')[-1] }}</code> 파일과 필요한 부품 <code>.dig</code> 파일을 한 폴더에 모아 저장한 뒤, 그 폴더를 선택하세요.</small>
         </span>
-      </div>
+      </details>
       {% endif %}
       <div id="econ-submit-root" data-mode="page" data-answer-filename="{{ hwp_starter_filename.split('/')[-1] if hwp_starter_filename else '' }}">
         <div data-state="empty">
@@ -219,7 +220,7 @@
     {% if previous_id %}
     <a href="/problems/{{ previous_id }}">
       <i class="fa-solid fa-arrow-left" aria-hidden="true"></i>
-      <span><small>PREVIOUS</small>이전 문제</span>
+      <span>이전 문제</span>
     </a>
     {% else %}<span></span>{% endif %}
 
@@ -230,7 +231,7 @@
 
     {% if next_id %}
     <a href="/problems/{{ next_id }}">
-      <span><small>NEXT</small>다음 문제</span>
+      <span>다음 문제</span>
       <i class="fa-solid fa-arrow-right" aria-hidden="true"></i>
     </a>
     {% else %}<span></span>{% endif %}

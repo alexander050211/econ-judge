@@ -48,12 +48,22 @@
     const style = document.createElement("style");
     style.id = "econ-round-ui-style";
     style.textContent = `
-      .er-root{max-width:1120px;margin:0 auto;padding:42px 24px 56px;font-family:var(--d-f-ko);color:var(--d-ink)}
-      .er-head{display:flex;justify-content:space-between;gap:24px;align-items:flex-start;border-bottom:1px solid var(--d-hair);padding-bottom:20px;margin-bottom:22px}.er-kicker,.er-label{font:600 11px var(--d-f-mono);letter-spacing:.13em;color:var(--d-ink-light);text-transform:uppercase}.er-h1{font:600 42px var(--d-f-sans);letter-spacing:-.035em;margin:7px 0}.er-sub{color:var(--d-ink-light);margin:0;line-height:1.6}.er-phase{padding:10px 14px;border:1px solid var(--d-brand-line);background:var(--d-brand-soft);border-radius:999px;white-space:nowrap;font:600 12px var(--d-f-mono);letter-spacing:.07em}.er-phase-frozen{border-color:var(--d-hair-strong);background:var(--d-paper-sunk);color:var(--d-ink-light)}.er-overview{display:grid;grid-template-columns:1.15fr 1fr 1fr;gap:12px;margin:20px 0}.er-panel{border:1px solid var(--d-hair);padding:18px;background:var(--d-paper)}.er-panel strong{display:block;font:650 38px var(--d-f-sans);letter-spacing:-.045em;margin-top:7px}.er-panel strong small{font:500 17px var(--d-f-mono);color:var(--d-ink-light)}.er-rounds{display:grid;grid-template-columns:1fr 1fr;gap:14px}.er-round{padding:22px;border:1px solid var(--d-hair-strong);background:var(--d-paper-soft)}.er-round-live{border-color:var(--d-brand);background:var(--d-brand-soft)}.er-round-title{display:flex;justify-content:space-between;gap:12px;align-items:baseline}.er-round h2{font:600 25px var(--d-f-sans);letter-spacing:-.025em;margin:0}.er-round-state{font:600 11px var(--d-f-mono);letter-spacing:.08em;color:var(--d-ink-light)}.er-round-score{font:650 52px var(--d-f-sans);letter-spacing:-.055em;margin:20px 0 8px}.er-round-score small{font:500 16px var(--d-f-mono);color:var(--d-ink-light)}.er-progress{height:7px;background:var(--d-paper-sunk);overflow:hidden}.er-progress i{display:block;height:100%;background:var(--d-brand);transition:width .35s}.er-round-foot{display:flex;justify-content:space-between;margin-top:10px;color:var(--d-ink-light);font-size:13px}.er-leader{margin-top:14px;padding:16px 18px;border:1px dashed var(--d-hair-strong);display:flex;justify-content:space-between;gap:12px}.er-note{margin-top:18px;color:var(--d-ink-light);font-size:13px}.er-error{padding:14px;border:1px solid var(--d-fail-line);background:var(--d-fail-soft);color:var(--d-fail)}
-      .er-projector{max-width:none;min-height:calc(100vh - 56px);display:flex;flex-direction:column}.er-projector .er-head{max-width:none}.er-projector-main{flex:1;display:grid;place-content:center;text-align:center;gap:18px}.er-projector-score{font:700 clamp(110px,24vw,270px) var(--d-f-sans);letter-spacing:-.08em;line-height:.8}.er-projector-score small{font:500 30px var(--d-f-mono);color:var(--d-brand-dark)}.er-projector-stats{display:flex;justify-content:center;gap:32px;color:var(--d-ink-light);font-size:16px}.er-projector-stats b{color:var(--d-ink);font:650 30px var(--d-f-sans)}
+      .er-root{max-width:720px;margin:0 auto;padding:24px 20px 28px;font-family:var(--d-f-sans);font-size:14px;line-height:1.5;color:var(--d-ink)}
+      .er-head{display:flex;justify-content:space-between;gap:16px;align-items:flex-start;margin-bottom:18px}.er-kicker{font-size:13px;font-weight:500;color:var(--d-text-2);margin-bottom:6px}.er-label{display:block;font-size:12.5px;color:var(--d-text-2);margin-bottom:4px}.er-h1{font-size:28px;font-weight:600;line-height:1.2;letter-spacing:-.015em;margin:0}.er-sub{color:var(--d-text-2);margin:6px 0 0}.er-phase{display:inline-flex;align-items:center;height:26px;padding:0 10px;border-radius:6px;background:var(--d-accent-soft);color:var(--d-accent-text);font-size:12.5px;font-weight:500;white-space:nowrap}.er-phase-frozen{background:var(--d-surface-2);color:var(--d-text-2)}
+      .er-overview{display:grid;grid-template-columns:1.5fr 1fr 1fr;background:var(--d-surface);border:1px solid var(--d-border);border-radius:10px;box-shadow:var(--d-shadow-1);margin:0 0 14px}.er-panel{padding:14px 20px;border-left:1px solid var(--d-border);min-width:0}.er-panel:first-child{border-left:0}.er-panel strong{display:block;font-size:22px;font-weight:600;line-height:1.2;letter-spacing:-.01em;font-variant-numeric:tabular-nums;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.er-panel:first-child strong{font-size:26px}.er-panel strong small{font-size:15px;font-weight:500;color:var(--d-text-3)}.er-panel:first-child strong small{font-size:18px}
+      .er-rounds{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px}.er-round{padding:18px;border:1px solid var(--d-border);border-radius:10px;background:var(--d-surface);box-shadow:var(--d-shadow-1)}.er-round-live{border-color:var(--d-accent)}.er-round-title{display:flex;align-items:center;gap:6px;margin-bottom:12px}.er-round h2,.er-round-state{display:inline-flex;align-items:center;height:24px;padding:0 8px;border-radius:6px;background:var(--d-surface-2);color:var(--d-text-2);font-size:12.5px;font-weight:500;white-space:nowrap;margin:0}.er-round-live h2{background:var(--d-accent-soft);color:var(--d-accent-text)}.er-round-live .er-round-state{background:var(--d-ok-soft);color:var(--d-ok-text)}.er-round-state:empty{display:none}.er-round-score{display:block;font-size:24px;font-weight:600;line-height:1.2;letter-spacing:-.01em;font-variant-numeric:tabular-nums;margin:0 0 10px}.er-round-score small{font-size:17px;font-weight:500;color:var(--d-text-3)}.er-progress{height:8px;background:var(--d-surface-2);border-radius:4px;overflow:hidden}.er-progress i{display:block;height:100%;border-radius:inherit;background:var(--d-accent);transition:width .22s var(--d-ease)}.er-round-foot{display:flex;justify-content:space-between;gap:10px;margin-top:10px;color:var(--d-text-2);font-size:13px;font-variant-numeric:tabular-nums}
+      .er-leader{display:flex;align-items:center;gap:10px;min-height:44px;padding:10px 14px;border:1px solid var(--d-border);border-radius:8px;background:var(--d-surface-2);color:var(--d-text-2);font-size:13.5px}.er-leader strong{margin-left:auto;text-align:right;color:var(--d-ink);font-size:15px;font-weight:600;font-variant-numeric:tabular-nums}.er-foot{display:flex;align-items:flex-start;gap:8px;margin-top:14px;color:var(--d-text-3);font-size:12.5px}.er-foot .er-ic{width:14px;height:14px;margin-top:3px;flex:none;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}.er-note{margin:0}.er-error{margin-top:14px;padding:10px 12px;border:1px solid var(--d-bad-line);border-radius:8px;background:var(--d-bad-soft);color:var(--d-bad-text);font-size:13.5px;font-weight:500}
       .er-root [hidden]{display:none}
-      .er-matrix{flex:1;display:flex;flex-direction:column;justify-content:center;gap:22px;padding:8px 0 4px;overflow:auto}.er-matrix-table{width:100%;border-collapse:collapse;table-layout:fixed}.er-matrix-table th,.er-matrix-table td{border:1px solid var(--d-hair-strong);padding:12px 14px;text-align:center;position:relative}.er-matrix-table thead th{background:var(--d-paper-soft)}.er-matrix-table thead th b{display:block;font:700 clamp(22px,2.4vw,38px) var(--d-f-mono);letter-spacing:.02em;color:var(--d-brand-dark)}.er-matrix-table thead th span{display:block;margin-top:5px;font:500 clamp(13px,1.2vw,19px) var(--d-f-ko);color:var(--d-ink-light)}.er-matrix-table .er-matrix-corner{width:22%;text-align:left;font:600 12px var(--d-f-mono);letter-spacing:.13em;color:var(--d-ink-light);text-transform:uppercase}.er-matrix-table tbody th{text-align:left;font:650 clamp(19px,2.1vw,32px) var(--d-f-sans);letter-spacing:-.03em;color:var(--d-ink)}.er-cell-in{background:var(--d-brand-soft)}.er-dot{display:block;width:clamp(26px,2.7vw,46px);height:clamp(26px,2.7vw,46px);margin:0 auto;border-radius:50%;border:3px solid var(--d-hair-strong);box-sizing:border-box}.er-dot-in{background:var(--d-brand-dark);border-color:var(--d-brand-dark)}.er-sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}.er-matrix-legend{display:flex;flex-wrap:wrap;align-items:center;gap:28px;color:var(--d-ink-light);font:500 clamp(14px,1.3vw,19px) var(--d-f-ko)}.er-matrix-legend span{display:flex;align-items:center;gap:10px}.er-matrix-legend .er-dot{width:22px;height:22px;margin:0}
-      @media(max-width:720px){.er-root{padding:28px 16px}.er-head{flex-direction:column}.er-h1{font-size:34px}.er-overview,.er-rounds{grid-template-columns:1fr}.er-projector-score{font-size:120px}.er-projector-stats{gap:16px;font-size:13px}}
+      /* The hall projector is dark whatever the CTFd theme toggle says, so it
+         redeclares B's dark set locally instead of inheriting the page's. */
+      .er-projector{--d-surface:#171a20;--d-surface-2:#1f232b;--d-border:#2a2f38;--d-border-strong:#3a404b;--d-ink:#eceef2;--d-text-2:#a3aab6;--d-text-3:#8a91a1;--d-accent:#6f92ff;--d-accent-soft:#1a2440;--d-accent-text:#9db4ff;--d-ok-soft:#10281f;--d-ok-text:#5fd9a4;--d-bad-soft:#2e1717;--d-bad-text:#ff8a85;--d-bad-line:#58393c;--d-shadow-1:0 0 0 1px rgba(255,255,255,.04),0 1px 2px rgba(0,0,0,.4);max-width:none;min-height:calc(100vh - 56px);padding:24px 32px 28px;background:#0f1115;color:var(--d-ink);display:flex;flex-direction:column}.er-projector .er-head{max-width:none;border-bottom:1px solid var(--d-border);padding-bottom:16px}.er-projector .er-h1{font-size:34px}
+      .er-projector-main{flex:1;display:grid;place-content:center;justify-items:center;text-align:center;gap:20px}.er-projector-main .er-label{font-size:15px;margin:0}.er-projector-score{font-size:clamp(110px,22vw,260px);font-weight:700;letter-spacing:-.045em;line-height:.9;font-variant-numeric:tabular-nums}.er-projector-score small{font-size:.2em;font-weight:500;letter-spacing:-.01em;color:var(--d-text-2)}.er-projector-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;width:min(880px,80vw)}.er-projector-stats span{padding:14px 18px;border:1px solid var(--d-border);border-radius:10px;background:var(--d-surface);box-shadow:var(--d-shadow-1);text-align:left;color:var(--d-text-2);font-size:15px}.er-projector-stats b{display:block;margin-top:4px;font-size:clamp(24px,3vw,40px);font-weight:600;line-height:1.15;letter-spacing:-.02em;font-variant-numeric:tabular-nums;color:var(--d-ink)}
+      .er-matrix{flex:1;display:flex;flex-direction:column;justify-content:center;gap:20px;padding:8px 0 4px;overflow:auto}.er-matrix-table{width:100%;border-collapse:collapse;table-layout:fixed;background:var(--d-surface)}.er-matrix-table th,.er-matrix-table td{border:1px solid var(--d-border);padding:12px 14px;text-align:center;position:relative}.er-matrix-table thead th{background:var(--d-surface-2)}.er-matrix-table thead th b{display:block;font:600 clamp(20px,2.2vw,34px) var(--d-f-mono);letter-spacing:.01em;font-variant-numeric:tabular-nums;color:var(--d-ink)}.er-matrix-table thead th span{display:block;margin-top:5px;font-size:clamp(12px,1.1vw,17px);font-weight:500;color:var(--d-text-2)}.er-matrix-table .er-matrix-corner{width:22%;text-align:left;font:500 12px var(--d-f-mono);letter-spacing:.12em;color:var(--d-text-2);text-transform:uppercase}.er-matrix-table tbody th{text-align:left;font-size:clamp(17px,1.9vw,28px);font-weight:600;letter-spacing:-.02em;color:var(--d-ink)}
+      /* The filled dot is deliberately neutral, not green: this grid reports
+         제출/미제출 only, and a "good" colour would read as a verdict. */
+      .er-cell-in{background:var(--d-surface-2)}.er-dot{display:block;width:clamp(22px,2.4vw,40px);height:clamp(22px,2.4vw,40px);margin:0 auto;border-radius:50%;border:2px solid var(--d-border-strong);box-sizing:border-box}.er-dot-in{background:var(--d-text-2);border-color:var(--d-text-2)}.er-sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}.er-matrix-legend{display:flex;flex-wrap:wrap;align-items:center;gap:24px;color:var(--d-text-2);font-size:clamp(13px,1.2vw,17px);font-weight:500}.er-matrix-legend span{display:flex;align-items:center;gap:10px}.er-matrix-legend .er-dot{width:20px;height:20px;margin:0}
+      @media(max-width:720px){.er-root{padding:20px 16px 24px}.er-head{flex-direction:column;align-items:flex-start}.er-h1{font-size:24px}.er-overview{grid-template-columns:repeat(2,1fr)}.er-panel:nth-child(3){grid-column:1/-1;border-left:0;border-top:1px solid var(--d-border)}.er-rounds{grid-template-columns:1fr}.er-projector{padding:20px 16px}.er-projector .er-h1{font-size:26px}.er-projector-score{font-size:96px}.er-projector-stats{grid-template-columns:1fr;width:100%}}
+      @media(prefers-reduced-motion:reduce){.er-root *{transition:none!important;animation:none!important}}
     `;
     document.head.appendChild(style);
   }
@@ -61,7 +71,7 @@
   function installScoreShell() {
     const old = document.getElementById("ms-root");
     if (!old) return null;
-    old.outerHTML = `<main class="er-root" id="er-score-root"><header class="er-head"><div><div class="er-kicker">SNU SENS · E-CON 논설</div><h1 class="er-h1">내 점수</h1><p class="er-sub" id="er-score-message">점수를 불러오는 중입니다.</p></div><div class="er-phase" id="er-score-phase">—</div></header><section class="er-overview"><div class="er-panel"><span class="er-label">온라인 총점</span><strong id="er-total-score">— <small>/ 80 pt</small></strong></div><div class="er-panel"><span class="er-label">해결한 문제</span><strong id="er-total-solved">— <small>/ 15</small></strong></div><div class="er-panel"><span class="er-label">우리 조</span><strong id="er-team-name" style="font-size:24px">—</strong></div></section><section class="er-rounds" id="er-rounds"></section><section class="er-leader"><span>익명 선두 조</span><strong id="er-leader">—</strong></section><p class="er-note" id="er-note">${STANDING_NOTE}</p><div class="er-error" id="er-error" hidden></div></main>`;
+    old.outerHTML = `<main class="er-root" id="er-score-root"><header class="er-head"><div><div class="er-kicker">SNU SENS · E-CON 논설</div><h1 class="er-h1">내 점수</h1><p class="er-sub" id="er-score-message">점수를 불러오는 중입니다.</p></div><div class="er-phase" id="er-score-phase">—</div></header><section class="er-overview"><div class="er-panel"><span class="er-label">온라인 총점</span><strong id="er-total-score">— <small>/ 80 pt</small></strong></div><div class="er-panel"><span class="er-label">해결한 문제</span><strong id="er-total-solved">— <small>/ 15</small></strong></div><div class="er-panel"><span class="er-label">우리 조</span><strong id="er-team-name">—</strong></div></section><section class="er-rounds" id="er-rounds"></section><section class="er-leader"><span>익명 선두 조</span><strong id="er-leader">—</strong></section><div class="er-foot"><svg class="er-ic" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 11v5M12 8h.01"/></svg><p class="er-note" id="er-note">${STANDING_NOTE}</p></div><div class="er-error" id="er-error" hidden></div></main>`;
     return document.getElementById("er-score-root");
   }
 
@@ -204,12 +214,27 @@
     const style = document.createElement("style");
     style.textContent = `
       .navbar{position:relative}
-      .econ-round-countdown{position:absolute;left:50%;top:50%;z-index:1031;transform:translate(-50%,-50%);display:flex;align-items:center;gap:10px;min-width:250px;padding:6px 13px 7px;border:1px solid var(--d-brand-line,#e7b86b);border-radius:999px;background:var(--d-paper,#fbfaf6);box-shadow:0 3px 12px rgba(21,17,10,.08);color:var(--d-ink,#15110a);font-variant-numeric:tabular-nums;pointer-events:none}
-      .econ-round-countdown[data-phase="round1"],.econ-round-countdown[data-phase="round2"]{border-color:var(--d-brand,#c98620);background:var(--d-brand-soft,#fff3dc)}
-      .econ-round-countdown-label{flex:1;font:600 11px var(--d-f-ko,system-ui);letter-spacing:-.01em;white-space:nowrap}
-      .econ-round-countdown-time{font:700 16px var(--d-f-mono,monospace);letter-spacing:.04em;white-space:nowrap}
-      .econ-round-countdown[data-phase="finished"]{justify-content:center;min-width:140px;border-color:var(--d-hair-strong,#bcb5a7);background:var(--d-paper-soft,#f3f0e8)}
-      @media(max-width:760px){.econ-round-countdown{top:calc(100% + 9px);min-width:0;padding:5px 10px;box-shadow:0 4px 14px rgba(21,17,10,.12)}.econ-round-countdown-label{font-size:10px}.econ-round-countdown-time{font-size:13px}}
+      .econ-round-countdown{position:absolute;left:50%;top:50%;z-index:1031;transform:translate(-50%,-50%);display:inline-flex;align-items:center;gap:10px;height:38px;padding:0 12px;border:1px solid var(--d-border,#e4e7ec);border-radius:6px;background:var(--d-surface,#ffffff);box-shadow:var(--d-shadow-1,0 1px 3px rgba(16,24,40,.06));color:var(--d-ink,#1a1d23);pointer-events:none;transition:background .22s var(--d-ease,ease),border-color .22s var(--d-ease,ease),color .22s var(--d-ease,ease)}
+      /* The alarm states (.is-warn/.is-crit) are styled in THEME_HEADER_CSS, which
+         reaches them through #econ-round-countdown and so outranks these rules —
+         including this muted label colour, which an alarm wants to inherit. */
+      .econ-round-countdown-label{font:500 12px var(--d-f-ko,system-ui);color:var(--d-text-2,#5c6370);white-space:nowrap}
+      /* Tabular figures plus a width that already fits HH:MM:SS, so a ticking
+         second never nudges the pill sideways under the navbar's centre. */
+      .econ-round-countdown-time{font:600 18px var(--d-f-sans,system-ui);font-variant-numeric:tabular-nums;letter-spacing:.01em;line-height:1;min-width:8ch;text-align:right;white-space:nowrap}
+      .econ-round-countdown[data-phase="finished"]{justify-content:center;border-color:var(--d-border,#e4e7ec);background:var(--d-surface-2,#f1f3f6);color:var(--d-text-2,#5c6370);box-shadow:none}
+      /* Phone: the pill stays inside the bar and gives up its label, which is
+         what B does. Dropping it below the navbar instead left it floating on
+         the bare page ground with no clearance above the heading — it is
+         absolutely positioned, so it reserves no space and every page under it
+         would have to pad its own header out of the way. */
+      @media(max-width:760px){.econ-round-countdown{gap:0;height:32px;padding:0 10px}.econ-round-countdown-label{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}.econ-round-countdown-time{font-size:15px;min-width:7ch}}
+      /* Narrower than ~560px the brand ("SNU SENS E-CON 논설") runs past the
+         centre line and the pill paints over its tail. Stop centring it there
+         and tuck it in beside the toggler instead, which clears the brand
+         without truncating either of them. 68px is the toggler plus the
+         container's right padding. */
+      @media(max-width:560px){.econ-round-countdown{left:auto;right:68px;transform:translateY(-50%)}}
     `;
     document.head.appendChild(style);
     const clock = document.createElement("div");
@@ -238,18 +263,30 @@
     }
   }
 
+  /* The two thresholds a mentee has to feel — five minutes and one minute — are
+     decided here and dressed in THEME_HEADER_CSS. They are kept mutually
+     exclusive so the pill is only ever in one alarm state, whatever order the
+     two rules happen to sit in. `seconds` is null when nothing is counting. */
+  function setUrgency(clock, seconds) {
+    clock.classList.toggle("is-warn", seconds !== null && seconds <= 300 && seconds > 60);
+    clock.classList.toggle("is-crit", seconds !== null && seconds <= 60);
+  }
+
   function render() {
     const clock = document.getElementById("econ-round-countdown");
     if (!clock || !competition) return;
     const [label, endAt] = timerSpec(competition);
-    if (!label) { clock.hidden = true; return; }
+    // Clear the alarm before hiding: a phase with nothing to count would
+    // otherwise keep whichever .is-warn/.is-crit skin the last tick set.
+    if (!label) { setUrgency(clock, null); clock.hidden = true; return; }
     clock.hidden = false;
     clock.dataset.phase = competition.phase || "";
-    if (!endAt) { clock.textContent = label; return; }
+    if (!endAt) { setUrgency(clock, null); clock.textContent = label; return; }
     const seconds = Math.max(0, Math.ceil((Date.parse(endAt) - Date.now()) / 1000));
     clock.innerHTML = '<span class="econ-round-countdown-label"></span><strong class="econ-round-countdown-time"></strong>';
     clock.querySelector(".econ-round-countdown-label").textContent = label;
     clock.querySelector(".econ-round-countdown-time").textContent = format(seconds);
+    setUrgency(clock, seconds);
     if (seconds === 0) reachedTarget = true;
   }
 

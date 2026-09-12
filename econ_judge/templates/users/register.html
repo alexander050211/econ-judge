@@ -3,167 +3,289 @@
 {% block stylesheets %}
 {{ super() }}
 <style>
-/* ─── Register — Direction D editorial-minimal (mirrors s7 login) ─── */
+/* ─── Register — Direction B "editorial product" (mirrors s7 login) ──
+   Same band, same card, same single blue action; only the card's
+   copy and its three fields differ. The s7- prefix is historical and
+   shared with login.html on purpose — the two screens are one design
+   and should stay easy to diff against each other. */
+
+/* B's palette lives in THEME_HEADER_CSS, which CTFd serves out of its
+   config table and only bin/bootstrap.py ever writes, so every colour
+   is read through a local alias carrying B's literal value as a
+   fallback. See login.html for the full reasoning. */
 .s7-login-root {
+  --s7-bg:            var(--d-bg, #f7f8fa);
+  --s7-surface:       var(--d-surface, #ffffff);
+  --s7-surface-2:     var(--d-surface-2, #f1f3f6);
+  --s7-border:        var(--d-border, #e4e7ec);
+  --s7-border-strong: var(--d-border-strong, #cfd5dd);
+  --s7-text-2:        var(--d-text-2, #5c6370);
+  --s7-text-3:        var(--d-text-3, #626977);
+  --s7-accent:        var(--d-accent, #2457e0);
+  --s7-accent-hover:  var(--d-accent-hover, #1e4bc7);
+  --s7-accent-text:   var(--d-accent-text, #1e47b8);
+  --s7-on-accent:     var(--d-on-accent, #ffffff);
+  --s7-bad-soft:      var(--d-bad-soft, #fdeceb);
+  --s7-bad-text:      var(--d-bad-text, #b42323);
+  --s7-bad-line:      var(--d-bad-line, #eac1c1);
+  --s7-ink:           var(--d-ink, #1a1d23);
+  /* Amber is one value in both modes, so it is not restated in the dark
+     block below — same as --s7-ease. */
+  --s7-brand:         var(--d-brand, #f5a83d);
+  --s7-focus:         var(--d-focus, rgba(36,87,224,0.35));
+  --s7-shadow-1:      var(--d-shadow-1, 0 1px 2px rgba(16,24,40,0.04), 0 1px 3px rgba(16,24,40,0.06));
+  --s7-shadow-3:      var(--d-shadow-3, 0 0 0 1px rgba(16,24,40,0.05), 0 12px 24px -8px rgba(16,24,40,0.10), 0 32px 64px -24px rgba(16,24,40,0.14));
+  --s7-ease:          var(--d-ease, cubic-bezier(0.2,0.8,0.2,1));
+
   width: 100%;
   min-height: calc(100vh - 120px);
-  background: var(--d-paper);
+  background: var(--s7-bg);
+  color: var(--s7-ink);
   display: grid;
   grid-template-columns: 1fr 1.05fr;
-  overflow: hidden;
   margin: 0;
-  border-top: 1px solid var(--d-hair);
+  border-top: 1px solid var(--s7-border);
+  font-family: var(--d-f-sans);
+  font-size: 14px;
+  line-height: 1.5;
+  word-break: keep-all;
+  overflow-wrap: anywhere;
 }
 .s7-login-root *, .s7-login-root *::before, .s7-login-root *::after { box-sizing: border-box; }
 
+/* The same aliases under CTFd's dark attribute — see login.html for why
+   the dark half cannot be left to inherit from the light one. */
+:root[data-bs-theme="dark"] .s7-login-root {
+  --s7-bg:            var(--d-bg, #0f1115);
+  --s7-surface:       var(--d-surface, #171a20);
+  --s7-surface-2:     var(--d-surface-2, #1f232b);
+  --s7-border:        var(--d-border, #2a2f38);
+  --s7-border-strong: var(--d-border-strong, #3a404b);
+  --s7-text-2:        var(--d-text-2, #a3aab6);
+  --s7-text-3:        var(--d-text-3, #8a91a1);
+  --s7-accent:        var(--d-accent, #6f92ff);
+  --s7-accent-hover:  var(--d-accent-hover, #86a4ff);
+  --s7-accent-text:   var(--d-accent-text, #9db4ff);
+  --s7-on-accent:     var(--d-on-accent, #0f1115);
+  --s7-bad-soft:      var(--d-bad-soft, #2e1717);
+  --s7-bad-text:      var(--d-bad-text, #ff8a85);
+  --s7-bad-line:      var(--d-bad-line, #58393c);
+  --s7-ink:           var(--d-ink, #eceef2);
+  --s7-focus:         var(--d-focus, rgba(111,146,255,0.45));
+  --s7-shadow-1:      var(--d-shadow-1, 0 0 0 1px rgba(255,255,255,0.04), 0 1px 2px rgba(0,0,0,0.4));
+  --s7-shadow-3:      var(--d-shadow-3, 0 0 0 1px rgba(255,255,255,0.06), 0 24px 48px -16px rgba(0,0,0,0.7));
+}
+
+/* Band content hugs the divider and the card hugs it from the other
+   side, so the two halves read as one composition centred on the page
+   instead of two things marooned at opposite edges. */
 .s7-login-aside {
   padding: 48px 56px;
-  background: var(--d-paper-soft);
-  border-right: 1px solid var(--d-hair);
+  background: var(--s7-surface-2);
+  border-right: 1px solid var(--s7-border);
   display: flex;
   flex-direction: column;
-  justify-content: space-between;
-  gap: 32px;
-  position: relative;
-  min-height: 600px;
+  justify-content: center;
+  align-items: flex-end;
 }
-.s7-login-aside::before {
-  content: '';
-  position: absolute;
-  inset: 0;
-  background-image:
-    linear-gradient(var(--d-paper-sunk) 1px, transparent 1px),
-    linear-gradient(90deg, var(--d-paper-sunk) 1px, transparent 1px);
-  background-size: 22px 22px;
-  opacity: 0.55;
-  pointer-events: none;
-}
-.s7-login-aside > * { position: relative; z-index: 1; }
-.s7-aside-top { display: flex; align-items: center; gap: 12px; }
+.s7-aside-band { width: 100%; max-width: 360px; }
 .s7-aside-mark {
-  font-family: var(--d-f-mono);
+  display: flex;
+  align-items: center;
+  gap: 8px;
   font-size: 13px;
-  font-weight: 600;
-  letter-spacing: 0.16em;
-  color: var(--d-brand-dark);
+  font-weight: 500;
+  color: var(--s7-text-2);
+  margin-bottom: 10px;
 }
-.s7-aside-mid { padding-bottom: 12px; }
+.s7-aside-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--s7-brand);
+  flex: none;
+}
 .s7-aside-title {
-  font-family: var(--d-f-sans);
-  font-weight: 700;
-  font-size: 64px;
-  line-height: 0.95;
-  letter-spacing: -0.045em;
-  color: var(--d-ink);
+  font-size: 30px;
+  font-weight: 600;
+  line-height: 1.2;
+  letter-spacing: -0.02em;
+  color: var(--s7-ink);
   margin: 0;
 }
-.s7-aside-dot { color: var(--d-brand-dark); }
 .s7-aside-tag {
-  font-family: var(--d-f-ko);
-  font-size: 18px;
-  color: var(--d-ink-mid);
-  margin: 18px 0 0;
+  font-size: 14px;
+  color: var(--s7-text-2);
   line-height: 1.5;
-  max-width: 320px;
+  margin: 4px 0 0;
 }
-.s7-aside-foot { display: flex; flex-direction: column; gap: 4px; }
-.s7-aside-foot .d-tiny { font-size: 11px; }
+/* The band paints --d-surface-2, the one ground the brief rules out
+   for --d-text-3, so the footnote recedes by size rather than by
+   dropping another step in contrast. */
+.s7-aside-foot {
+  font-size: 12.5px;
+  color: var(--s7-text-2);
+  margin-top: 14px;
+}
 
 .s7-login-main {
   display: flex;
   align-items: center;
-  justify-content: center;
-  padding: 56px 48px;
+  justify-content: flex-start;
+  padding: 48px 56px;
 }
 .s7-login-card {
   width: 100%;
-  max-width: 420px;
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
+  max-width: 400px;
+  background: var(--s7-surface);
+  border: 1px solid var(--s7-border);
+  border-radius: 14px;
+  box-shadow: var(--s7-shadow-3);
+  padding: 28px 24px;
 }
 .s7-login-h {
-  font-family: var(--d-f-sans);
+  font-size: 22px;
   font-weight: 600;
-  font-size: 36px;
-  letter-spacing: -0.03em;
-  margin: 6px 0 4px;
-  color: var(--d-ink);
-  line-height: 1.05;
-}
-.s7-login-sub {
-  font-family: var(--d-f-ko);
-  font-size: 14.5px;
-  color: var(--d-ink-light);
-  margin: 0 0 22px;
-  line-height: 1.55;
-}
-
-.s7-form { display: flex; flex-direction: column; gap: 16px; margin: 0; }
-.s7-field { display: flex; flex-direction: column; gap: 6px; }
-.s7-label {
-  font-family: var(--d-f-mono);
-  font-size: 10.5px;
-  letter-spacing: 0.14em;
-  text-transform: uppercase;
-  color: var(--d-ink-light);
-  font-weight: 600;
+  letter-spacing: -0.015em;
+  line-height: 1.3;
+  color: var(--s7-ink);
   margin: 0;
 }
-.s7-input {
-  font-family: var(--d-f-ko);
-  font-size: 15px;
-  padding: 12px 14px;
-  background: var(--d-paper);
-  border: 1px solid var(--d-hair-strong);
-  border-radius: 6px;
-  color: var(--d-ink);
-  outline: none;
-  transition: border-color 0.15s ease, box-shadow 0.15s ease;
-  width: 100%;
-}
-.s7-input:focus {
-  border-color: var(--d-brand-dark);
-  box-shadow: 0 0 0 3px rgba(245,168,61,0.18);
+.s7-login-sub {
+  font-size: 14px;
+  color: var(--s7-text-2);
+  line-height: 1.5;
+  margin: 6px 0 20px;
 }
 
-.s7-submit {
-  margin-top: 14px;
+.s7-form { margin: 0; }
+.s7-field { margin-bottom: 14px; }
+.s7-label {
+  display: block;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--s7-ink);
+  margin: 0 0 6px;
+}
+.s7-input {
+  display: block;
+  width: 100%;
+  height: 44px;
+  padding: 0 12px;
+  font-family: inherit;
+  font-size: 14px;
+  color: var(--s7-ink);
+  background: var(--s7-surface);
+  border: 1px solid var(--s7-border-strong);
+  border-radius: 6px;
+  box-shadow: var(--s7-shadow-1);
+  outline: none;
+  transition: border-color 0.15s var(--s7-ease), box-shadow 0.15s var(--s7-ease);
+}
+.s7-input::placeholder { color: var(--s7-text-3); }
+.s7-input:focus {
+  border-color: var(--s7-accent);
+  box-shadow: 0 0 0 3px var(--s7-focus);
+}
+
+/* CTFd's stock theme and THEME_HEADER_CSS both paint
+   `button[type="submit"]` globally, one of them with !important, so
+   these three colour declarations are forced. */
+.s7-login-root .s7-form .s7-submit {
+  display: flex;
+  align-items: center;
   justify-content: center;
   width: 100%;
-  font-size: 15px;
-  cursor: pointer;
-  border: 1px solid var(--d-ink) !important;
-}
-
-.s7-back {
-  font-family: var(--d-f-ko);
-  font-size: 14px;
-  color: var(--d-ink-mid);
-  text-decoration: none;
-  align-self: center;
-  margin-top: 22px;
-}
-.s7-back:hover { color: var(--d-ink); }
-
-.s7-errors {
-  margin: 0 0 18px;
-  padding: 12px 14px;
-  background: var(--d-fail-soft);
-  border: 1px solid var(--d-fail-line);
-  color: var(--d-fail);
+  height: 44px;
+  margin-top: 6px;
+  padding: 0 14px;
+  font-family: inherit;
+  font-size: 14.5px;
+  font-weight: 500;
   border-radius: 6px;
-  font-family: var(--d-f-ko);
-  font-size: 13.5px;
+  background: var(--s7-accent) !important;
+  border: 1px solid var(--s7-accent) !important;
+  color: var(--s7-on-accent) !important;
+  box-shadow: 0 1px 2px rgba(16,24,40,0.12);
+  cursor: pointer;
+  transition: background 0.15s var(--s7-ease), border-color 0.15s var(--s7-ease);
+}
+.s7-login-root .s7-form .s7-submit:hover {
+  background: var(--s7-accent-hover) !important;
+  border-color: var(--s7-accent-hover) !important;
+}
+.s7-login-root .s7-form .s7-submit:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 3px var(--s7-focus);
+}
+.s7-login-root .s7-form .s7-submit:active { transform: translateY(1px); box-shadow: none; }
+
+.s7-llinks {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  margin-top: 14px;
+  font-size: 13px;
+}
+.s7-link {
+  color: var(--s7-accent-text);
+  font-weight: 500;
+  text-decoration: none;
+  border-radius: 6px;
+}
+.s7-link:hover { color: var(--s7-accent-text); text-decoration: underline; text-underline-offset: 3px; }
+.s7-link:focus-visible { outline: none; box-shadow: 0 0 0 3px var(--s7-focus); }
+
+/* A rejected signup has to read from the mentor's aisle, so the banner
+   sits inline above the fields and carries a glyph as well as colour. */
+.s7-errors {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  margin: 0 0 16px;
+  padding: 9px 12px;
+  background: var(--s7-bad-soft);
+  border: 1px solid var(--s7-bad-line);
+  border-radius: 8px;
+  color: var(--s7-bad-text);
+  font-size: 13px;
+  font-weight: 500;
   line-height: 1.5;
 }
-.s7-errors ul { margin: 0; padding-left: 18px; }
+.s7-errors svg {
+  width: 16px;
+  height: 16px;
+  flex: none;
+  margin-top: 2px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+.s7-errors ul { margin: 0; padding: 0; list-style: none; }
+.s7-errors li + li { margin-top: 4px; }
 
 @media (max-width: 880px) {
   .s7-login-root { grid-template-columns: 1fr; min-height: auto; }
-  .s7-login-aside { padding: 28px 22px; min-height: 0; }
-  .s7-aside-title { font-size: 48px; }
-  .s7-login-main { padding: 32px 22px 48px; }
+  .s7-login-aside {
+    padding: 22px 24px 20px;
+    border-right: 0;
+    border-bottom: 1px solid var(--s7-border);
+    justify-content: flex-start;
+    align-items: stretch;
+  }
+  .s7-aside-band { max-width: none; }
+  .s7-aside-title { font-size: 26px; }
+  .s7-login-main { align-items: flex-start; justify-content: center; padding: 24px 20px 32px; }
+  .s7-login-card { max-width: none; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .s7-login-root *, .s7-login-root *::before, .s7-login-root *::after {
+    transition: none !important;
+    animation: none !important;
+    transform: none !important;
+  }
 }
 </style>
 {% endblock %}
@@ -172,34 +294,24 @@
 <div class="s7-login-root">
 
   <aside class="s7-login-aside">
-    <div class="s7-aside-top">
-      <span class="s7-aside-mark">◤ SNU · SENS</span>
-    </div>
-    <div class="s7-aside-mid">
-      <h1 class="s7-aside-title">
-        E&#8209;CON 논설<span class="s7-aside-dot">.</span>
-      </h1>
-      <p class="s7-aside-tag">
-        새 계정을 만드세요.<br/>
-        디지털 회로 채점 시스템.
-      </p>
-    </div>
-    <div class="s7-aside-foot">
-      <div class="d-tiny">2026 하계 공학 캠프 · SNU SENS</div>
-      <div class="d-tiny">SENS-2026-001 / v1.0</div>
+    <div class="s7-aside-band">
+      <div class="s7-aside-mark"><i class="s7-aside-dot" aria-hidden="true"></i>SNU · SENS</div>
+      <h1 class="s7-aside-title">E&#8209;CON 논설.</h1>
+      <p class="s7-aside-tag">디지털 논리회로 설계 자동채점 시스템.</p>
+      <div class="s7-aside-foot">2026 하계 공학 캠프 · SNU SENS</div>
     </div>
   </aside>
 
   <main class="s7-login-main">
     <div class="s7-login-card">
-      <div class="d-meta">REGISTER · 회원가입</div>
-      <h2 class="s7-login-h">새 계정 만들기</h2>
+      <h2 class="s7-login-h">회원가입</h2>
       <p class="s7-login-sub">
         팀명(또는 사용자명) · 이메일 · 비밀번호를 입력하세요.
       </p>
 
       {% if errors %}
-      <div class="s7-errors">
+      <div class="s7-errors" role="alert">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M18 6 6 18M6 6l12 12"/></svg>
         <ul>{% for error in errors %}<li>{{ error }}</li>{% endfor %}</ul>
       </div>
       {% endif %}
@@ -221,18 +333,14 @@
                  autocomplete="new-password" />
         </div>
 
-        <button type="submit" name="_submit" value="제출"
-                class="d-btn d-btn-primary s7-submit">
-          가입하기
-          <svg width="14" height="14" viewBox="0 0 16 16" fill="none" aria-hidden="true">
-            <path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
-          </svg>
-        </button>
+        <button type="submit" name="_submit" value="제출" class="s7-submit">가입하기</button>
 
         <input id="nonce" name="nonce" type="hidden" value="{{ Session.nonce }}">
       </form>
 
-      <a href="/login" class="s7-back">이미 계정이 있다면 로그인 →</a>
+      <div class="s7-llinks">
+        <a href="/login" class="s7-link">이미 계정이 있다면 로그인</a>
+      </div>
     </div>
   </main>
 
