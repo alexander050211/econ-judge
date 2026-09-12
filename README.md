@@ -27,6 +27,7 @@ CTFd is the host platform. We ship a custom challenge type plugin (id `digital`)
 - Point-deducting hints run **on paper, by mentors**. Nothing in this repo creates a CTFd `Hints` row; the `hints` field in a grading response is the free checklist above, not a purchased hint.
 - CTFd's public scoreboard is switched off (`score_visibility=admins`). Mentees see `/my-score` (their own score plus an anonymized leader), and the BK Hall projector page reads `/api/v1/digital/projector`.
 - `competition.py` derives every phase — before / round 1 / break / round 2 / finished — from the single `ECON_JUDGE_COMPETITION_START` timestamp and syncs CTFd's own challenge visibility to it, so a restart mid-contest recovers on its own.
+- The front page `/` is `INDEX_CONTENT` in `bin/bootstrap.py`, rewritten on every boot like `/my-score`, `/projector` and the theme header, so edit the string, not CTFd's admin Pages screen. It is served with no state attributes: the first paint, which is also what a browser without JavaScript keeps, reads 연결 중, `--:--` and (signed out) 로그인. `econ_judge/assets/landing.js` takes each reply of `round-ui.js`'s poll from `window.econRoundState` (or fetches `/api/v1/digital/competition` itself when that is missing) and writes `data-phase` / `data-auth` / `data-tail`, the clock digits and `--el` / `--ticks` / `--major`; the CSS picks every visible sentence and button from those. The clock, the ruler and the rail's progress follow the timestamps `competition.py` derives from `ECON_JUDGE_COMPETITION_START`, but the durations, problem counts and points in the copy are literal restatements of `competition.py` and `tests/register_challenges.py`, checked by `tests/landing_page_test.py` — so a rehearsal (`ECON_JUDGE_REHEARSAL`) shortens the clocks, not the copy. The camp name and year are literal too, in `INDEX_CONTENT`, `CTFD_DESCRIPTION`'s default and the login/register templates.
 
 Synchronous grading (no RabbitMQ), one gunicorn gevent worker, one grading slot: enough at this camp's scale of 4 teams / ~12 mentees.
 
@@ -108,20 +109,20 @@ pip install -r requirements-dev.txt
 python -m pytest tests
 ```
 
-The suite is written with `unittest` but the files are named `*_test.py`, so pytest collects them — 111 tests across 12 modules as of this commit.
+The suite is written with `unittest` but the files are named `*_test.py`, so pytest collects them; `python -m pytest tests --collect-only -q` prints the current count.
 
 Three of those cases need a JRE and `Digital.jar` at the repo root, and they behave differently without them:
 
 - `tests/grader_structure_test.py`'s component-bundle case really shells out to Digital and **fails loudly**.
 - `tests/health_export_test.py`'s ready-200 case **skips silently** — it is the only check that `/health` answers 200 with an empty `failed_checks`, so on a machine without Java a green run has not exercised that assertion at all. Its admin-report case skips for the same reason.
 
-Everything else in the suite is pure Python. `tests/canonical_self_test.py` is a script rather than a pytest case (pytest imports it and collects nothing): it grades 17 committed reference circuits — the three shared sub-circuits in `canonical/` plus one answer per submittable challenge in `solutions/2026-summer/` — against the committed secret tests with the real Digital.jar, and takes about a minute of JVM time.
+`tests/landing_clock_test.py` runs `landing.js` and `round-ui.js` in node, and without `node` on PATH the cases that need it **skip silently**. Everything else in the suite is pure Python. `tests/canonical_self_test.py` is a script rather than a pytest case (pytest imports it and collects nothing): it grades 17 committed reference circuits — the three shared sub-circuits in `canonical/` plus one answer per submittable challenge in `solutions/2026-summer/` — against the committed secret tests with the real Digital.jar, and takes about a minute of JVM time.
 
 ```
 python tests/canonical_self_test.py
 ```
 
-`.github/workflows/tests.yml` runs both on push and pull request — it installs a JRE and downloads Digital.jar first, so neither Java-dependent case fails or skips there — and its header records what it deliberately leaves out (the live-deploy smoke scripts, and the generator/admin scripts under `tests/`).
+`.github/workflows/tests.yml` runs both on push and pull request — it installs a JRE, downloads Digital.jar and sets up node first, so none of the Java- or node-dependent cases fails or skips there — and its header records what it deliberately leaves out (the live-deploy smoke scripts, and the generator/admin scripts under `tests/`).
 
 ## References
 

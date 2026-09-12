@@ -4,11 +4,10 @@ name: tests
 #
 # What this job covers, and what it deliberately does not:
 #
-#   IN  — everything pytest collects under tests/ (the files named *_test.py):
-#         111 tests across 12 modules as of this commit. Deliberately not
-#         enumerated here — an enumeration goes stale the next time a module
-#         is added, and `python -m pytest tests --collect-only -q` is the
-#         answer that cannot.
+#   IN  — everything pytest collects under tests/ (the files named *_test.py).
+#         Deliberately neither counted nor enumerated here — both go stale the
+#         next time a test is added, and
+#         `python -m pytest tests --collect-only -q` is the answer that cannot.
 #   IN  — three of those cases need a JRE and Digital.jar, so this job installs
 #         a JRE and downloads Digital.jar from the same release the Dockerfile
 #         pins. grader_structure_test's component-bundle case really shells out
@@ -17,6 +16,10 @@ name: tests
 #         that /health answers 200 with an empty failed_checks, so leaving it
 #         to skip would make a green run quietly mean less than it looks like.
 #         All are set up rather than excluded.
+#   IN  — tests/landing_clock_test.py runs landing.js and round-ui.js in node,
+#         and the cases that need node SKIP without it. The runner image
+#         happens to ship a node; this job sets one up anyway, so those cases
+#         run by design rather than by luck.
 #   IN  — bootstrap_demo_data_test's six behavioural cases, which need
 #         SQLAlchemy. It is pinned in requirements-dev.txt for exactly that
 #         reason: they are the regression tests for a bulk DELETE that would
@@ -89,6 +92,11 @@ jobs:
             "https://github.com/hneemann/Digital/releases/download/${DIGITAL_VERSION}/Digital.zip"
           unzip -q /tmp/Digital.zip -d /tmp/digital
           cp /tmp/digital/Digital/Digital.jar Digital.jar
+
+      - uses: actions/setup-node@v4
+        with:
+          # landing_clock_test runs landing.js and round-ui.js in node, or skips.
+          node-version: "22"
 
       - name: Run tests
         run: python -m pytest tests -q

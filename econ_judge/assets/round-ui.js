@@ -200,14 +200,22 @@
   if (path === "/my-score") scorePage(); else projectorPage();
 })();
 
-/* Participant-facing contest clock. It lives in the shared navigation header
-   and broadcasts phase changes so the challenges page can refresh instantly. */
+/* Participant-facing contest clock. It lives in the shared navigation header,
+   broadcasts phase changes so the challenges page can refresh instantly, and
+   lends its poll to the landing page's hero clock as window.econRoundState. */
 (function () {
   "use strict";
 
 
   let competition = null;
   let reachedTarget = false;
+  const listeners = new Set();
+  // Every refresh takes a number when it asks. Replies can arrive out of
+  // order — at zero the 250ms tick asks again before the last answer is in —
+  // and one written before the boundary must never land after a newer one
+  // and flip the phase back.
+  let issued = 0;
+  let applied = 0;
 
   function install() {
     if (document.getElementById("econ-round-countdown")) return;
@@ -290,17 +298,29 @@
     if (seconds === 0) reachedTarget = true;
   }
 
+  /* Subscribers hear every successful refresh, not only the phase changes the
+     event below carries: the landing page's own countdown needs the fresh
+     timestamps. Each call is fenced, so a broken subscriber can never stop the
+     navbar clock. */
+  function tell(listener) {
+    try { listener(competition); } catch (_error) { /* the navbar clock carries on */ }
+  }
+
   async function refresh() {
+    const turn = ++issued;
     try {
       const response = await fetch("/api/v1/digital/competition", { credentials: "same-origin", cache: "no-store" });
       if (!response.ok) return;
       const payload = await response.json();
+      if (turn < applied) return; // older than what is on screen: it lost the race
+      applied = turn;
       const next = payload.data || null;
       const changed = competition && next && competition.phase !== next.phase;
       competition = next;
       reachedTarget = false;
       render();
       if (changed) window.dispatchEvent(new CustomEvent("econ:competition-change", { detail: competition }));
+      if (competition) listeners.forEach(tell);
     } catch (_error) {
       // Keep the last successful display during a transient failure.
     }
@@ -309,6 +329,18 @@
   function start() {
     if (!document.querySelector(".navbar")) return;
     install();
+    // Published only once this poll is really running, so landing.js can
+    // share it rather than start a second one — and, where it is missing,
+    // knows to fetch for itself instead of waiting on a clock nobody winds.
+    window.econRoundState = {
+      get: () => competition,
+      subscribe(listener) {
+        listeners.add(listener);
+        if (competition) tell(listener);
+        return () => { listeners.delete(listener); };
+      },
+      refresh,
+    };
     refresh();
     // The 250ms tick keeps ticking while hidden so the clock is already right
     // when the viewer looks back; only the network refresh pauses.

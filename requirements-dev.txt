@@ -26,7 +26,12 @@
 # and the ready-200 one is the only check that /health answers 200 with an
 # empty failed_checks list, so a green run on a JRE-less machine has not
 # exercised it at all. .github/workflows/tests.yml installs both so nothing
-# goes quiet there. Everything else in the suite is pure Python.
+# goes quiet there.
+#
+# tests/landing_clock_test.py runs econ_judge/assets/landing.js and
+# round-ui.js under node, and every case that needs node SKIPS silently
+# without it; tests.yml sets node up too. Everything else in the suite is
+# pure Python.
 #
 # Keep this file ASCII-only: pip decodes requirements files with the locale
 # codec, so a non-ASCII comment makes `pip install -r` fail outright on a
