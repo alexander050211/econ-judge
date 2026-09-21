@@ -1,0 +1,112 @@
+name: tests
+
+# Runs the unit suite on every push to master and on every pull request.
+#
+# What this job covers, and what it deliberately does not:
+#
+#   IN  — everything pytest collects under tests/ (the files named *_test.py).
+#         Deliberately neither counted nor enumerated here — both go stale the
+#         next time a test is added, and
+#         `python -m pytest tests --collect-only -q` is the answer that cannot.
+#   IN  — three of those cases need a JRE and Digital.jar, so this job installs
+#         a JRE and downloads Digital.jar from the same release the Dockerfile
+#         pins. grader_structure_test's component-bundle case really shells out
+#         to Digital and FAILS without them; health_export_test's ready-200 and
+#         admin-report cases SKIP without them, and ready-200 is the only check
+#         that /health answers 200 with an empty failed_checks, so leaving it
+#         to skip would make a green run quietly mean less than it looks like.
+#         All are set up rather than excluded.
+#   IN  — tests/landing_clock_test.py runs landing.js and round-ui.js in node,
+#         and the cases that need node SKIP without it. The runner image
+#         happens to ship a node; this job sets one up anyway, so those cases
+#         run by design rather than by luck.
+#   IN  — bootstrap_demo_data_test's six behavioural cases, which need
+#         SQLAlchemy. It is pinned in requirements-dev.txt for exactly that
+#         reason: they are the regression tests for a bulk DELETE that would
+#         not compile on SQLite and wiped every real solve on PostgreSQL, and
+#         without the pin they skip — CI would go green on the bug they exist
+#         to catch. Every skip in this job is therefore a real signal.
+#   IN  — tests/canonical_self_test.py, as a step of its own. pytest imports
+#         the module and collects no test from it, so it has to be invoked as
+#         the script it is. It grades 17 committed reference circuits — the
+#         three shared sub-circuits in canonical/ plus one answer per
+#         submittable challenge in solutions/2026-summer/ — against the
+#         committed secret tests with the real Digital.jar: the only
+#         end-to-end check in the repo. It is a step of
+#         its own rather than part of the suite because it is ~1 min of JVM
+#         time, and it can only redden CI on a real disagreement between a
+#         reference circuit and its secret test — with java or Digital.jar
+#         missing it prints SKIP and exits 0.
+#   OUT — tests/deploy_smoke.py and tests/smoke_submit.py: they POST to a live
+#         deployment and need camp credentials, so they cannot run here. Their
+#         filenames match neither of pytest's default patterns, so pytest does
+#         not collect them either; they stay a manual pre-camp step.
+#   OUT — tests/generate_*.py and tests/register_challenges.py are generators
+#         and admin scripts, not tests.
+
+on:
+  push:
+    # PRs are covered by the pull_request trigger below; limiting push to
+    # master keeps a PR branch from running the suite twice per commit.
+    branches: [master]
+  pull_request:
+  workflow_dispatch: {}  # allow manual "run now" from the Actions tab
+
+# Don't keep running a superseded commit's suite.
+concurrency:
+  group: tests-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  pytest:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          # Matches the repo's local .venv. The deploy image is python:3.11-slim;
+          # nothing under test is sensitive to the difference.
+          python-version: "3.12"
+          cache: pip
+          cache-dependency-path: requirements-dev.txt
+
+      - name: Install Python dependencies
+        run: pip install -r requirements-dev.txt
+
+      - uses: actions/setup-java@v4
+        with:
+          # Matches the Dockerfile's openjdk-21-jre-headless.
+          distribution: temurin
+          java-version: "21"
+
+      - name: Fetch Digital.jar
+        env:
+          # Same release the Dockerfile pins. Digital.jar is gitignored, so CI
+          # has to download it; grader.py looks for it at the repo root unless
+          # ECON_JUDGE_DIGITAL_JAR says otherwise.
+          DIGITAL_VERSION: v0.31
+        run: |
+          curl -sSL -o /tmp/Digital.zip \
+            "https://github.com/hneemann/Digital/releases/download/${DIGITAL_VERSION}/Digital.zip"
+          unzip -q /tmp/Digital.zip -d /tmp/digital
+          cp /tmp/digital/Digital/Digital.jar Digital.jar
+
+      - uses: actions/setup-node@v4
+        with:
+          # landing_clock_test runs landing.js and round-ui.js in node, or skips.
+          node-version: "22"
+
+      - name: Run tests
+        run: python -m pytest tests -q
+
+      - name: Grade the reference circuits against the secret tests
+        # Not a pytest case (see the header) — invoked as a script, and its
+        # exit code is the verdict: 0 on PASS or on SKIP when java/Digital.jar
+        # are absent, 1 when a reference circuit and its secret test disagree.
+        # PYTHONIOENCODING is set because every line it prints carries a Korean
+        # .dig filename.
+        env:
+          PYTHONIOENCODING: utf-8
+        run: python tests/canonical_self_test.py

@@ -17,7 +17,22 @@ services:
     runtime: docker
     region: singapore
     plan: free
-    healthCheckPath: /
+    # The grading readiness probe, not CTFd's index. "/" answers 200 the
+    # moment gunicorn binds and proves nothing about grading — the first
+    # exercise of the grader would otherwise be a contestant's submission
+    # during a timed round. This route checks the three independently built
+    # artifacts a grade needs (Digital.jar, a java binary on PATH, one
+    # secret test per submittable challenge) and answers 503 with
+    # failed_checks naming the failure. That 503 blocking a deploy is the
+    # POINT and not an accident: all three are baked into the image at build
+    # time, so a failure here means this image cannot grade at all, and a
+    # deploy that never goes live beats a container that reveals itself
+    # broken mid-round. The schedule is reported but deliberately does NOT
+    # gate the status (health.structural_report), so a bad
+    # ECON_JUDGE_COMPETITION_START cannot restart-loop the service; alert on
+    # competition.phase == "misconfigured" instead. Unauthenticated and
+    # JVM-free, so Render can poll it on a short interval.
+    healthCheckPath: /api/v1/digital/health
     envVars:
       - key: CTFD_ADMIN_NAME
         value: admin
@@ -31,8 +46,11 @@ services:
         generateValue: true
       # Per-grade timeout — Render free tier's 0.5 vCPU adds 5–10s of JVM
       # cold-start overhead on top of Digital's testcase execution. 45s
-      # comfortably covers chal 3 (64 rows + 2 canonicals) and chal 16 (64
-      # rows + 5 canonicals) even when the service is freshly woken.
+      # comfortably covers the heaviest testcase files — chal 7 (100 rows) and
+      # chals 11 / 13 / 14 (64 rows each) — even when the service is freshly
+      # woken. Nothing is seeded alongside a submission: grader.py's
+      # CANONICAL_SUBCIRCUITS is empty, so every component a circuit needs must
+      # come from the submitted round folder itself.
       - key: ECON_JUDGE_TIMEOUT
         value: "45"
       # Grading concurrency guard. Each grade spawns a ~400MB Digital JVM;
@@ -49,8 +67,13 @@ services:
         value: "1"
       - key: ECON_JUDGE_QUEUE_WAIT
         value: "8"
-      # Competition: 2026-08-04 13:20 KST. The app handles all phase changes,
-      # including after a restart.
+      # 2026-summer value — Round 1 opened 2026-08-04 13:20 KST. Every phase
+      # boundary is derived from this one timestamp (70 min Round 1, 10 min
+      # break, 80 min Round 2; see econ_judge/competition.py), so the schedule
+      # survives a restart. FOR A NEW CAMP: set that camp's Round 1 start, or
+      # clear the value to run in open review mode (all 15 challenges always
+      # submittable). Left at a past date the service sits in the "finished"
+      # phase and refuses every submission — see the teardown checklist below.
       - key: ECON_JUDGE_COMPETITION_START
         value: "2026-08-04T13:20:00+09:00"
       - key: ECON_JUDGE_REHEARSAL
@@ -74,7 +97,11 @@ services:
         sync: false
       - key: CTFD_TEAM4_PASSWORD
         sync: false
-      # Camp day: set to "false" to start the board empty (roster still seeded).
+      # 2026-summer value, kept as the record of what this file shipped with.
+      # "true" seeds fabricated demo solves so a review deploy has a populated
+      # scoreboard; camp day runs with "false" (empty board — the team roster
+      # is seeded either way). Render's Environment panel overrides this file,
+      # so the dashboard value is what a given deploy actually ran with.
       - key: CTFD_DEMO_DATA
         value: "true"
 #
@@ -82,9 +109,51 @@ services:
 # In Render → econ-judge → Environment, before the contest:
 #   1. CTFD_TEAM_PASSWORD = <real shared pw>  (or per-team CTFD_TEAM{1..4}_PASSWORD)
 #   2. CTFD_DEMO_DATA = false                 (empty board, no fabricated solves)
-#   3. (optional) CTFD_FREEZE_AT = <unix ts>  (scoreboard freeze near contest end)
+#   3. ECON_JUDGE_COMPETITION_START = <this camp's Round 1 start, ISO-8601 +09:00>
+#   4. DATABASE_URL = <Render Postgres>       (REQUIRED if the results have to
+#      outlive the contest: the free tier's SQLite sits on ephemeral disk and is
+#      wiped by any redeploy, restart or spin-down, taking Solves/Fails with it.
+#      Without it, the export in step 1 of the teardown is the only copy.)
+#   5. (optional) CTFD_FREEZE_AT = <unix ts>  (scoreboard freeze near contest end;
+#      to lift it afterwards you must set it EMPTY, not delete it — teardown step 6)
 # In GitHub → repo → Settings → Variables (keep-warm pinger):
-#   4. KEEPWARM_ENABLED = true                (prevents idle spin-down during camp)
-#   5. AFTER camp: KEEPWARM_ENABLED = false   (else it burns Render's free hours)
+#   6. KEEPWARM_ENABLED = true                (prevents idle spin-down during camp)
 # Deploy with a CLEAR CACHE rebuild after any plugin-code change (the COPY
 # econ_judge layer caches stale), then live-verify a team login + a submission.
+#
+# ── POST-CAMP TEARDOWN CHECKLIST ───────────────────────────────────────
+# Step 1 comes FIRST: every step after it can trigger a restart, and on the
+# free tier a restart wipes the SQLite database and the whole contest with it.
+#   1. EXPORT THE RESULTS before anything restarts. Primary mechanism, and the
+#      one this repo built for the job — logged in as admin, open
+#        https://<service>.onrender.com/api/v1/digital/export
+#      The JSON it returns is the archival copy: per-team round scores plus
+#      EVERY Solve and Fail with its timestamp, and frozen/frozen_at marking
+#      where the freeze cut. ?format=csv gives the same export as one row per
+#      (team, challenge) for a spreadsheet — per-challenge counts, not the
+#      individual attempts — so save both. CTFd admin's own backup / CSV export
+#      and a dump of the database behind DATABASE_URL are the fuller copies;
+#      take one too while the instance is still up. On the free tier there is
+#      no second chance once it goes down.
+#   2. KEEPWARM_ENABLED = false in GitHub Variables. Left on, the 10-minute
+#      pinger holds the instance up ~744 h/month and eats Render free tier's
+#      ~750 h monthly cap, starving every other free service on the account.
+#   3. ECON_JUDGE_COMPETITION_START — clear it to go back to open review mode
+#      (all 15 challenges submittable, no timer), or suspend the service in
+#      Render. Leaving a past date parks the service in the "finished" phase
+#      permanently: challenges visible, every submission refused.
+#   4. CTFD_DEMO_DATA — set to whatever the next state should be: "true" for a
+#      demo deploy with a populated scoreboard, "false" to keep the board empty.
+#   5. Rotate or remove CTFD_TEAM_PASSWORD / CTFD_TEAM{1..4}_PASSWORD. They were
+#      handed to mentees on paper and are no longer secret, and the roster is
+#      re-seeded with them on every boot.
+#   6. CTFD_FREEZE_AT — if a freeze was set, clear it by setting the variable
+#      to an EMPTY value and redeploying. DELETING the variable does NOT clear
+#      it: bin/bootstrap.py writes the `freeze` config only when the variable
+#      is PRESENT (empty = store None = un-freeze) and leaves the stored value
+#      untouched when it is ABSENT, so that a freeze set through the CTFd admin
+#      UI survives a cold start. On the free tier's ephemeral SQLite the next
+#      wipe hides this; with the DATABASE_URL Postgres from pre-flight step 4
+#      the config row outlives every container and a stale freeze silently
+#      pins /my-score and /projector to that timestamp forever. (A value that
+#      is not an integer is logged and ignored — it neither sets nor clears.)

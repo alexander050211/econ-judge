@@ -4,6 +4,7 @@ Only summer challenges with pin-compatible winter reference circuits are
 included. Extend ``SAMPLES`` when the new starter/reference files arrive.
 """
 
+import importlib.util
 import os
 import re
 import sys
@@ -12,10 +13,20 @@ import time
 import requests
 
 
+REPO_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+
+# econ_judge/__init__.py imports CTFd, so load the manifest module directly.
+_problemset_spec = importlib.util.spec_from_file_location(
+    "problemset", os.path.join(REPO_ROOT, "econ_judge", "problemset.py")
+)
+problemset = importlib.util.module_from_spec(_problemset_spec)
+_problemset_spec.loader.exec_module(problemset)
+
+
 def _load_dotenv() -> None:
     """Best-effort .env loader (no python-dotenv dep). Values from the shell
     env take precedence — `os.environ.setdefault` only sets unset keys."""
-    env_path = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), ".env")
+    env_path = os.path.join(REPO_ROOT, ".env")
     if not os.path.exists(env_path):
         return
     with open(env_path, encoding="utf-8") as f:
@@ -34,12 +45,12 @@ USERNAME = os.environ.get("SMOKE_USER", "smoke-test-1")
 EMAIL = os.environ.get("SMOKE_EMAIL", "smoke1@econ-judge.local")
 PASSWORD = os.environ.get("SMOKE_PASSWORD", "smoketest-pw-1")
 
-SAMPLES_ROOT = "tests/samples/5jo-26winter"
+SAMPLES_ROOT = os.path.join(REPO_ROOT, "tests", "5jo-26winter")
 SAMPLES = {
-    3: f"{SAMPLES_ROOT}/5조_연습문제/2번_입력이3개인AND게이트.dig",
-    4: f"{SAMPLES_ROOT}/5조_연습문제/3번_2대1멀티플렉서(MUX).dig",
-    9: f"{SAMPLES_ROOT}/5조_프로젝트1/A1_반가산기(HalfAdder)만들기.dig",
-    7: f"{SAMPLES_ROOT}/5조_미션문제/4번_21세기윤년판독기만들기.dig",
+    3: "5조_연습문제/2번_입력이3개인AND게이트.dig",
+    4: "5조_연습문제/3번_2대1멀티플렉서(MUX).dig",
+    9: "5조_프로젝트1/A1_반가산기(HalfAdder)만들기.dig",
+    7: "5조_미션문제/4번_21세기윤년판독기만들기.dig",
 }
 
 
@@ -72,14 +83,19 @@ def authed_session() -> requests.Session:
 def submit(s: requests.Session, cid: int, path: str) -> dict:
     """Submit with retry on transient connection drops (Render free tier
     occasionally closes connections mid-sequence under sequential load)."""
-    abs_path = os.path.abspath(path)
+    abs_path = os.path.join(SAMPLES_ROOT, path)
+    # The endpoint reads the "files" list a webkitdirectory picker sends, so
+    # every part is named "<folder>/<file>.dig" and one of them must carry
+    # this challenge's answer filename. Posting the manifest path reproduces
+    # exactly what a contestant's round folder sends.
+    upload_name = problemset.HWP_STARTER_FILES[cid]
     last_exc = None
     for attempt in range(3):
         try:
             with open(abs_path, "rb") as f:
                 r = s.post(
                     f"{BASE}/api/v1/digital/challenges/{cid}/attempt",
-                    files={"file": (os.path.basename(abs_path), f, "application/octet-stream")},
+                    files=[("files", (upload_name, f, "application/octet-stream"))],
                     timeout=60,
                 )
             r.raise_for_status()
